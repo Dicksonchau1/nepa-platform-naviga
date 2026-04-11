@@ -12,72 +12,74 @@ const PRODUCT_COLORS = {
 }
 
 const PRODUCT_DESCRIPTORS = {
-  VODA: 'Video control substrate',
-  SODA: 'Facility surveillance intelligence',
-  RODA: 'Robot dispatch & orchestration',
+  VODA: 'Video Operations & Detection Agent',
+  SODA: 'Surveillance Operations & Detection Agent',
+  RODA: 'Robotic Operations & Decision Agent',
 }
 
 const VODA_TIERS = [
   {
-    name: 'Starter',
-    price: 29,
-    period: 'month',
-    descriptor: 'Turn diagnostics into action.',
+    name: 'Pilot',
+    price: 20000,
+    period: 'one-time',
+    descriptor: '30-day pilot programme',
     features: [
-      'Up to 3 diagnostic scans per month',
-      'Basic corrective execution via VODA',
-      'Localized ROI correction workflows',
-      '1 seat · 10 active projects',
-      '30-day project history',
-      'Standard processing',
-      'Email support',
+      'On-site hardware assessment & installation',
+      'Full VODA agent deployment (up to 8 streams)',
+      'NEPA console — full access',
+      'Full audit ledger (30-day retention)',
+      'Dedicated AuraSense engineer on-site setup',
+      'Team backup throughout pilot period',
+      'Joint review session at pilot close',
     ],
     recommended: false,
+    currency: 'HK$',
   },
   {
-    name: 'Team / Pro',
-    price: 149,
+    name: 'Monthly Support',
+    price: 9000,
     period: 'month',
-    descriptor: 'Built for collaborative video operations.',
+    descriptor: 'Included from day one',
     features: [
-      'Unlimited diagnostic scans',
-      'Batch correction workflows',
-      'Replayable audit-trailed edit histories',
-      '3 seats · 50 active projects',
-      '90-day project history',
-      'Priority processing',
-      'Usage analytics',
-      'Priority support + email',
+      'Full AuraSense team backup',
+      'Remote monitoring & incident response',
+      'Model updates and inference tuning',
+      'Alert threshold reconfiguration',
+      'Console and dashboard updates',
+      'Monthly operational review report',
+      'Priority support — response within 4 hours',
+      'Ongoing audit ledger access & export',
     ],
     recommended: true,
+    currency: 'HK$',
   },
   {
-    name: 'Enterprise',
+    name: 'Production',
     price: null,
     period: 'custom',
-    descriptor: 'Embed VODA into production systems.',
+    descriptor: 'Multi-site commercial rollout',
     features: [
-      'API access + private deployment option',
-      'Custom model routing and substrate config',
-      'OEM / white-label options',
-      'Unlimited seats and projects',
-      'Custom project history retention',
-      'SLA-backed uptime',
-      'Dedicated onboarding',
-      'Custom workflow and fine-tuning',
+      'Up to 16 camera streams per node',
+      'Multi-site deployment',
+      'Custom model fine-tuning',
+      'Unlimited audit log retention',
+      'API + webhook integrations',
+      'SLA-backed uptime guarantee',
+      'Dedicated account manager',
     ],
     recommended: false,
+    currency: 'HK$',
   },
 ]
 
 const RODA_TIERS = [
   {
-    name: 'Starter',
-    price: 39,
+    name: 'Development',
+    price: 5000,
     period: 'month',
-    descriptor: 'Get your first robots dispatched.',
+    descriptor: 'Get your first robots integrated.',
     features: [
-      'Up to 5 registered devices (robots or drones)',
+      'Up to 3 registered devices (robots or drones)',
       'Basic fleet telemetry and status dashboard',
       'Basic task assignment and routing',
       'Single operator seat',
@@ -86,23 +88,25 @@ const RODA_TIERS = [
       'Email support',
     ],
     recommended: false,
+    currency: 'HK$',
   },
   {
-    name: 'Team / Pro',
-    price: 179,
+    name: 'Operations',
+    price: 15000,
     period: 'month',
     descriptor: 'Coordinate your fleet across zones.',
     features: [
-      'Up to 25 registered devices',
+      'Up to 10 registered devices',
       'Automated task routing and re-routing',
       'Full fleet management dashboard',
       'Mission planning and replay',
       '3 operator seats',
       'Cross-zone coordination',
       'Incident escalation and audit trail',
-      'Priority support',
+      'Priority support — response within 4 hours',
     ],
     recommended: true,
+    currency: 'HK$',
   },
   {
     name: 'Enterprise',
@@ -120,26 +124,27 @@ const RODA_TIERS = [
       'Dedicated fleet operations engineer',
     ],
     recommended: false,
+    currency: 'HK$',
   },
 ]
 
 const VODA_COMPARISON = [
-  { feature: 'Diagnostic scans per month', starter: '3', pro: 'Unlimited', enterprise: 'Unlimited' },
-  { feature: 'Corrective execution', starter: true, pro: true, enterprise: true },
-  { feature: 'Batch workflows', starter: false, pro: true, enterprise: true },
-  { feature: 'Audit trail', starter: false, pro: true, enterprise: true },
-  { feature: 'Seats included', starter: '1', pro: '3', enterprise: 'Custom' },
-  { feature: 'Active projects', starter: '10', pro: '50', enterprise: 'Unlimited' },
-  { feature: 'Project history', starter: '30 days', pro: '90 days', enterprise: 'Custom' },
-  { feature: 'Processing priority', starter: 'Standard', pro: 'Priority', enterprise: 'Guaranteed' },
+  { feature: 'Camera streams', starter: 'Up to 8', pro: 'Up to 8', enterprise: 'Up to 16' },
+  { feature: 'On-site installation', starter: true, pro: false, enterprise: true },
+  { feature: 'Hardware assessment', starter: true, pro: false, enterprise: true },
+  { feature: 'Audit ledger retention', starter: '30 days', pro: 'Ongoing', enterprise: 'Unlimited' },
+  { feature: 'Console access', starter: 'Full', pro: 'Full', enterprise: 'Full' },
+  { feature: 'Remote monitoring', starter: false, pro: true, enterprise: true },
+  { feature: 'Model updates', starter: false, pro: true, enterprise: true },
+  { feature: 'Support response time', starter: '48 hours', pro: '4 hours', enterprise: 'Custom SLA' },
+  { feature: 'Monthly review reports', starter: false, pro: true, enterprise: true },
+  { feature: 'Multi-site deployment', starter: false, pro: false, enterprise: true },
   { feature: 'API access', starter: false, pro: false, enterprise: true },
-  { feature: 'White-label options', starter: false, pro: false, enterprise: true },
-  { feature: 'Dedicated onboarding', starter: false, pro: false, enterprise: true },
   { feature: 'Custom fine-tuning', starter: false, pro: false, enterprise: true },
 ]
 
 const RODA_COMPARISON = [
-  { feature: 'Registered devices', starter: '5', pro: '25', enterprise: 'Unlimited' },
+  { feature: 'Registered devices', starter: '3', pro: '10', enterprise: 'Unlimited' },
   { feature: 'Fleet telemetry', starter: 'Basic', pro: 'Full', enterprise: 'Advanced' },
   { feature: 'Task routing', starter: 'Basic', pro: 'Automated', enterprise: 'AI-assisted' },
   { feature: 'Operator seats', starter: '1', pro: '3', enterprise: 'Custom' },
@@ -147,9 +152,9 @@ const RODA_COMPARISON = [
   { feature: 'Cross-zone coordination', starter: false, pro: true, enterprise: true },
   { feature: 'Multi-site orchestration', starter: false, pro: false, enterprise: true },
   { feature: 'Incident escalation', starter: false, pro: true, enterprise: true },
-  { feature: 'Audit trail', starter: false, pro: true, enterprise: true },
+  { feature: 'Audit trail', starter: 'Basic', pro: true, enterprise: true },
   { feature: 'VODA/SODA integration', starter: false, pro: false, enterprise: true },
-  { feature: 'SLA-backed uptime', starter: false, pro: false, enterprise: true },
+  { feature: 'Support response time', starter: '48 hours', pro: '4 hours', enterprise: 'Custom SLA' },
   { feature: 'Dedicated engineer', starter: false, pro: false, enterprise: true },
 ]
 
@@ -323,19 +328,21 @@ export function PricingPage() {
                     <div className="mb-8">
                       {tier.price ? (
                         <>
-                          {billingPeriod === 'annual' && (
+                          {billingPeriod === 'annual' && tier.period === 'month' && (
                             <div className="text-white/30 line-through text-lg mb-1">
-                              ${originalPrice}
+                              {tier.currency || '$'}{originalPrice?.toLocaleString()}
                             </div>
                           )}
                           <div className="flex items-baseline gap-1">
                             <span
                               className="text-5xl font-bold"
-                              style={{ color: billingPeriod === 'annual' ? accentColor : 'white' }}
+                              style={{ color: billingPeriod === 'annual' && tier.period === 'month' ? accentColor : 'white' }}
                             >
-                              ${discountedPrice}
+                              {tier.currency || '$'}{discountedPrice?.toLocaleString()}
                             </span>
-                            <span className="text-white/40">/{tier.period}</span>
+                            <span className="text-white/40">
+                              {tier.period === 'month' ? '/month' : tier.period === 'one-time' ? ' (one-time)' : ''}
+                            </span>
                           </div>
                         </>
                       ) : (
