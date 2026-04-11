@@ -26,7 +26,7 @@ export function Navbar() {
             <img
               src={logoImage}
               alt="AuraSense"
-              className="h-8 w-8 md:h-9 md:w-9 object-contain"
+              className="h-10 w-10 md:h-11 md:w-11 object-contain"
             />
             <div className="flex flex-col leading-tight">
               <span className="text-base md:text-lg font-semibold tracking-[0.08em] uppercase group-hover:text-cyan-glow transition-colors">
