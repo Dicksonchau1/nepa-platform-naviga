@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { CaretDown } from '@phosphor-icons/react'
-import logoImage from '@/assets/images/AuraSense_Company_logo.jpeg'
+import logoImage from '@/assets/images/Gemini_Generated_Image_8oxhp28oxhp28oxh.png'
 
 export function Navbar() {
   const [isProductsOpen, setIsProductsOpen] = useState(false)
