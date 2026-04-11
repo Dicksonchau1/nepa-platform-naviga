@@ -323,6 +323,172 @@ export function LandingPage() {
         </div>
       </section>
 
+      <section className="relative py-28 border-t border-white/8 overflow-hidden">
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 25%, #0F0F0F 50%, #1F1F1F 75%, #0D0D0D 100%)',
+          }}
+        />
+        <div
+          className="absolute inset-0 pointer-events-none opacity-40"
+          style={{
+            backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(40,40,40,0.5) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(50,50,50,0.4) 0%, transparent 50%)',
+          }}
+        />
+        
+        <div className="container mx-auto px-6 max-w-6xl relative z-10">
+          <div className="text-center mb-16">
+            <p className="text-xs text-cyan-400/60 tracking-widest uppercase font-mono mb-4">
+              Pricing
+            </p>
+            <h2
+              className="text-4xl md:text-5xl font-bold tracking-tight mb-4 text-white"
+              style={{
+                textShadow: '0 4px 12px rgba(0,0,0,0.8), 0 8px 24px rgba(0,0,0,0.4)',
+                transform: 'translateZ(20px)',
+              }}
+            >
+              Built for every stage
+            </h2>
+            <p className="text-white/60 leading-relaxed max-w-2xl mx-auto">
+              From free diagnostics to enterprise-scale deployment, NEPA grows with your operation.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            {[
+              {
+                name: 'NEPA Diagnostic',
+                price: 'Free',
+                period: '',
+                highlight: false,
+                tag: "Find what's wrong first",
+                desc: "Run up to 3 diagnostic scans per month with NEPA's inference engine to detect motion inconsistency, jitter, lighting mismatch, background issues, and ROI anomalies.",
+                cta: 'Start diagnosing',
+                to: '/agent',
+              },
+              {
+                name: 'Creator',
+                price: '$29',
+                period: '/month',
+                highlight: false,
+                tag: 'Turn diagnostics into action',
+                desc: 'Use Vodec to execute corrective workflows, replay edits, and resolve localized issues with predictable control.',
+                cta: 'Get started',
+                to: '/about/contact',
+              },
+              {
+                name: 'Studio',
+                price: '$149',
+                period: '/month',
+                highlight: true,
+                tag: 'Built for collaborative video operations',
+                desc: 'Give your team shared workflows, audit trails, batch processing, and higher-volume execution capacity.',
+                cta: 'Talk to us',
+                to: '/about/contact',
+              },
+              {
+                name: 'Growth',
+                price: '$499',
+                period: '/month',
+                highlight: false,
+                tag: 'Operationalize at scale',
+                desc: 'Add governance, analytics, API access, and premium support for growing commercial workflows.',
+                cta: 'Talk to us',
+                to: '/about/contact',
+              },
+              {
+                name: 'Enterprise',
+                price: 'Custom',
+                period: '',
+                highlight: false,
+                tag: 'Embed NEPA into production systems',
+                desc: 'For platforms, studios, and enterprise teams that need API access, governance, integrations, and high-volume infrastructure.',
+                cta: 'Contact sales',
+                to: '/about/contact',
+              },
+            ].map((plan) => (
+              <div
+                key={plan.name}
+                className={`relative p-6 rounded-lg transition-all duration-300 hover:transform hover:translateY(-2px) ${
+                  plan.highlight
+                    ? 'bg-gradient-to-br from-[#1A1A1A] via-[#252525] to-[#1A1A1A] border-2 border-cyan-500/40'
+                    : 'bg-gradient-to-br from-[#141414] via-[#1F1F1F] to-[#141414] border border-white/10'
+                }`}
+                style={{
+                  boxShadow: plan.highlight
+                    ? '0 8px 32px rgba(0, 212, 255, 0.15), 0 4px 16px rgba(0, 0, 0, 0.6)'
+                    : '0 4px 16px rgba(0, 0, 0, 0.4)',
+                }}
+              >
+                {plan.highlight && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-cyan-500 text-black text-xs font-bold rounded-full">
+                    POPULAR
+                  </div>
+                )}
+                
+                <div className="mb-4">
+                  <h3
+                    className="text-xl font-bold text-white mb-1"
+                    style={{
+                      textShadow: '0 2px 8px rgba(0,0,0,0.6), 0 4px 16px rgba(0,0,0,0.3)',
+                      transform: 'translateZ(10px)',
+                    }}
+                  >
+                    {plan.name}
+                  </h3>
+                  <p className="text-xs text-cyan-400/70 font-mono tracking-wider mb-3">
+                    {plan.tag}
+                  </p>
+                  <div className="flex items-baseline gap-1 mb-4">
+                    <span
+                      className="text-3xl font-bold text-white"
+                      style={{
+                        textShadow: '0 2px 8px rgba(0,0,0,0.6), 0 4px 16px rgba(0,0,0,0.3)',
+                        transform: 'translateZ(10px)',
+                      }}
+                    >
+                      {plan.price}
+                    </span>
+                    {plan.period && (
+                      <span className="text-sm text-white/40">{plan.period}</span>
+                    )}
+                  </div>
+                </div>
+
+                <p className="text-sm text-white/60 leading-relaxed mb-6 min-h-[80px]">
+                  {plan.desc}
+                </p>
+
+                <Link
+                  to={plan.to}
+                  className={`block w-full text-center py-3 px-4 rounded font-semibold text-sm transition-all ${
+                    plan.highlight
+                      ? 'bg-cyan-500 text-black hover:bg-cyan-400'
+                      : 'border border-white/20 text-white/70 hover:border-white/40 hover:text-white'
+                  }`}
+                >
+                  {plan.cta}
+                </Link>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <p className="text-xs text-white/40 mb-4">
+              All plans include cryptographic audit logging and edge-only deployment
+            </p>
+            <Link
+              to="/about/contact"
+              className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors underline underline-offset-4"
+            >
+              Compare all features →
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <section className="py-28 border-t border-white/8">
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="grid md:grid-cols-2 gap-12 items-center">
