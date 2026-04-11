@@ -1,10 +1,12 @@
 import { useState, useEffect, useMemo } from 'react'
-import { MagnifyingGlass, X, FileText, Code, Book, Clock, ListChecks } from '@phosphor-icons/react'
+import { MagnifyingGlass, X, FileText, Code, Book, Clock, ListChecks, Funnel } from '@phosphor-icons/react'
 import { Input } from '@/components/ui/input'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useNavigate } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 export interface SearchableContent {
   id: string
@@ -249,7 +251,49 @@ interface DocsSearchProps {
 
 export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
   const [query, setQuery] = useState('')
+  const [selectedCategories, setSelectedCategories] = useState<Set<SearchableContent['category']>>(new Set())
+  const [selectedSections, setSelectedSections] = useState<Set<string>>(new Set())
+  const [showFilters, setShowFilters] = useState(false)
   const navigate = useNavigate()
+
+  const availableSections = useMemo(() => {
+    const sections = new Set<string>()
+    allSearchableContent.forEach(item => {
+      if (item.section) sections.add(item.section)
+    })
+    return Array.from(sections).sort()
+  }, [])
+
+  const toggleCategory = (category: SearchableContent['category']) => {
+    setSelectedCategories(prev => {
+      const next = new Set(prev)
+      if (next.has(category)) {
+        next.delete(category)
+      } else {
+        next.add(category)
+      }
+      return next
+    })
+  }
+
+  const toggleSection = (section: string) => {
+    setSelectedSections(prev => {
+      const next = new Set(prev)
+      if (next.has(section)) {
+        next.delete(section)
+      } else {
+        next.add(section)
+      }
+      return next
+    })
+  }
+
+  const clearFilters = () => {
+    setSelectedCategories(new Set())
+    setSelectedSections(new Set())
+  }
+
+  const hasActiveFilters = selectedCategories.size > 0 || selectedSections.size > 0
 
   const searchResults = useMemo(() => {
     if (!query.trim()) return []
@@ -258,6 +302,15 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
     const terms = lowerQuery.split(/\s+/).filter(Boolean)
 
     return allSearchableContent
+      .filter(item => {
+        if (selectedCategories.size > 0 && !selectedCategories.has(item.category)) {
+          return false
+        }
+        if (selectedSections.size > 0 && (!item.section || !selectedSections.has(item.section))) {
+          return false
+        }
+        return true
+      })
       .map(item => {
         let score = 0
         const lowerTitle = item.title.toLowerCase()
@@ -287,7 +340,7 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
       .filter(item => item.score > 0)
       .sort((a, b) => b.score - a.score)
       .slice(0, 15)
-  }, [query])
+  }, [query, selectedCategories, selectedSections])
 
   const handleSelect = (result: SearchableContent) => {
     navigate(result.url)
@@ -298,6 +351,7 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
   useEffect(() => {
     if (!open) {
       setQuery('')
+      setShowFilters(false)
     }
   }, [open])
 
@@ -306,22 +360,104 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
       <DialogContent className="max-w-3xl p-0 gap-0">
         <DialogHeader className="p-6 pb-4">
           <DialogTitle className="sr-only">Search Documentation</DialogTitle>
-          <div className="relative">
-            <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-            <Input
-              placeholder="Search docs, API reference, guides..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="pl-10 pr-10 h-12 text-base"
-              autoFocus
-            />
-            {query && (
-              <button
-                onClick={() => setQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+          <div className="space-y-3">
+            <div className="relative">
+              <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <Input
+                placeholder="Search docs, API reference, guides..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="pl-10 pr-10 h-12 text-base"
+                autoFocus
+              />
+              {query && (
+                <button
+                  onClick={() => setQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              )}
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <Button
+                variant={showFilters ? "default" : "outline"}
+                size="sm"
+                onClick={() => setShowFilters(!showFilters)}
+                className="gap-2"
               >
-                <X className="w-5 h-5" />
-              </button>
+                <Funnel className="w-4 h-4" />
+                Filters
+                {hasActiveFilters && (
+                  <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
+                    {selectedCategories.size + selectedSections.size}
+                  </Badge>
+                )}
+              </Button>
+              
+              {hasActiveFilters && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearFilters}
+                  className="text-xs"
+                >
+                  Clear filters
+                </Button>
+              )}
+            </div>
+
+            {showFilters && (
+              <div className="space-y-4 p-4 border border-border rounded-lg bg-muted/30">
+                <div>
+                  <h4 className="text-sm font-semibold mb-2">Category</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {(Object.keys(categoryLabels) as Array<SearchableContent['category']>).map(category => {
+                      const Icon = categoryIcons[category]
+                      const isSelected = selectedCategories.has(category)
+                      return (
+                        <button
+                          key={category}
+                          onClick={() => toggleCategory(category)}
+                          className={cn(
+                            "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium border transition-all",
+                            isSelected
+                              ? "bg-primary text-primary-foreground border-primary"
+                              : "bg-background border-border hover:border-primary/50 hover:bg-accent"
+                          )}
+                        >
+                          <Icon className="w-3.5 h-3.5" />
+                          {categoryLabels[category]}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="text-sm font-semibold mb-2">Section</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {availableSections.map(section => {
+                      const isSelected = selectedSections.has(section)
+                      return (
+                        <button
+                          key={section}
+                          onClick={() => toggleSection(section)}
+                          className={cn(
+                            "px-3 py-1.5 rounded-md text-xs font-medium border transition-all",
+                            isSelected
+                              ? "bg-accent text-accent-foreground border-accent"
+                              : "bg-background border-border hover:border-accent/50 hover:bg-accent/30"
+                          )}
+                        >
+                          {section}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         </DialogHeader>
@@ -332,18 +468,44 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
               <div className="text-center py-12 text-muted-foreground">
                 <MagnifyingGlass className="w-12 h-12 mx-auto mb-4 opacity-40" />
                 <p className="text-sm">Start typing to search across all documentation</p>
+                {hasActiveFilters && (
+                  <p className="text-xs mt-2">
+                    {selectedCategories.size + selectedSections.size} filter(s) active
+                  </p>
+                )}
               </div>
             )}
 
             {query && searchResults.length === 0 && (
               <div className="text-center py-12 text-muted-foreground">
                 <p className="text-sm">No results found for "{query}"</p>
-                <p className="text-xs mt-2">Try different keywords or check the spelling</p>
+                {hasActiveFilters ? (
+                  <p className="text-xs mt-2">Try removing some filters or using different keywords</p>
+                ) : (
+                  <p className="text-xs mt-2">Try different keywords or check the spelling</p>
+                )}
               </div>
             )}
 
             {searchResults.length > 0 && (
               <div className="space-y-2">
+                {hasActiveFilters && (
+                  <div className="flex items-center gap-2 mb-3 pb-3 border-b border-border">
+                    <p className="text-xs text-muted-foreground">
+                      Filtered by:
+                    </p>
+                    {Array.from(selectedCategories).map(cat => (
+                      <Badge key={cat} variant="secondary" className="text-xs">
+                        {categoryLabels[cat]}
+                      </Badge>
+                    ))}
+                    {Array.from(selectedSections).map(sec => (
+                      <Badge key={sec} variant="outline" className="text-xs">
+                        {sec}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
                 {searchResults.map((result) => {
                   const Icon = categoryIcons[result.category]
                   return (
