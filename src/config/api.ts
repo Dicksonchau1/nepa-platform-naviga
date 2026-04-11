@@ -28,6 +28,11 @@ export const API_CONFIG = {
       health: '/metrics/health',
       live: '/metrics/live',
     },
+    nepa: {
+      infer: '/api/nepa/infer',
+      upload: '/api/nepa/upload',
+      status: (taskId: string) => `/api/nepa/status/${taskId}`,
+    },
   },
 }
 

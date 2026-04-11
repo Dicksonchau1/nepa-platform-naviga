@@ -1,6 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { LiveBadge } from '@/components/LiveBadge'
+import { nepaService, type AgentType } from '@/lib/nepaService'
+import { API_CONFIG } from '@/config/api'
+import { toast } from 'sonner'
 
 type Role = 'user' | 'agent'
 type AttachmentType = 'video-file' | 'video-url' | 'image'
@@ -10,6 +13,7 @@ type Attachment = {
   name: string
   preview?: string
   url?: string
+  file?: File
 }
 
 type Message = {
@@ -45,119 +49,6 @@ const SUGGESTIONS = [
   },
 ]
 
-const AGENT_RESPONSES: Record<string, { agent: string; response: string }> = {
-  default: {
-    agent: 'NEPA',
-    response: `I'm NEPA — the AuraSense edge AI assistant. I can help you:
-
-- **Analyse video footage** using VODA (Video Agent)
-- **Set up facility surveillance** using SODA (Surveillance Agent)
-- **Configure drone inspections** using FODA (Facade Agent)
-- **Plan robot missions** using RODA (Robotic Agent)
-- **Deploy edge inference** using EODA (Edge Agent)
-
-Upload a video file, paste a video URL, or describe what you want to detect — and I'll route your request to the right NEPA agent.`,
-  },
-  video: {
-    agent: 'VODA',
-    response: `**VODA** is processing your video input.
-
-Running inference pipeline:
-\`\`\`
-> LOADING MODEL     : YOLOv8 + TensorRT
-> RESOLUTION        : 1920×1080
-> INFERENCE_RT      : 34ms per frame
-> CLASSES_ACTIVE    : person, object, anomaly, zone
-> AUDIT_CHAIN       : SHA-256 enabled
-\`\`\`
-
-**Detections found:**
-- 👤 3× Person — tracked across frames
-- 📦 Shelf zone — monitored, stock at 68%
-- ⚠️ Dwell time exceeded — Camera 2, 00:47s
-- ✅ No anomalies detected
-
-Every detection has been written to your audit ledger with SHA-256 hash, confidence score, and millisecond timestamp. Would you like to export the full audit log as JSON?`,
-  },
-  retail: {
-    agent: 'SODA',
-    response: `**SODA** can configure your unmanned retail setup in the following steps:
-
-**1. Camera registration**
-Register each camera by RTSP URL or local device ID in the FacilityWatch console. SODA supports up to 16 concurrent streams.
-
-**2. Zone configuration**
-Define zones per camera — entrance, aisle, POS, stock room. Each zone gets its own alert thresholds.
-
-**3. Shelf setup**
-Add your shelf and aisle layout. SODA tracks visual stock levels and fires low-stock alerts at your configured threshold (default: 20%).
-
-**4. Alert routing**
-Configure severity levels (critical / warning / info) per event type: loitering, crowd density, unauthorised access, shelf empty, dwell time exceeded.
-
-**5. Go live**
-SODA begins inference immediately on-device. All events appear in the FacilityWatch alert feed within one inference cycle (<40ms).
-
-Want me to generate a configuration template for your 4-camera setup?`,
-  },
-  facade: {
-    agent: 'FODA',
-    response: `**FODA** — Facade Agent — handles aerial structural inspection via drone.
-
-**Pre-flight checklist:**
-\`\`\`
-> DRONE_CONNECTED   : awaiting pairing
-> CAMERA_RESOLUTION : 4K / 30fps
-> INFERENCE_MODEL   : BRS + Concealment v2.1
-> AUDIT_CHAIN       : SHA-256 enabled
-> FLIGHT_ZONE       : not yet configured
-\`\`\`
-
-**To start a facade inspection:**
-1. Pair your drone via the FODA console
-2. Define the building polygon and floor count
-3. FODA auto-generates the flight path for full facade coverage
-4. Inference runs on-device during flight — BRS detection, concealment analysis, structural defect classification
-5. A full inspection report with GPS-tagged findings is written to your audit ledger on completion
-
-Upload an existing facade video or connect your drone to begin. What building are you inspecting?`,
-  },
-  robot: {
-    agent: 'RODA',
-    response: `**RODA** — Robotic Agent — handles autonomous navigation and mission orchestration.
-
-**Mission setup:**
-\`\`\`
-> ROBOT_CONNECTED   : awaiting pairing
-> MAP_LOADED        : not yet configured
-> MISSION_TYPE      : delivery / patrol / inspection
-> OBSTACLE_AVOID    : enabled
-> AUDIT_CHAIN       : SHA-256 enabled
-\`\`\`
-
-**To configure a delivery mission:**
-1. Upload your floor plan or let RODA map the environment via SLAM
-2. Define pickup and delivery waypoints
-3. Set obstacle avoidance sensitivity and speed profile
-4. RODA executes the mission autonomously — logging every waypoint, stop, and event to the audit ledger
-5. Mission complete events trigger notifications in the NEPA console
-
-What type of robot are you deploying and what is the floor plan dimensions?`,
-  },
-}
-
-function routeToAgent(text: string, hasAttachment: boolean): { agent: string; response: string } {
-  const t = text.toLowerCase()
-  if (hasAttachment || t.includes('video') || t.includes('upload') || t.includes('voda') || t.includes('detect'))
-    return AGENT_RESPONSES.video
-  if (t.includes('retail') || t.includes('shelf') || t.includes('soda') || t.includes('store') || t.includes('camera'))
-    return AGENT_RESPONSES.retail
-  if (t.includes('facade') || t.includes('foda') || t.includes('drone') || t.includes('inspect') || t.includes('brs'))
-    return AGENT_RESPONSES.facade
-  if (t.includes('robot') || t.includes('roda') || t.includes('mission') || t.includes('delivery') || t.includes('navigate'))
-    return AGENT_RESPONSES.robot
-  return AGENT_RESPONSES.default
-}
 
 function uid() {
   return Math.random().toString(36).slice(2)
@@ -225,6 +116,7 @@ export function AgentChat() {
       type: isVideo ? 'video-file' : isImage ? 'image' : 'video-file',
       name: file.name,
       preview: URL.createObjectURL(file),
+      file,
     })
     setShowUrlInput(false)
   }
@@ -258,24 +150,42 @@ export function AgentChat() {
     }
     setMessages((prev) => [...prev, userMsg])
     setInput('')
+    const currentAttachment = attachment
     setAttachment(null)
     if (fileRef.current) fileRef.current.value = ''
     setIsThinking(true)
 
-    await new Promise((r) => setTimeout(r, 1400 + Math.random() * 800))
+    try {
+      const response = await nepaService.infer({
+        prompt: text,
+        videoUrl: currentAttachment?.type === 'video-url' ? currentAttachment.url : undefined,
+        videoFile: currentAttachment?.type === 'video-file' ? currentAttachment.file : undefined,
+        imageFile: currentAttachment?.type === 'image' ? currentAttachment.file : undefined,
+      })
 
-    const { agent: agentName, response } = routeToAgent(text, !!attachment)
-    setAgent(agentName)
+      setAgent(response.agent)
 
-    const agentMsg: Message = {
-      id: uid(),
-      role: 'agent',
-      content: response,
-      timestamp: new Date(),
-      agentUsed: agentName,
+      const agentMsg: Message = {
+        id: uid(),
+        role: 'agent',
+        content: response.content,
+        timestamp: new Date(),
+        agentUsed: response.agent,
+      }
+      setMessages((prev) => [...prev, agentMsg])
+    } catch (error) {
+      const errorMsg: Message = {
+        id: uid(),
+        role: 'agent',
+        content: `⚠️ **Connection Error**\n\nUnable to reach the NEPA inference backend. Please ensure:\n\n- The FastAPI server is running at ${API_CONFIG.baseUrl}\n- Network connectivity is available\n- CORS is properly configured\n\n**Error details:** ${error instanceof Error ? error.message : 'Unknown error'}`,
+        timestamp: new Date(),
+        agentUsed: 'NEPA',
+      }
+      setMessages((prev) => [...prev, errorMsg])
+      toast.error('Failed to connect to NEPA backend')
+    } finally {
+      setIsThinking(false)
     }
-    setMessages((prev) => [...prev, agentMsg])
-    setIsThinking(false)
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

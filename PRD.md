@@ -57,6 +57,13 @@ A neuromorphic edge perception platform website that turns camera feeds into rel
 - **Progression**: User enters query → Selects context (retail/inspection/robotics) → Submits → AI generates response → Response displays with syntax highlighting → User can save/copy queries
 - **Success criteria**: Users can experiment with queries, understand response format, and see value in under 30 seconds
 
+### NEPA Agent Chat with Backend Integration
+- **Functionality**: Real-time AI agent chat interface that routes user queries to a FastAPI backend for actual NEPA inference processing
+- **Purpose**: Provide production-grade video intelligence, surveillance, facade inspection, and robot mission capabilities through conversational interface
+- **Trigger**: User navigates to `/agent` or `/chat` route, uploads video/image, or enters natural language prompt
+- **Progression**: User enters prompt/uploads file → Request sent to FastAPI `/api/nepa/infer` endpoint → Backend routes to appropriate agent (VODA/SODA/FODA/RODA/EODA) → Inference runs on backend → Streaming response returned → UI displays formatted results with agent badge
+- **Success criteria**: Real-time agent routing, file uploads processed by backend, inference results displayed with proper formatting, error states handled gracefully, streaming responses for long-running tasks
+
 ### Protected Dashboard Routes
 - **Functionality**: Authentication-gated dashboard routes that require login with JWT token management
 - **Purpose**: Secure access to NEPA console features (facade inspection, robot tasks, audit logs, live intelligence)
