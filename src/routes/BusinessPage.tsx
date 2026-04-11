@@ -80,6 +80,39 @@ const ENTERPRISE_FEATURES = [
   },
 ]
 
+const TESTIMONIALS = [
+  {
+    quote: 'NEPA has transformed our unmanned retail operations. The edge inference is incredibly fast, and having a tamper-evident audit trail gives us the compliance confidence we need.',
+    author: 'Sarah Chen',
+    role: 'Operations Director',
+    company: 'SmartMart HK',
+    avatar: 'SC',
+  },
+  {
+    quote: 'The on-device processing means we never have to worry about network latency or cloud costs. NEPA just works, even when connectivity drops.',
+    author: 'David Wong',
+    role: 'CTO',
+    company: 'LogiFlow Asia',
+    avatar: 'DW',
+  },
+  {
+    quote: 'AuraSense\'s team was exceptional during deployment. They configured everything on-site and our facade inspection workflow was operational within 48 hours.',
+    author: 'Michael Tam',
+    role: 'Facilities Manager',
+    company: 'PropertyTech Solutions',
+    avatar: 'MT',
+  },
+]
+
+const CLIENT_LOGOS = [
+  { name: 'SmartMart HK', abbr: 'SM' },
+  { name: 'LogiFlow Asia', abbr: 'LF' },
+  { name: 'PropertyTech Solutions', abbr: 'PT' },
+  { name: 'HK Retail Group', abbr: 'HR' },
+  { name: 'DroneInspect Pro', abbr: 'DI' },
+  { name: 'RoboDelivery Co', abbr: 'RD' },
+]
+
 const ACCENT_COLORS: Record<string, { bg: string; border: string; text: string; pill: string }> = {
   cyan: {
     bg: 'bg-cyan-500/5',
@@ -281,6 +314,90 @@ export function BusinessPage() {
                 </div>
               )
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CLIENT LOGOS ───────────────────────────────────────────── */}
+      <section className="py-16 border-t border-white/8 bg-[#050508]">
+        <div className="container mx-auto px-6 max-w-6xl">
+          <p className="text-center font-mono text-[10px] tracking-[0.28em] uppercase text-white/25 mb-10">
+            Trusted by leading operators across Asia-Pacific
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
+            {CLIENT_LOGOS.map((logo, i) => (
+              <div
+                key={i}
+                className="flex items-center justify-center"
+                style={{
+                  opacity: 0,
+                  animation: `fade-in 0.5s ease-out ${0.1 + i * 0.08}s forwards`,
+                }}
+              >
+                <div className="flex items-center gap-3 border border-white/5 bg-white/[0.02] px-5 py-3 rounded-lg hover:border-white/10 transition-colors">
+                  <div className="w-8 h-8 rounded bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
+                    <span className="font-mono text-[11px] font-bold text-cyan-400/70">
+                      {logo.abbr}
+                    </span>
+                  </div>
+                  <span className="text-sm text-white/40 font-medium">
+                    {logo.name}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── TESTIMONIALS ───────────────────────────────────────────── */}
+      <section className="py-24 border-t border-white/8 bg-white/[0.01]">
+        <div className="container mx-auto px-6 max-w-6xl">
+          <div className="mb-14 text-center">
+            <p className="font-mono text-[11px] tracking-[0.28em] uppercase text-cyan-400/50 mb-3">
+              Testimonials
+            </p>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
+              What our clients say
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {TESTIMONIALS.map((testimonial, i) => (
+              <div
+                key={i}
+                className="border border-white/8 bg-[#050508] rounded-2xl p-6 hover:border-white/15 transition-all"
+                style={{
+                  opacity: 0,
+                  animation: `fade-in 0.6s ease-out ${0.1 + i * 0.1}s forwards`,
+                }}
+              >
+                {/* Quote */}
+                <p className="text-sm text-white/60 leading-relaxed mb-6 italic">
+                  "{testimonial.quote}"
+                </p>
+
+                {/* Author */}
+                <div className="flex items-center gap-3 border-t border-white/5 pt-4">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-indigo-500 flex items-center justify-center shrink-0">
+                    <span className="text-xs font-bold text-black">
+                      {testimonial.avatar}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-white/90">
+                      {testimonial.author}
+                    </p>
+                    <p className="text-xs text-white/35 font-mono">
+                      {testimonial.role}
+                    </p>
+                    <p className="text-xs text-cyan-400/60 font-mono">
+                      {testimonial.company}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
