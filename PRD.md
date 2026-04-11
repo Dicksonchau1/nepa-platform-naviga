@@ -50,6 +50,13 @@ A neuromorphic edge perception platform website that turns camera feeds into rel
 - **Progression**: User views cards → Clicks relevant use case → Navigates to solutions page → Learns details
 - **Success criteria**: Users can identify their industry and click through for more information
 
+### Interactive Playground
+- **Functionality**: Live demo environment where users can query NEPA world model with natural language and see real-time responses
+- **Purpose**: Allow developers and potential customers to experience the platform's AI capabilities hands-on
+- **Trigger**: User navigates to playground or clicks "Try Demo" CTA
+- **Progression**: User enters query → Selects context (retail/inspection/robotics) → Submits → AI generates response → Response displays with syntax highlighting → User can save/copy queries
+- **Success criteria**: Users can experiment with queries, understand response format, and see value in under 30 seconds
+
 ## Edge Case Handling
 - **Missing/Future Content** — Placeholder pages with clear messaging and back navigation for sections under construction
 - **Deep Linking** — Persistent state ensures users can refresh and stay on the same page

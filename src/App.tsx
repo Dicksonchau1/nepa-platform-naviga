@@ -8,6 +8,7 @@ import { ForgotPasswordPage } from '@/routes/ForgotPasswordPage'
 import { ResetPasswordPage } from '@/routes/ResetPasswordPage'
 import { TwoFactorSetupPage } from '@/routes/TwoFactorSetupPage'
 import { TwoFactorVerifyPage } from '@/routes/TwoFactorVerifyPage'
+import { PlaygroundPage } from '@/routes/PlaygroundPage'
 
 import { VODAPage } from '@/routes/products/VODAPage'
 import { RODAPage } from '@/routes/products/RODAPage'
@@ -45,6 +46,8 @@ function App() {
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/2fa-setup" element={<TwoFactorSetupPage pendingEmail={pendingEmail || ''} />} />
           <Route path="/2fa-verify" element={<TwoFactorVerifyPage pendingEmail={pendingEmail || ''} />} />
+
+          <Route path="/playground" element={<PlaygroundPage />} />
 
           <Route path="/products/voda" element={<VODAPage />} />
           <Route path="/products/roda" element={<RODAPage />} />
