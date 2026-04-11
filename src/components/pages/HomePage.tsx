@@ -1,8 +1,7 @@
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { ArrowRight, Cpu, Eye, Robot, CloudArrowDown, Buildings, Screencast, ShieldCheck, Lightning, Atom } from '@phosphor-icons/react'
-import { AnimatedBackground } from '@/components/AnimatedBackground'
+import { ArrowRight, Cpu, Eye, CloudArrowDown } from '@phosphor-icons/react'
+import { CinematicBackground, FloatingNodes, ScopeLines, ScrollHUD, ScanlineOverlay, TickerBar, StatStrip } from '@/components/CinematicBackground'
 
 interface HomePageProps {
   onNavigate: (page: string) => void
@@ -10,75 +9,57 @@ interface HomePageProps {
 
 export function HomePage({ onNavigate }: HomePageProps) {
   return (
-    <div className="flex flex-col">
-      <section className="min-h-screen flex items-center justify-center relative overflow-hidden py-32">
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-card" />
-        <AnimatedBackground />
+    <div className="flex flex-col relative">
+      <CinematicBackground />
+      
+      <section className="min-h-screen flex items-center justify-center relative overflow-hidden">
+        <ScanlineOverlay />
+        <FloatingNodes />
+        <ScopeLines />
+        <ScrollHUD />
         
-        <div className="container mx-auto px-6 relative z-10">
-          <div className="max-w-5xl mx-auto">
-            <div className="backdrop-blur-xl bg-card/40 border border-border/50 rounded-3xl p-12 shadow-2xl relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
-              <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/10 rounded-full blur-3xl" />
-              <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-accent/10 rounded-full blur-3xl" />
-              
-              <div className="text-center relative z-10">
-                <Badge className="mb-6 bg-primary/10 text-primary border-primary/30 mono text-xs px-4 py-1.5">
-                  NEUROMORPHIC EDGE PROCESSING
-                </Badge>
-                
-                <h1 className="text-6xl md:text-7xl font-bold mb-6 tracking-tight leading-[1.1]">
-                  Decision Intelligence
-                  <br />
-                  <span className="bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">
-                    Powered by NEPA
-                  </span>
-                </h1>
-                
-                <p className="text-lg md:text-xl text-muted-foreground mb-10 leading-relaxed max-w-2xl mx-auto">
-                  Deterministic neuromorphic inference at the edge. No cloud dependency. 
-                  Sub-2ms latency. Every decision cryptographically auditable.
-                </p>
-                
-                <div className="flex items-center justify-center gap-4 mb-12">
-                  <Button 
-                    size="lg" 
-                    className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 px-8 h-12 rounded-full"
-                    onClick={() => onNavigate('contact')}
-                  >
-                    REQUEST BRIEFING
-                    <ArrowRight className="ml-2" weight="bold" />
-                  </Button>
-                  <Button 
-                    size="lg" 
-                    variant="outline"
-                    className="border-border/50 hover:border-primary/50 backdrop-blur-sm bg-background/50 h-12 px-8 rounded-full"
-                    onClick={() => onNavigate('platform')}
-                  >
-                    EXPLORE PLATFORM
-                  </Button>
-                </div>
-
-                <div className="flex items-center justify-center gap-8 text-sm">
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <ShieldCheck size={18} className="text-primary" weight="duotone" />
-                    <span>Auditable</span>
-                  </div>
-                  <div className="w-px h-4 bg-border" />
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Lightning size={18} className="text-primary" weight="duotone" />
-                    <span>Sub-2ms</span>
-                  </div>
-                  <div className="w-px h-4 bg-border" />
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Atom size={18} className="text-primary" weight="duotone" />
-                    <span>Edge-First</span>
-                  </div>
-                </div>
-              </div>
+        <div className="container mx-auto px-6 relative z-10 pt-24">
+          <div className="max-w-4xl mx-auto text-center">
+            <Badge className="mb-8 bg-primary/5 text-primary border border-primary/20 mono text-xs px-4 py-2 uppercase tracking-wider">
+              Neuromorphic Edge Processing
+            </Badge>
+            
+            <h1 className="hero-h1-cinematic">
+              Decision Intelligence for{' '}
+              <span className="accent-word">Governed</span> Environments
+            </h1>
+            
+            <p className="text-base text-muted-foreground mb-12 leading-relaxed max-w-2xl mx-auto">
+              Deterministic neuromorphic inference at the edge. No cloud dependency. 
+              Sub-2ms latency. Every decision cryptographically auditable.
+            </p>
+            
+            <div className="flex items-center justify-center gap-4">
+              <Button 
+                size="lg" 
+                className="bg-primary/90 text-primary-foreground hover:bg-primary shadow-lg shadow-primary/10 px-8 h-12 rounded-lg mono text-sm border border-primary/20"
+                onClick={() => onNavigate('contact')}
+              >
+                REQUEST BRIEFING
+                <ArrowRight className="ml-2" weight="bold" size={16} />
+              </Button>
+              <Button 
+                size="lg" 
+                variant="outline"
+                className="border-border hover:border-primary/40 backdrop-blur-sm bg-background/20 h-12 px-8 rounded-lg mono text-sm"
+                onClick={() => onNavigate('platform')}
+              >
+                API DOCS
+              </Button>
             </div>
           </div>
         </div>
+      </section>
+
+      <TickerBar />
+
+      <section className="relative z-10">
+        <StatStrip />
       </section>
 
       <section className="py-32 relative">

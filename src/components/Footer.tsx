@@ -4,7 +4,7 @@ interface FooterProps {
 
 export function Footer({ onNavigate }: FooterProps) {
   return (
-    <footer className="border-t border-border bg-card">
+    <footer className="border-t border-border/20 bg-card/40 backdrop-blur-xl relative z-10">
       <div className="container mx-auto px-6 py-12">
         <div className="grid grid-cols-4 gap-12">
           <div>
@@ -81,7 +81,7 @@ export function Footer({ onNavigate }: FooterProps) {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-border flex items-center justify-between">
+        <div className="mt-12 pt-8 border-t border-border/20 flex items-center justify-between">
           <p className="text-sm text-muted-foreground mono">
             © 2024 NEPA. All rights reserved.
           </p>

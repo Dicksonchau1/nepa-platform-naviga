@@ -1,8 +1,8 @@
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ArrowRight } from '@phosphor-icons/react'
 import { ReactNode } from 'react'
+import { CinematicBackground, ScanlineOverlay } from '@/components/CinematicBackground'
 
 interface FeatureCard {
   icon: ReactNode
@@ -30,35 +30,39 @@ export function ProductPage({
   onNavigate,
 }: ProductPageProps) {
   return (
-    <div className="flex flex-col">
-      <section className="min-h-[70vh] flex items-center justify-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,oklch(0.15_0.15_145),oklch(0.08_0_0))]" />
+    <div className="flex flex-col relative">
+      <CinematicBackground />
+      
+      <section className="min-h-screen flex items-center justify-center relative overflow-hidden">
+        <ScanlineOverlay />
         
-        <div className="container mx-auto px-6 relative z-10 pt-24">
+        <div className="container mx-auto px-6 relative z-10 pt-32 pb-24">
           <div className="max-w-4xl mx-auto text-center">
-            <Badge className="mb-6 bg-primary/10 text-primary border-primary/20 mono text-xs">
+            <Badge className="mb-8 bg-primary/5 text-primary border border-primary/20 mono text-xs px-4 py-2 uppercase tracking-wider">
               {eyebrow}
             </Badge>
             
-            <h1 className="text-6xl font-bold mb-6 tracking-tight">
+            <h1 className="hero-h1-cinematic mb-8">
               {title}
             </h1>
             
-            <p className="text-xl text-muted-foreground mb-10 leading-relaxed max-w-2xl mx-auto">
+            <p className="text-base text-muted-foreground mb-12 leading-relaxed max-w-2xl mx-auto">
               {subtitle}
             </p>
             
             <div className="flex items-center justify-center gap-4">
               <Button 
                 size="lg" 
-                className="bg-primary text-primary-foreground hover:bg-primary/90"
+                className="bg-primary/90 text-primary-foreground hover:bg-primary shadow-lg shadow-primary/10 px-8 h-12 rounded-lg mono text-sm border border-primary/20"
                 onClick={() => onNavigate('contact')}
               >
                 REQUEST BRIEFING
+                <ArrowRight className="ml-2" weight="bold" size={16} />
               </Button>
               <Button 
                 size="lg" 
                 variant="outline"
+                className="border-border hover:border-primary/40 backdrop-blur-sm bg-background/20 h-12 px-8 rounded-lg mono text-sm"
               >
                 API DOCS
               </Button>
@@ -67,53 +71,68 @@ export function ProductPage({
         </div>
       </section>
 
-      <section className="py-24">
+      <section className="py-32 relative z-10">
         <div className="container mx-auto px-6">
-          <div className="grid grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {features.map((feature, index) => (
-              <Card key={index} className="p-8 bg-card border-2 border-border">
-                <div className="text-primary mb-4">{feature.icon}</div>
-                <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">
+              <div
+                key={index}
+                className="glass-card group"
+              >
+                <div className="text-primary mb-6 transform group-hover:scale-110 transition-transform duration-300">
+                  {feature.icon}
+                </div>
+                <h3 className="text-xl font-bold mb-4">{feature.title}</h3>
+                <p className="text-muted-foreground leading-relaxed text-sm">
                   {feature.description}
                 </p>
-              </Card>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-24 bg-card">
+      <section className="py-32 bg-card/20 relative z-10 backdrop-blur-sm">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold mb-6">{integrationTitle}</h2>
-            <p className="text-lg text-muted-foreground leading-relaxed mb-8">
+            <h2 className="text-3xl font-bold mb-6 text-center">{integrationTitle}</h2>
+            <p className="text-base text-muted-foreground leading-relaxed mb-12 text-center max-w-2xl mx-auto">
               {integrationDescription}
             </p>
             
-            <div className="bg-secondary p-6 rounded-lg border border-border mono text-sm">
-              <div className="text-muted-foreground mb-2"># REST API Endpoint</div>
-              <div className="text-foreground">POST https://api.nepa.io/v1/inference</div>
-              <div className="text-muted-foreground mt-4 mb-2"># gRPC Service</div>
-              <div className="text-foreground">nepa.inference.v1.InferenceService</div>
+            <div className="glass-card">
+              <div className="mono text-sm space-y-4">
+                <div>
+                  <div className="text-muted-foreground text-xs mb-2"># REST API Endpoint</div>
+                  <div className="text-primary font-medium">POST https://api.nepa.io/v1/inference</div>
+                </div>
+                <div className="border-t border-border/20 pt-4">
+                  <div className="text-muted-foreground text-xs mb-2"># gRPC Service</div>
+                  <div className="text-primary font-medium">nepa.inference.v1.InferenceService</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="py-24 border-t border-border">
-        <div className="container mx-auto px-6">
+      <section className="py-32 border-t border-border/20 relative z-10 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(0.72_0.19_195_/_0.05)_0%,transparent_60%)]" />
+        <div className="container mx-auto px-6 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-4xl font-bold mb-6">
-              Powered by NEPA — Deterministic. Traceable. Accountable.
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Powered by NEPA
             </h2>
+            <p className="text-lg text-muted-foreground mb-10">
+              Deterministic. Traceable. Accountable.
+            </p>
             <Button 
               size="lg"
-              className="bg-primary text-primary-foreground hover:bg-primary/90"
+              className="bg-primary/90 text-primary-foreground hover:bg-primary shadow-lg shadow-primary/10 px-10 h-14 rounded-lg mono text-sm border border-primary/20"
               onClick={() => onNavigate('contact')}
             >
               REQUEST BRIEFING
-              <ArrowRight className="ml-2" />
+              <ArrowRight className="ml-2" weight="bold" />
             </Button>
           </div>
         </div>

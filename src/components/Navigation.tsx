@@ -19,7 +19,7 @@ export function Navigation({ onNavigate, currentPage }: NavigationProps) {
   const [isBusinessOpen, setIsBusinessOpen] = useState(false)
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/80 backdrop-blur-lg">
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/20 bg-background/60 backdrop-blur-xl">
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <button
@@ -49,7 +49,7 @@ export function Navigation({ onNavigate, currentPage }: NavigationProps) {
                   />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-80 bg-card border-border">
+              <DropdownMenuContent align="end" className="w-80 bg-card/95 backdrop-blur-xl border-border/30">
                 <DropdownMenuLabel className="text-xs text-muted-foreground mono">
                   ── NEPA PLATFORM ──
                 </DropdownMenuLabel>
@@ -139,7 +139,7 @@ export function Navigation({ onNavigate, currentPage }: NavigationProps) {
             <Button
               onClick={() => onNavigate('contact')}
               size="sm"
-              className="bg-primary text-primary-foreground hover:bg-primary/90"
+              className="bg-primary/90 text-primary-foreground hover:bg-primary border border-primary/20 mono text-xs px-6"
             >
               CONTACT
             </Button>
