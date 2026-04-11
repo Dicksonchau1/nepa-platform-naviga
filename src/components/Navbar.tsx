@@ -29,18 +29,22 @@ export function Navbar() {
   }, [])
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 border-b border-gray-200 bg-white/95 backdrop-blur-md transition-shadow duration-300 ${isScrolled ? 'shadow-sm' : ''}`}>
-      <div className="container mx-auto px-6 py-4">
+    <nav className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 ${
+      isScrolled 
+        ? 'border-white/10 bg-[#050508]/95 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,212,255,0.1)]' 
+        : 'border-white/5 bg-[#050508]/80 backdrop-blur-md'
+    }`}>
+      <div className="container mx-auto px-6 py-3.5">
         <div className="flex items-center justify-between gap-8">
           <Link to="/" className="flex items-center gap-2.5 group">
             <div className="relative h-8 w-8 flex items-center justify-center">
               <img
                 src={logoImage}
                 alt="AuraSense"
-                className="h-8 w-8 object-contain"
+                className="h-8 w-8 object-contain transition-all group-hover:drop-shadow-[0_0_12px_rgba(0,212,255,0.6)]"
               />
             </div>
-            <span className="text-[15px] font-medium text-gray-900 group-hover:text-blue-600 transition-colors">
+            <span className="text-[15px] font-semibold text-white group-hover:text-cyan-400 transition-colors">
               AuraSense
             </span>
           </Link>
@@ -48,10 +52,10 @@ export function Navbar() {
           <div className="flex items-center gap-8">
             <DropdownMenu open={isProductsOpen} onOpenChange={setIsProductsOpen}>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1 text-sm text-gray-700 hover:text-gray-900 transition-colors">
+                <button className="flex items-center gap-1 text-sm font-medium text-white/70 hover:text-white transition-colors">
                   Products
                   <CaretDown
-                    size={16}
+                    size={14}
                     weight="bold"
                     className={`transition-transform ${
                       isProductsOpen ? 'rotate-180' : ''
@@ -61,63 +65,63 @@ export function Navbar() {
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="center"
-                className="w-72 bg-white/98 backdrop-blur-xl border-gray-200"
+                className="w-72 bg-[#0A0D14]/98 backdrop-blur-xl border-white/10"
               >
-                <DropdownMenuItem asChild className="cursor-pointer focus:bg-gray-100">
+                <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10">
                   <NavLink to="/products/voda" onClick={() => setIsProductsOpen(false)}>
-                    <div className="flex flex-col gap-1 py-1">
-                      <span className="font-medium text-sm text-gray-900">
+                    <div className="flex flex-col gap-1 py-1.5">
+                      <span className="font-semibold text-sm text-white">
                         VODA — Video Agent
                       </span>
-                      <span className="text-xs text-gray-600">
+                      <span className="text-xs text-white/50">
                         Real-time video operations & detection
                       </span>
                     </div>
                   </NavLink>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild className="cursor-pointer focus:bg-gray-100">
+                <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10">
                   <NavLink to="/products/roda" onClick={() => setIsProductsOpen(false)}>
-                    <div className="flex flex-col gap-1 py-1">
-                      <span className="font-medium text-sm text-gray-900">
+                    <div className="flex flex-col gap-1 py-1.5">
+                      <span className="font-semibold text-sm text-white">
                         RODA — Robotic Agent
                       </span>
-                      <span className="text-xs text-gray-600">
+                      <span className="text-xs text-white/50">
                         Autonomous navigation & mission control
                       </span>
                     </div>
                   </NavLink>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild className="cursor-pointer focus:bg-gray-100">
+                <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10">
                   <NavLink to="/products/eoda" onClick={() => setIsProductsOpen(false)}>
-                    <div className="flex flex-col gap-1 py-1">
-                      <span className="font-medium text-sm text-gray-900">
+                    <div className="flex flex-col gap-1 py-1.5">
+                      <span className="font-semibold text-sm text-white">
                         EODA — Edge Agent
                       </span>
-                      <span className="text-xs text-gray-600">
+                      <span className="text-xs text-white/50">
                         Hardware-agnostic edge inference
                       </span>
                     </div>
                   </NavLink>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild className="cursor-pointer focus:bg-gray-100">
+                <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10">
                   <NavLink to="/products/foda" onClick={() => setIsProductsOpen(false)}>
-                    <div className="flex flex-col gap-1 py-1">
-                      <span className="font-medium text-sm text-gray-900">
+                    <div className="flex flex-col gap-1 py-1.5">
+                      <span className="font-semibold text-sm text-white">
                         FODA — Facade Agent
                       </span>
-                      <span className="text-xs text-gray-600">
+                      <span className="text-xs text-white/50">
                         Aerial structural inspection
                       </span>
                     </div>
                   </NavLink>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild className="cursor-pointer focus:bg-gray-100">
+                <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10">
                   <NavLink to="/products/soda" onClick={() => setIsProductsOpen(false)}>
-                    <div className="flex flex-col gap-1 py-1">
-                      <span className="font-medium text-sm text-gray-900">
+                    <div className="flex flex-col gap-1 py-1.5">
+                      <span className="font-semibold text-sm text-white">
                         SODA — Surveillance Agent
                       </span>
-                      <span className="text-xs text-gray-600">
+                      <span className="text-xs text-white/50">
                         Multi-camera facility intelligence
                       </span>
                     </div>
@@ -128,10 +132,10 @@ export function Navbar() {
 
             <DropdownMenu open={isResourcesOpen} onOpenChange={setIsResourcesOpen}>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1 text-sm text-gray-700 hover:text-gray-900 transition-colors">
+                <button className="flex items-center gap-1 text-sm font-medium text-white/70 hover:text-white transition-colors">
                   Resources
                   <CaretDown
-                    size={16}
+                    size={14}
                     weight="bold"
                     className={`transition-transform ${
                       isResourcesOpen ? 'rotate-180' : ''
@@ -141,19 +145,19 @@ export function Navbar() {
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="center"
-                className="w-48 bg-white/98 backdrop-blur-xl border-gray-200"
+                className="w-48 bg-[#0A0D14]/98 backdrop-blur-xl border-white/10"
               >
-                <DropdownMenuItem asChild className="cursor-pointer focus:bg-gray-100">
+                <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
                   <NavLink to="/resources/docs" onClick={() => setIsResourcesOpen(false)}>
                     Documentation
                   </NavLink>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild className="cursor-pointer focus:bg-gray-100">
+                <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
                   <NavLink to="/resources/api" onClick={() => setIsResourcesOpen(false)}>
                     API Reference
                   </NavLink>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild className="cursor-pointer focus:bg-gray-100">
+                <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
                   <NavLink
                     to="/resources/guides"
                     onClick={() => setIsResourcesOpen(false)}
@@ -161,7 +165,7 @@ export function Navbar() {
                     Guides & Tutorials
                   </NavLink>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild className="cursor-pointer focus:bg-gray-100">
+                <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
                   <NavLink
                     to="/resources/changelog"
                     onClick={() => setIsResourcesOpen(false)}
@@ -169,7 +173,7 @@ export function Navbar() {
                     Changelog
                   </NavLink>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild className="cursor-pointer focus:bg-gray-100">
+                <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
                   <NavLink
                     to="/resources/status"
                     onClick={() => setIsResourcesOpen(false)}
@@ -182,10 +186,10 @@ export function Navbar() {
 
             <DropdownMenu open={isAboutOpen} onOpenChange={setIsAboutOpen}>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1 text-sm text-gray-700 hover:text-gray-900 transition-colors">
+                <button className="flex items-center gap-1 text-sm font-medium text-white/70 hover:text-white transition-colors">
                   About
                   <CaretDown
-                    size={16}
+                    size={14}
                     weight="bold"
                     className={`transition-transform ${
                       isAboutOpen ? 'rotate-180' : ''
@@ -195,29 +199,29 @@ export function Navbar() {
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="center"
-                className="w-48 bg-white/98 backdrop-blur-xl border-gray-200"
+                className="w-48 bg-[#0A0D14]/98 backdrop-blur-xl border-white/10"
               >
-                <DropdownMenuItem asChild className="cursor-pointer focus:bg-gray-100">
+                <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
                   <NavLink to="/about/company" onClick={() => setIsAboutOpen(false)}>
                     Company
                   </NavLink>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild className="cursor-pointer focus:bg-gray-100">
+                <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
                   <NavLink to="/about/technology" onClick={() => setIsAboutOpen(false)}>
                     Technology
                   </NavLink>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild className="cursor-pointer focus:bg-gray-100">
+                <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
                   <NavLink to="/about/careers" onClick={() => setIsAboutOpen(false)}>
                     Careers
                   </NavLink>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild className="cursor-pointer focus:bg-gray-100">
+                <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
                   <NavLink to="/about/community" onClick={() => setIsAboutOpen(false)}>
                     Community
                   </NavLink>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild className="cursor-pointer focus:bg-gray-100">
+                <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
                   <NavLink to="/about/contact" onClick={() => setIsAboutOpen(false)}>
                     Contact Us
                   </NavLink>
@@ -230,7 +234,7 @@ export function Navbar() {
                 asChild
                 size="sm"
                 variant="ghost"
-                className="text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                className="text-sm font-medium text-white/60 hover:text-white hover:bg-white/5 transition-all"
               >
                 <Link to="/dashboard">Console</Link>
               </Button>
@@ -238,16 +242,17 @@ export function Navbar() {
               <Button
                 asChild
                 size="sm"
-                variant="outline"
-                className="text-sm border-cyan-500/30 text-cyan-600 hover:bg-cyan-500/10 hover:border-cyan-400 transition-all"
+                className="relative text-sm font-semibold bg-gradient-to-r from-cyan-500 to-blue-500 text-black hover:from-cyan-400 hover:to-blue-400 transition-all shadow-[0_0_20px_rgba(0,212,255,0.3)] hover:shadow-[0_0_30px_rgba(0,212,255,0.5)] border-0"
               >
-                <Link to="/agent">Ask NEPA</Link>
+                <Link to="/agent">
+                  <span className="relative z-10">Ask NEPA</span>
+                </Link>
               </Button>
 
               <Button
                 asChild
                 size="sm"
-                className="bg-blue-600 text-white hover:bg-blue-700 text-sm font-medium"
+                className="text-sm font-semibold bg-white/10 text-white hover:bg-white/15 border border-white/20 hover:border-white/30 transition-all backdrop-blur-sm"
               >
                 <Link to="/signup">Sign up</Link>
               </Button>
