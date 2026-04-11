@@ -23,11 +23,11 @@ A neuromorphic edge perception platform website that turns camera feeds into rel
 - **Success criteria**: Users can find any section within 2 clicks from the homepage
 
 ### Homepage Hero
-- **Functionality**: Cinematic hero section with key value proposition, badges, and dual CTAs
-- **Purpose**: Immediately communicate platform value and drive conversions
+- **Functionality**: Full-viewport cinematic experience with background video, animated brand arrival (AuraSense → line → NEPA → descriptor), no scrollable content
+- **Purpose**: Create an immersive, premium first impression that immediately establishes brand identity and technological sophistication
 - **Trigger**: Page load
-- **Progression**: Page loads → Animations play → User reads headline → Clicks CTA
-- **Success criteria**: Clear hierarchy and readable text, CTAs are immediately visible
+- **Progression**: Page loads → Video autoplays → "AuraSense" fades in (0-0.8s) → Teal line expands (0.8s-1.6s) → "NEPA" fades in (1.6s-2.4s) → Descriptor fades in (2.4s-3.2s) → Full brand identity visible
+- **Success criteria**: Smooth sequential animation with no jank, video loads and plays immediately, text is highly legible over video with dark overlay
 
 ### Problem/Value Sections
 - **Functionality**: Three-column layout explaining value for different audiences (unmanned operations, AI agents, edge deployments)
@@ -64,7 +64,7 @@ A neuromorphic edge perception platform website that turns camera feeds into rel
 - **Empty Dropdown Hover** — Dropdowns require click, not hover, to prevent accidental triggers
 
 ## Design Direction
-The design should evoke a sense of **technical sophistication**, **reliability**, and **innovation**. The dark, cinematic aesthetic with glowing accents creates a futuristic yet grounded feeling—appropriate for edge AI and neuromorphic computing. The interface should feel like a premium SaaS platform: clean, purposeful, and confidence-inspiring.
+The design should evoke a sense of **technical sophistication**, **reliability**, and **innovation**. The homepage uses a full-viewport cinematic approach with a looping background video and sequential brand animation to create an immersive, premium experience. The dark overlay ensures text legibility while maintaining the cinematic atmosphere. The rest of the site maintains the dark, technical aesthetic with glowing accents creates a futuristic yet grounded feeling—appropriate for edge AI and neuromorphic computing. The interface should feel like a premium SaaS platform: clean, purposeful, and confidence-inspiring.
 
 ## Color Selection
 
@@ -88,13 +88,17 @@ Accent Color: `oklch(0.68 0.21 175)` — Slightly desaturated teal for badges an
 - Accent (Teal #00D4AA): Black text (#0D0F14) - Ratio 7.1:1 ✓
 
 ## Font Selection
-Typography should convey modern technical sophistication with excellent readability across all sizes.
+Typography should convey modern technical sophistication with excellent readability across all sizes. The homepage uses Inter for the cinematic brand arrival sequence, while the rest of the site uses Space Grotesk for body content and JetBrains Mono for technical elements.
 
-- **Primary**: Space Grotesk — A geometric sans-serif with technical character and modern proportions
-- **Secondary**: JetBrains Mono — For code snippets, technical labels, and badges
+- **Homepage Primary**: Inter — A clean, highly legible geometric sans-serif perfect for the cinematic brand presentation
+- **Site Primary**: Space Grotesk — A geometric sans-serif with technical character and modern proportions
+- **Monospace**: JetBrains Mono — For code snippets, technical labels, and badges
 
 **Typographic Hierarchy**:
-- H1 (Hero): Space Grotesk Bold / clamp(42px, 6vw, 80px) / -0.02em letter-spacing / line-height 1.1
+- Homepage H1 (AuraSense): Inter Light / clamp(2rem, 5vw, 4.5rem) / 0.3em letter-spacing / weight 300
+- Homepage H2 (NEPA): Inter Medium / clamp(1.5rem, 3vw, 2.5rem) / 0.4em letter-spacing / weight 500 / color #00C9A7
+- Homepage Descriptor: Inter Regular / clamp(0.75rem, 1.5vw, 1rem) / 0.2em letter-spacing / weight 400 / uppercase / color #CCCCCC
+- H1 (Site Hero): Space Grotesk Bold / clamp(42px, 6vw, 80px) / -0.02em letter-spacing / line-height 1.1
 - H2 (Section): Space Grotesk Bold / 48-60px / -0.01em letter-spacing / line-height 1.2
 - H3 (Card Title): Space Grotesk Bold / 20-24px / normal letter-spacing / line-height 1.3
 - Body: Space Grotesk Regular / 16-18px / normal letter-spacing / line-height 1.6
@@ -102,6 +106,8 @@ Typography should convey modern technical sophistication with excellent readabil
 
 ## Animations
 Animations should be subtle and purposeful, enhancing the premium feel without causing distraction or delay.
+
+**Homepage brand arrival**: Sequential fade-in animations for brand elements (0.8s each step with ease-out timing). The teal divider line expands from center. Total sequence runs 0s-3.2s on page load.
 
 **Ambient animations**: Gentle breathing glow orbs in the background provide life and depth without demanding attention. These run continuously at 8-10 second cycles.
 

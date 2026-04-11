@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { useKV } from '@github/spark/hooks'
 import { AppLayout } from '@/components/AppLayout'
 
+import { HomePage } from '@/routes/HomePage'
 import { SignInPage } from '@/routes/SignInPage'
 import { SignUpPage } from '@/routes/SignUpPage'
 import { ForgotPasswordPage } from '@/routes/ForgotPasswordPage'
@@ -38,7 +39,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route element={<AppLayout />}>
-          <Route path="/" element={<VODAPage />} />
+          <Route path="/" element={<HomePage />} />
           
           <Route path="/signin" element={<SignInPage setPendingEmail={setPendingEmail} />} />
           <Route path="/signup" element={<SignUpPage setPendingEmail={setPendingEmail} />} />
