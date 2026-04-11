@@ -44,8 +44,8 @@ function App() {
           <Route path="/signup" element={<SignUpPage setPendingEmail={setPendingEmail} />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
-          <Route path="/2fa-setup" element={<TwoFactorSetupPage pendingEmail={pendingEmail} />} />
-          <Route path="/2fa-verify" element={<TwoFactorVerifyPage pendingEmail={pendingEmail} />} />
+          <Route path="/2fa-setup" element={<TwoFactorSetupPage pendingEmail={pendingEmail || ''} />} />
+          <Route path="/2fa-verify" element={<TwoFactorVerifyPage pendingEmail={pendingEmail || ''} />} />
 
           <Route path="/products/voda" element={<VODAPage />} />
           <Route path="/products/roda" element={<RODAPage />} />
