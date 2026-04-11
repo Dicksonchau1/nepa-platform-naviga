@@ -155,7 +155,7 @@ export function VODAPage({ onNavigate }: VODAPageProps) {
                 AuraSense NEPA — Video Agent
               </p>
               <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.0] mb-3">
-                Video Operations
+                Cinematic Reconstruction
               </h1>
               <h1
                 className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.0] text-cyan-400"
@@ -165,7 +165,7 @@ export function VODAPage({ onNavigate }: VODAPageProps) {
                   transform: visible ? 'translateY(0)' : 'translateY(20px)',
                 }}
               >
-                & Detection
+                & Correction
               </h1>
             </div>
 
@@ -176,11 +176,15 @@ export function VODAPage({ onNavigate }: VODAPageProps) {
                 opacity: visible ? 1 : 0,
               }}
             >
-              VODA is the video intelligence agent of the NEPA platform. It
-              processes up to 16 concurrent camera streams entirely on-device,
-              classifying objects, behaviours, and anomalies in under 36ms —
-              with every event cryptographically logged to a tamper-evident
-              audit chain.
+              VODA is a video agent that reconstructs and corrects cinematic clips on top of NEPA
+              using a model&#8209;agnostic control surface, coordinated by a horizontal ensemble of
+              LLMs. Instead of re&#8209;running heavy generative models over every frame, NEPA lifts
+              each clip into a structured scene representation and VODA applies localised,
+              deterministic diffs there — stabilising specific motion, harmonising lighting, or
+              fixing background issues without disturbing the rest of the shot. This lets you cache
+              the representation once and run many small, cheap control updates in parallel, cutting
+              FLOPs and memory traffic, improving temporal consistency, and keeping per&#8209;edit
+              latency low enough for real&#8209;time, edge&#8209;constrained deployments.
             </p>
 
             <div

@@ -24,6 +24,7 @@ import { VODAPage } from '@/routes/products/VODAPage'
 import { RODAPage } from '@/routes/products/RODAPage'
 import { EODAPage } from '@/routes/products/EODAPage'
 import { FODAPage } from '@/routes/products/FODAPage'
+import { NepaAgentPage } from '@/routes/products/NepaAgentPage'
 import { SODAPage } from '@/routes/products/SODAPage'
 
 import { DocsPage } from '@/routes/resources/DocsPage'
@@ -90,7 +91,10 @@ function AppRoutes() {
         <Route path="/products/roda" element={<RODAPage />} />
         <Route path="/products/eoda" element={<EODAPage />} />
         <Route path="/products/foda" element={<FODAPage />} />
+        <Route path="/products/nepa-agent" element={<NepaAgentPage />} />
         <Route path="/products/soda" element={<SODAPage />} />
+        <Route path="/products" element={<Navigate to="/landing" replace />} />
+        <Route path="/products/enterprise" element={<Navigate to="/business#enterprise-services" replace />} />
 
         <Route path="/resources/docs" element={<DocsPage />} />
         <Route path="/resources/api" element={<ApiReferencePage />} />
@@ -106,6 +110,9 @@ function AppRoutes() {
         <Route path="/about/privacy" element={<PrivacyPage />} />
         <Route path="/about/terms" element={<TermsPage />} />
         <Route path="/about/security" element={<SecurityPage />} />
+        <Route path="/business/case-studies/unmanned-retail-hk" element={<Navigate to="/business#case-studies" replace />} />
+        <Route path="/business/case-studies/drone-inspection-facade" element={<Navigate to="/business#case-studies" replace />} />
+        <Route path="/business/case-studies/robotic-delivery-logistics" element={<Navigate to="/business#case-studies" replace />} />
       </Route>
 
       <Route path="/login" element={<LoginPage />} />

@@ -1,13 +1,26 @@
-import { useState, useEffect } from 'react'
+import { ArrowRight } from '@phosphor-icons/react'
+import { motion, useReducedMotion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { HudPanel } from '@/components/HudPanel'
 
-const CASE_STUDIES = [
+type Accent = 'cyan' | 'indigo' | 'amber'
+
+type CaseStudy = {
+  tag: string
+  location: string
+  headline: string
+  body: string
+  stats: Array<{ label: string; value: string }>
+  cta: string
+  to: string
+  accent: Accent
+}
+
+const CASE_STUDIES: CaseStudy[] = [
   {
     tag: 'Unmanned Retail',
     location: 'Hong Kong',
     headline: 'Cashierless convenience store powered by NEPA',
-    body: "NEPA's edge inference engine manages product detection, shelf monitoring, and transaction validation across a fully unmanned retail environment - without cloud dependency.",
+    body: "NEPA's edge inference engine manages product detection, shelf monitoring, and transaction validation across a fully unmanned retail environment — without cloud dependency.",
     stats: [
       { label: 'Inference latency', value: '< 36ms' },
       { label: 'Uptime', value: '99.4%' },
@@ -80,450 +93,377 @@ const ENTERPRISE_FEATURES = [
   },
 ]
 
-const TESTIMONIALS = [
-  {
-    quote: 'NEPA has transformed our unmanned retail operations. The edge inference is incredibly fast, and having a tamper-evident audit trail gives us the compliance confidence we need.',
-    author: 'Sarah Chen',
-    role: 'Operations Director',
-    company: 'SmartMart HK',
-    avatar: 'SC',
-  },
-  {
-    quote: 'The on-device processing means we never have to worry about network latency or cloud costs. NEPA just works, even when connectivity drops.',
-    author: 'David Wong',
-    role: 'CTO',
-    company: 'LogiFlow Asia',
-    avatar: 'DW',
-  },
-  {
-    quote: 'AuraSense\'s team was exceptional during deployment. They configured everything on-site and our facade inspection workflow was operational within 48 hours.',
-    author: 'Michael Tam',
-    role: 'Facilities Manager',
-    company: 'PropertyTech Solutions',
-    avatar: 'MT',
-  },
-]
-
-const CLIENT_LOGOS = [
-  { name: 'SmartMart HK', abbr: 'SM' },
-  { name: 'LogiFlow Asia', abbr: 'LF' },
-  { name: 'PropertyTech Solutions', abbr: 'PT' },
-  { name: 'HK Retail Group', abbr: 'HR' },
-  { name: 'DroneInspect Pro', abbr: 'DI' },
-  { name: 'RoboDelivery Co', abbr: 'RD' },
-]
-
-const ACCENT_COLORS: Record<string, { bg: string; border: string; text: string; pill: string }> = {
+const accentStyles: Record<Accent, { color: string; glow: string; pill: string }> = {
   cyan: {
-    bg: 'bg-cyan-500/5',
-    border: 'border-cyan-500/20',
-    text: 'text-cyan-400',
-    pill: 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400',
+    color: '#00C8F0',
+    glow: 'rgba(0, 200, 240, 0.18)',
+    pill: 'rgba(0, 200, 240, 0.10)',
   },
   indigo: {
-    bg: 'bg-indigo-500/5',
-    border: 'border-indigo-500/20',
-    text: 'text-indigo-400',
-    pill: 'bg-indigo-500/10 border-indigo-500/30 text-indigo-400',
+    color: '#6366F1',
+    glow: 'rgba(99, 102, 241, 0.18)',
+    pill: 'rgba(99, 102, 241, 0.10)',
   },
   amber: {
-    bg: 'bg-amber-500/5',
-    border: 'border-amber-500/20',
-    text: 'text-amber-400',
-    pill: 'bg-amber-500/10 border-amber-500/30 text-amber-400',
+    color: '#F59E0B',
+    glow: 'rgba(245, 158, 11, 0.18)',
+    pill: 'rgba(245, 158, 11, 0.10)',
   },
 }
 
-export function BusinessPage() {
-  const [visible, setVisible] = useState(false)
+const sectionViewport = { once: true, amount: 0.2 }
 
-  useEffect(() => {
-    const t = setTimeout(() => setVisible(true), 80)
-    return () => clearTimeout(t)
-  }, [])
+const sectionVariants = {
+  hidden: { opacity: 0, y: 28 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.72,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+}
+
+const staggerContainer = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+}
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+}
+
+function SectionEyebrow({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-white/35">
+      {children}
+    </p>
+  )
+}
+
+function PrimaryButton({ to, children }: { to: string; children: React.ReactNode }) {
+  return (
+    <Link
+      to={to}
+      className="inline-flex w-full items-center justify-center rounded-full border border-transparent bg-[#00C8F0] px-6 py-3 text-sm font-semibold text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#67ddf7] hover:shadow-[0_0_32px_rgba(0,200,240,0.28)] sm:w-auto"
+    >
+      {children}
+    </Link>
+  )
+}
+
+function SecondaryButton({ to, children }: { to: string; children: React.ReactNode }) {
+  return (
+    <Link
+      to={to}
+      className="inline-flex w-full items-center justify-center rounded-full border border-white/10 bg-white/[0.02] px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/[0.05] sm:w-auto"
+    >
+      {children}
+    </Link>
+  )
+}
+
+export function BusinessPage() {
+  const reduceMotion = useReducedMotion()
+
+  const heroTransition = (index: number) => ({
+    duration: reduceMotion ? 0.01 : 0.72,
+    delay: reduceMotion ? 0 : 0.08 + index * 0.08,
+    ease: [0.22, 1, 0.36, 1],
+  })
 
   return (
-    <main className="min-h-screen bg-[#050508] text-white overflow-x-hidden">
-      
-      {/* ── HERO ──────────────────────────────────────────────────── */}
-      <section className="relative min-h-[85vh] flex items-center overflow-hidden pt-24">
-        
-        {/* Grid background */}
+    <main className="relative min-h-screen overflow-x-hidden bg-[#050508] text-white">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div
-          className="absolute inset-0 pointer-events-none"
+          className="absolute inset-0 opacity-70"
           style={{
-            backgroundImage: `
-              linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px)`,
-            backgroundSize: '56px 56px',
+            backgroundImage:
+              'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)',
+            backgroundSize: '72px 72px',
+            maskImage: 'linear-gradient(to bottom, white, rgba(255,255,255,0.2))',
           }}
         />
-
-        {/* Bloom */}
         <div
-          className="absolute inset-0 pointer-events-none"
+          className="absolute inset-0"
           style={{
-            background: 'radial-gradient(ellipse 60% 55% at 30% 50%, rgba(0,212,255,0.08) 0%, transparent 70%)',
+            background:
+              'radial-gradient(circle at 18% 18%, rgba(0,200,240,0.16), transparent 34%), radial-gradient(circle at 80% 22%, rgba(99,102,241,0.12), transparent 28%), radial-gradient(circle at 50% 100%, rgba(255,255,255,0.04), transparent 40%)',
           }}
         />
-
-        {/* Scanlines */}
         <div
-          className="absolute inset-0 pointer-events-none"
+          className="absolute inset-0"
           style={{
-            backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,212,255,0.012) 2px, rgba(0,212,255,0.012) 4px)',
+            backgroundImage:
+              'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,200,240,0.02) 2px, rgba(0,200,240,0.02) 4px)',
           }}
         />
+      </div>
 
-        <div className="container mx-auto px-6 max-w-6xl relative z-10">
-          <div className="max-w-3xl">
-            
-            {/* Eyebrow */}
-            <p
-              className="font-mono text-[11px] tracking-[0.28em] uppercase text-cyan-400/50 mb-5"
-              style={{
-                opacity: visible ? 1 : 0,
-                transform: visible ? 'translateY(0)' : 'translateY(12px)',
-                transition: 'opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s',
-              }}
+      <section className="relative border-b border-white/5 pt-28 pb-18 sm:pt-32 sm:pb-24">
+        <div className="container mx-auto max-w-7xl px-6">
+          <div className="max-w-4xl">
+            <motion.div
+              initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={heroTransition(0)}
+              className="mb-6"
             >
-              AuraSense NEPA — Business
-            </p>
+              <SectionEyebrow>AuraSense NEPA — Business</SectionEyebrow>
+            </motion.div>
 
-            {/* Headline */}
-            <h1
-              className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.05] mb-6"
-              style={{
-                opacity: visible ? 1 : 0,
-                transform: visible ? 'translateY(0)' : 'translateY(24px)',
-                transition: 'opacity 0.9s ease 0.2s, transform 0.9s cubic-bezier(0.16,1,0.3,1) 0.2s',
-              }}
+            <motion.h1
+              initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={heroTransition(1)}
+              className="max-w-3xl text-5xl font-semibold tracking-[-0.04em] text-white sm:text-6xl lg:text-7xl"
             >
               Edge AI built for operations at scale.
-            </h1>
+            </motion.h1>
 
-            {/* Subtext */}
-            <p
-              className="text-base text-white/50 max-w-2xl leading-relaxed mb-10"
-              style={{
-                opacity: visible ? 1 : 0,
-                transform: visible ? 'translateY(0)' : 'translateY(16px)',
-                transition: 'opacity 0.8s ease 0.6s, transform 0.8s ease 0.6s',
-              }}
+            <motion.p
+              initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={heroTransition(2)}
+              className="mt-6 max-w-3xl text-base leading-8 text-white/60 sm:text-lg"
             >
-              From unmanned retail to drone inspection and robotic delivery — NEPA deploys at the edge, 
-              runs without cloud dependency, and gives your operations team structured intelligence from day one.
-            </p>
+              From unmanned retail to drone inspection and robotic delivery — NEPA deploys at the edge, runs without cloud dependency, and gives your operations team structured intelligence from day one.
+            </motion.p>
 
-            {/* CTAs */}
-            <div
-              className="flex flex-wrap items-center gap-4"
-              style={{
-                opacity: visible ? 1 : 0,
-                transition: 'opacity 0.8s ease 0.8s',
-              }}
+            <motion.div
+              initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={heroTransition(3)}
+              className="mt-10 flex flex-col gap-4 sm:flex-row"
             >
-              <Link
-                to="/about/contact"
-                className="bg-cyan-500 text-black font-semibold text-sm px-8 py-3 hover:bg-cyan-400 transition-colors"
-              >
-                Talk to our team
-              </Link>
-              <Link
-                to="/products/eoda"
-                className="border border-white/20 text-white/70 text-sm px-8 py-3 hover:border-white/40 hover:text-white transition-colors"
-              >
-                Explore NEPA Enterprise
-              </Link>
-            </div>
+              <PrimaryButton to="/about/contact">Talk to our team</PrimaryButton>
+              <SecondaryButton to="/products/enterprise">Explore NEPA Enterprise</SecondaryButton>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={heroTransition(4)}
+              className="mt-14 grid gap-4 border-t border-white/5 pt-8 sm:grid-cols-3"
+            >
+              {[
+                { label: 'Deployment model', value: 'Edge native' },
+                { label: 'Cloud dependency', value: 'None required' },
+                { label: 'Operational fit', value: 'Retail · UAV · Robotics' },
+              ].map((item) => (
+                <div key={item.label} className="rounded-2xl border border-white/5 bg-white/[0.02] p-5">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-white/35">
+                    {item.label}
+                  </p>
+                  <p className="mt-2 text-sm font-medium text-white" style={{ color: item.label === 'Deployment model' ? '#00C8F0' : undefined }}>
+                    {item.value}
+                  </p>
+                </div>
+              ))}
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ── CASE STUDIES GRID ──────────────────────────────────────── */}
-      <section className="py-24 border-t border-white/8">
-        <div className="container mx-auto px-6 max-w-6xl">
-          
-          <div className="mb-14">
-            <p className="font-mono text-[11px] tracking-[0.28em] uppercase text-cyan-400/50 mb-3">
-              Case Studies
-            </p>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+      <motion.section
+        id="case-studies"
+        className="relative py-20 sm:py-24"
+        variants={sectionVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={sectionViewport}
+      >
+        <div className="container mx-auto max-w-7xl px-6">
+          <div className="max-w-3xl">
+            <SectionEyebrow>Case Studies</SectionEyebrow>
+            <h2 className="mt-4 text-3xl font-semibold tracking-[-0.03em] text-white sm:text-4xl">
               NEPA deployed in the field.
             </h2>
-            <p className="text-white/40 max-w-2xl leading-relaxed">
-              Real deployments across unmanned retail, aerial inspection, and autonomous logistics 
-              operations in Asia-Pacific.
+            <p className="mt-5 text-base leading-8 text-white/60">
+              Real deployments across unmanned retail, aerial inspection, and autonomous logistics operations in Asia-Pacific.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {CASE_STUDIES.map((study, i) => {
-              const colors = ACCENT_COLORS[study.accent]
+          <motion.div
+            className="mt-12 grid gap-6 lg:grid-cols-3"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={sectionViewport}
+          >
+            {CASE_STUDIES.map((study) => {
+              const accent = accentStyles[study.accent]
+
               return (
-                <div
-                  key={i}
-                  className={`border rounded-2xl ${colors.bg} ${colors.border} hover:border-opacity-40 transition-all p-6 flex flex-col`}
+                <motion.article
+                  key={study.headline}
+                  variants={itemVariants}
+                  className="group flex h-full flex-col rounded-2xl border border-white/5 bg-white/[0.02] p-6 transition-colors duration-300 hover:border-white/15"
                   style={{
-                    opacity: 0,
-                    animation: `fade-in 0.6s ease-out ${0.1 + i * 0.1}s forwards`,
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.02), 0 24px 80px ' + accent.glow,
                   }}
                 >
-                  {/* Tag */}
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className={`font-mono text-[10px] px-2.5 py-1 border rounded ${colors.pill} tracking-wider`}>
+                  <div className="flex items-start justify-between gap-4">
+                    <span
+                      className="inline-flex rounded-full px-3 py-1 font-mono text-[10px] uppercase tracking-[0.24em]"
+                      style={{ color: accent.color, backgroundColor: accent.pill }}
+                    >
                       {study.tag}
+                    </span>
+                    <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/35">
+                      {study.location}
                     </span>
                   </div>
 
-                  {/* Location */}
-                  <p className="text-xs text-white/30 font-mono mb-3 tracking-wide">
-                    {study.location}
-                  </p>
-
-                  {/* Headline */}
-                  <h3 className="text-lg font-semibold mb-3 leading-snug">
+                  <h3 className="mt-8 text-2xl font-semibold tracking-[-0.03em] text-white">
                     {study.headline}
                   </h3>
 
-                  {/* Body */}
-                  <p className="text-sm text-white/45 leading-relaxed mb-6 flex-1">
+                  <p className="mt-4 flex-1 text-sm leading-7 text-white/60">
                     {study.body}
                   </p>
 
-                  {/* Stats */}
-                  <div className="space-y-2 mb-6 border-t border-white/5 pt-4">
-                    {study.stats.map((stat, j) => (
-                      <div key={j} className="flex items-center justify-between text-xs">
-                        <span className="text-white/30 font-mono">{stat.label}</span>
-                        <span className={`font-mono font-semibold ${colors.text}`}>
-                          {stat.value}
-                        </span>
+                  <div className="mt-8 grid grid-cols-3 gap-3 border-t border-white/5 pt-6">
+                    {study.stats.map((stat) => (
+                      <div key={stat.label}>
+                        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/35">
+                          {stat.label}
+                        </p>
+                        <p className="mt-2 text-sm font-semibold text-white">{stat.value}</p>
                       </div>
                     ))}
                   </div>
 
-                  {/* CTA */}
                   <Link
                     to={study.to}
-                    className={`text-sm ${colors.text} hover:opacity-70 transition-opacity inline-flex items-center gap-2`}
+                    className="mt-8 inline-flex items-center gap-2 text-sm font-semibold transition-colors"
+                    style={{ color: accent.color }}
                   >
                     {study.cta}
-                    <span>→</span>
+                    <ArrowRight size={16} weight="bold" />
                   </Link>
-                </div>
+                </motion.article>
               )
             })}
-          </div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
-      {/* ── CLIENT LOGOS ───────────────────────────────────────────── */}
-      <section className="py-16 border-t border-white/8 bg-[#050508]">
-        <div className="container mx-auto px-6 max-w-6xl">
-          <p className="text-center font-mono text-[10px] tracking-[0.28em] uppercase text-white/25 mb-10">
-            Trusted by leading operators across Asia-Pacific
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
-            {CLIENT_LOGOS.map((logo, i) => (
-              <div
-                key={i}
-                className="flex items-center justify-center"
-                style={{
-                  opacity: 0,
-                  animation: `fade-in 0.5s ease-out ${0.1 + i * 0.08}s forwards`,
-                }}
-              >
-                <div className="flex items-center gap-3 border border-white/5 bg-white/[0.02] px-5 py-3 rounded-lg hover:border-white/10 transition-colors">
-                  <div className="w-8 h-8 rounded bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
-                    <span className="font-mono text-[11px] font-bold text-cyan-400/70">
-                      {logo.abbr}
-                    </span>
-                  </div>
-                  <span className="text-sm text-white/40 font-medium">
-                    {logo.name}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── TESTIMONIALS ───────────────────────────────────────────── */}
-      <section className="py-24 border-t border-white/8 bg-white/[0.01]">
-        <div className="container mx-auto px-6 max-w-6xl">
-          <div className="mb-14 text-center">
-            <p className="font-mono text-[11px] tracking-[0.28em] uppercase text-cyan-400/50 mb-3">
-              Testimonials
-            </p>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
-              What our clients say
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {TESTIMONIALS.map((testimonial, i) => (
-              <div
-                key={i}
-                className="border border-white/8 bg-[#050508] rounded-2xl p-6 hover:border-white/15 transition-all"
-                style={{
-                  opacity: 0,
-                  animation: `fade-in 0.6s ease-out ${0.1 + i * 0.1}s forwards`,
-                }}
-              >
-                {/* Quote */}
-                <p className="text-sm text-white/60 leading-relaxed mb-6 italic">
-                  "{testimonial.quote}"
-                </p>
-
-                {/* Author */}
-                <div className="flex items-center gap-3 border-t border-white/5 pt-4">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-indigo-500 flex items-center justify-center shrink-0">
-                    <span className="text-xs font-bold text-black">
-                      {testimonial.avatar}
-                    </span>
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-white/90">
-                      {testimonial.author}
-                    </p>
-                    <p className="text-xs text-white/35 font-mono">
-                      {testimonial.role}
-                    </p>
-                    <p className="text-xs text-cyan-400/60 font-mono">
-                      {testimonial.company}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── ENTERPRISE ONBOARDING ──────────────────────────────────── */}
-      <section className="py-24 border-t border-white/8 bg-white/[0.02]">
-        <div className="container mx-auto px-6 max-w-6xl">
-          <div className="grid md:grid-cols-2 gap-12 lg:gap-16">
-            
-            {/* Left — Copy */}
-            <div>
-              <p className="font-mono text-[11px] tracking-[0.28em] uppercase text-cyan-400/50 mb-3">
-                Enterprise Services
-              </p>
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6">
+      <motion.section
+        id="enterprise-services"
+        className="relative border-y border-white/5 bg-white/[0.02] py-20 sm:py-24"
+        variants={sectionVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={sectionViewport}
+      >
+        <div className="container mx-auto max-w-7xl px-6">
+          <div className="grid gap-12 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-16">
+            <div className="max-w-2xl">
+              <SectionEyebrow>Enterprise Services</SectionEyebrow>
+              <h2 className="mt-4 text-3xl font-semibold tracking-[-0.03em] text-white sm:text-4xl">
                 Premium services for Enterprise customers.
               </h2>
-              <p className="text-white/45 leading-relaxed mb-6">
-                Our professional services are designed to get your NEPA deployment operational from day one — 
-                and keep it running at full performance as your environment scales. Services and availability 
-                are scoped to your site count, device fleet, and operational requirements.
+              <p className="mt-5 text-base leading-8 text-white/60">
+                Our professional services are designed to get your NEPA deployment operational from day one — and keep it running at full performance as your environment scales. Services and availability are scoped to your site count, device fleet, and operational requirements.
               </p>
 
-              <div className="flex flex-wrap gap-4 mt-8">
-                <Link
-                  to="/about/contact"
-                  className="bg-cyan-500 text-black font-semibold text-sm px-7 py-3 hover:bg-cyan-400 transition-colors"
-                >
-                  Contact Sales
-                </Link>
-                <Link
-                  to="/products/eoda"
-                  className="border border-white/20 text-white/65 text-sm px-7 py-3 hover:border-white/35 hover:text-white transition-colors"
-                >
-                  Explore NEPA Enterprise
-                </Link>
+              <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+                <PrimaryButton to="/about/contact">Contact Sales</PrimaryButton>
+                <SecondaryButton to="/products/enterprise">Explore NEPA Enterprise</SecondaryButton>
               </div>
             </div>
 
-            {/* Right — Feature List */}
-            <div className="space-y-5">
-              {ENTERPRISE_FEATURES.map((feature, i) => (
-                <div
-                  key={i}
-                  className="flex gap-4 items-start"
-                  style={{
-                    opacity: 0,
-                    animation: `fade-in 0.5s ease-out ${0.2 + i * 0.08}s forwards`,
-                  }}
+            <motion.div
+              className="grid gap-4 sm:grid-cols-2"
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={sectionViewport}
+            >
+              {ENTERPRISE_FEATURES.map((feature) => (
+                <motion.div
+                  key={feature.label}
+                  variants={itemVariants}
+                  className="rounded-2xl border border-white/5 bg-black/20 p-5"
                 >
-                  <span className="text-2xl text-cyan-400/70 shrink-0 mt-1">
-                    {feature.icon}
-                  </span>
-                  <div>
-                    <p className="font-semibold text-sm mb-1">{feature.label}</p>
-                    <p className="text-sm text-white/40 leading-relaxed">
-                      {feature.desc}
-                    </p>
+                  <div className="flex items-start gap-4">
+                    <span className="font-mono text-lg text-[#00C8F0]">{feature.icon}</span>
+                    <div>
+                      <h3 className="text-base font-semibold text-white">{feature.label}</h3>
+                      <p className="mt-2 text-sm leading-7 text-white/60">{feature.desc}</p>
+                    </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
-      {/* ── PARTNER PROGRAMME STRIP ────────────────────────────────── */}
-      <section className="py-20 border-t border-white/5 border-b border-white/5 bg-[#050508]">
-        <div className="container mx-auto px-6 max-w-4xl text-center">
-          <p className="font-mono text-[11px] tracking-[0.28em] uppercase text-cyan-400/50 mb-3">
-            Partners
-          </p>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+      <motion.section
+        id="partners"
+        className="relative border-y border-white/5 bg-[#050508] py-16"
+        variants={sectionVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={sectionViewport}
+      >
+        <div className="container mx-auto max-w-4xl px-6 text-center">
+          <SectionEyebrow>Partners</SectionEyebrow>
+          <h2 className="mt-4 text-3xl font-semibold tracking-[-0.03em] text-white sm:text-4xl">
             Work with AuraSense.
           </h2>
-          <p className="text-white/45 leading-relaxed max-w-2xl mx-auto mb-8">
-            We partner with system integrators, property managers, logistics operators, and technology 
-            platforms to deploy NEPA in new environments. If you are building something that needs edge 
-            perception, let's talk.
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-white/60">
+            We partner with system integrators, property managers, logistics operators, and technology platforms to deploy NEPA in new environments. If you are building something that needs edge perception, let's talk.
           </p>
-          <Link
-            to="/about/contact"
-            className="inline-block bg-cyan-500 text-black font-semibold text-sm px-8 py-3 hover:bg-cyan-400 transition-colors"
-          >
-            Become a partner
-          </Link>
-        </div>
-      </section>
-
-      {/* ── FINAL CTA ──────────────────────────────────────────────── */}
-      <section className="py-24 border-t border-white/5 bg-black/20">
-        <div className="container mx-auto px-6 max-w-4xl text-center">
-          <p className="font-mono text-[11px] tracking-[0.28em] uppercase text-cyan-400/50 mb-3">
-            Next steps
-          </p>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
-            Ready to deploy NEPA in your operation?
-          </h2>
-          <p className="text-white/45 leading-relaxed max-w-2xl mx-auto mb-8">
-            Talk to our team about your environment, site count, and operational requirements. 
-            We scope every deployment before any contract is signed.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="mt-8">
             <Link
               to="/about/contact"
-              className="bg-cyan-500 text-black font-semibold text-sm px-8 py-3 hover:bg-cyan-400 transition-colors"
+              className="inline-flex w-full items-center justify-center rounded-full border border-[#00C8F0]/30 bg-[#00C8F0]/10 px-6 py-3 text-sm font-semibold text-[#00C8F0] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#00C8F0]/15 sm:w-auto"
             >
-              Talk to our team
-            </Link>
-            <Link
-              to="/products/voda"
-              className="border border-white/20 text-white/65 text-sm px-8 py-3 hover:border-white/35 hover:text-white transition-colors"
-            >
-              View all products
+              Become a partner
             </Link>
           </div>
         </div>
-      </section>
+      </motion.section>
 
-      {/* ── KEYFRAMES ──────────────────────────────────────────────── */}
-      <style>{`
-        @keyframes fade-in {
-          from { opacity: 0; transform: translateY(16px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
+      <motion.section
+        id="next-steps"
+        className="relative border-t border-white/5 bg-black/20 py-20 sm:py-24"
+        variants={sectionVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={sectionViewport}
+      >
+        <div className="container mx-auto max-w-4xl px-6 text-center">
+          <SectionEyebrow>Next steps</SectionEyebrow>
+          <h2 className="mt-4 text-3xl font-semibold tracking-[-0.03em] text-white sm:text-4xl">
+            Ready to deploy NEPA in your operation?
+          </h2>
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-white/60">
+            Talk to our team about your environment, site count, and operational requirements. We scope every deployment before any contract is signed.
+          </p>
+
+          <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center">
+            <PrimaryButton to="/about/contact">Talk to our team</PrimaryButton>
+            <SecondaryButton to="/products">View all products</SecondaryButton>
+          </div>
+        </div>
+      </motion.section>
     </main>
   )
 }
