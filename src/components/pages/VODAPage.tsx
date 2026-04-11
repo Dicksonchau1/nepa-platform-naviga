@@ -5,6 +5,7 @@ import { LiveBadge } from '@/components/LiveBadge'
 import { TerminalLine } from '@/components/TerminalLine'
 import { CountUp } from '@/components/CountUp'
 import { SensorSweep } from '@/components/SensorSweep'
+import vodaLogoVideo from '@/assets/video/VODA_Logo_Animation_for_WhatsApp_(1).mp4'
 
 interface VODAPageProps {
   onNavigate: (page: string) => void
@@ -124,6 +125,18 @@ export function VODAPage({ onNavigate }: VODAPageProps) {
               'radial-gradient(ellipse 70% 55% at 38% 50%, rgba(0,102,255,0.10) 0%, transparent 70%)',
           }}
         />
+
+        <div className="absolute top-24 right-8 md:top-32 md:right-16 z-20 pointer-events-none">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-48 md:w-64 lg:w-80 opacity-90 drop-shadow-[0_0_32px_rgba(0,212,255,0.4)]"
+          >
+            <source src={vodaLogoVideo} type="video/mp4" />
+          </video>
+        </div>
 
         <div className="container mx-auto px-6 max-w-6xl relative z-10">
 
