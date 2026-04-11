@@ -1,6 +1,20 @@
+import { useState, useEffect } from 'react'
 import heroVideo from '@/assets/video/home-hero.mp4'
 
 export function HomePage() {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 20
+      const y = (e.clientY / window.innerHeight - 0.5) * 20
+      setMousePosition({ x, y })
+    }
+
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => window.removeEventListener('mousemove', handleMouseMove)
+  }, [])
+
   return (
     <div className="fixed inset-0 w-screen h-screen overflow-hidden">
       <video
@@ -13,7 +27,12 @@ export function HomePage() {
         <source src={heroVideo} type="video/mp4" />
       </video>
       
-      <div className="absolute top-0 left-0 w-full h-full bg-black/55" />
+      <div 
+        className="absolute top-0 left-0 w-full h-full bg-black/55 transition-transform duration-300 ease-out"
+        style={{
+          transform: `translate(${mousePosition.x}px, ${mousePosition.y}px)`
+        }}
+      />
       
       <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center z-10">
         <div className="text-center">
