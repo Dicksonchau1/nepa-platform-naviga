@@ -12,6 +12,7 @@ import { ResetPasswordPage } from '@/routes/ResetPasswordPage'
 import { TwoFactorSetupPage } from '@/routes/TwoFactorSetupPage'
 import { TwoFactorVerifyPage } from '@/routes/TwoFactorVerifyPage'
 import { PlaygroundPage } from '@/routes/PlaygroundPage'
+import { AgentChat } from '@/routes/AgentChat'
 
 import { LoginPage } from '@/routes/dashboard/LoginPage'
 import { DashboardLayout } from '@/routes/dashboard/DashboardLayout'
@@ -76,6 +77,8 @@ function AppRoutes() {
         <Route path="/2fa-verify" element={<TwoFactorVerifyPage pendingEmail={pendingEmail || ''} />} />
 
         <Route path="/playground" element={<PlaygroundPage />} />
+        <Route path="/agent" element={<AgentChat />} />
+        <Route path="/chat" element={<AgentChat />} />
 
         <Route path="/products/voda" element={<VODAPage />} />
         <Route path="/products/roda" element={<RODAPage />} />

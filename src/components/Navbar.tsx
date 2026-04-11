@@ -238,6 +238,15 @@ export function Navbar() {
               <Button
                 asChild
                 size="sm"
+                variant="outline"
+                className="text-sm border-cyan-500/30 text-cyan-600 hover:bg-cyan-500/10 hover:border-cyan-400 transition-all"
+              >
+                <Link to="/agent">Ask NEPA</Link>
+              </Button>
+
+              <Button
+                asChild
+                size="sm"
                 className="bg-blue-600 text-white hover:bg-blue-700 text-sm font-medium"
               >
                 <Link to="/signup">Sign up</Link>

@@ -301,6 +301,25 @@ export function LandingPage() {
               </Link>
             ))}
           </div>
+
+          <div className="mt-8 border border-cyan-500/20 bg-cyan-500/[0.03] rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+              <p className="text-sm font-semibold text-white mb-1">
+                Not sure which agent you need?
+              </p>
+              <p className="text-xs text-white/40 leading-relaxed max-w-lg">
+                Talk to NEPA directly. Describe your environment, upload a video,
+                or paste a stream URL — NEPA will route your request to the right
+                agent automatically.
+              </p>
+            </div>
+            <Link
+              to="/agent"
+              className="shrink-0 bg-cyan-500 text-black font-semibold text-sm px-6 py-3 hover:bg-cyan-400 transition-colors whitespace-nowrap"
+            >
+              Ask NEPA →
+            </Link>
+          </div>
         </div>
       </section>
 
