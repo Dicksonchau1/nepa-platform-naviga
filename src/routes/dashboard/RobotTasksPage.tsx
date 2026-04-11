@@ -1,0 +1,329 @@
+import { useState } from 'react'
+import { useRobotTasks } from '@/hooks/useRobotTasks'
+import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Skeleton } from '@/components/ui/skeleton'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
+  Plus,
+  ArrowsClockwise,
+  DotsThree,
+  PlayCircle,
+  StopCircle,
+  CheckCircle,
+  XCircle,
+  Clock,
+  Robot,
+  ListNumbers,
+  Kanban as KanbanIcon,
+} from '@phosphor-icons/react'
+import { toast } from 'sonner'
+import { RobotTask, CreateTaskRequest } from '@/types/nepa'
+import { KanbanBoard } from '@/components/dashboard/KanbanBoard'
+import { TaskList } from '@/components/dashboard/TaskList'
+
+type ViewMode = 'kanban' | 'list'
+
+const taskTypes = [
+  { value: 'facade_inspection', label: 'Facade Inspection' },
+  { value: 'navigation', label: 'Navigation' },
+  { value: 'maintenance', label: 'Maintenance' },
+  { value: 'surveillance', label: 'Surveillance' },
+  { value: 'data_collection', label: 'Data Collection' },
+  { value: 'custom', label: 'Custom' },
+]
+
+const priorities = [
+  { value: 1, label: 'Low' },
+  { value: 2, label: 'Normal' },
+  { value: 3, label: 'High' },
+  { value: 4, label: 'Critical' },
+]
+
+export function RobotTasksPage() {
+  const { tasks, total, isLoading, error, refresh, createTask, updateTaskStatus } = useRobotTasks()
+  const [viewMode, setViewMode] = useState<ViewMode>('kanban')
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [isCreating, setIsCreating] = useState(false)
+  
+  const [newTask, setNewTask] = useState<CreateTaskRequest>({
+    name: '',
+    type: 'facade_inspection',
+    priority: 2,
+    robotId: '',
+    metadata: {},
+  })
+
+  const handleCreateTask = async () => {
+    if (!newTask.name.trim()) {
+      toast.error('Task name is required')
+      return
+    }
+
+    setIsCreating(true)
+    try {
+      await createTask(newTask)
+      toast.success('Task created successfully')
+      setIsCreateDialogOpen(false)
+      setNewTask({
+        name: '',
+        type: 'facade_inspection',
+        priority: 2,
+        robotId: '',
+        metadata: {},
+      })
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to create task')
+    } finally {
+      setIsCreating(false)
+    }
+  }
+
+  const handleUpdateStatus = async (taskId: string, status: RobotTask['status']) => {
+    try {
+      await updateTaskStatus(taskId, { status })
+      toast.success(`Task ${status}`)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to update task')
+    }
+  }
+
+  const handleCancelTask = async (taskId: string) => {
+    try {
+      await updateTaskStatus(taskId, { status: 'cancelled' })
+      toast.success('Task cancelled')
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to cancel task')
+    }
+  }
+
+  const handleRetryTask = async (taskId: string) => {
+    try {
+      await updateTaskStatus(taskId, { status: 'queued' })
+      toast.success('Task requeued')
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to retry task')
+    }
+  }
+
+  const statusCounts = {
+    queued: tasks.filter(t => t.status === 'queued').length,
+    running: tasks.filter(t => t.status === 'running').length,
+    completed: tasks.filter(t => t.status === 'completed').length,
+    failed: tasks.filter(t => t.status === 'failed').length,
+    cancelled: tasks.filter(t => t.status === 'cancelled').length,
+  }
+
+  if (error) {
+    return (
+      <div className="p-8">
+        <Card className="p-8 bg-destructive/10 border-destructive/20">
+          <p className="text-destructive text-center">{error}</p>
+          <Button onClick={refresh} className="mt-4 mx-auto block">
+            Retry
+          </Button>
+        </Card>
+      </div>
+    )
+  }
+
+  return (
+    <div className="p-8 space-y-6">
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-4xl font-bold flex items-center gap-3">
+            <Robot size={40} weight="duotone" className="text-primary" />
+            Robot Tasks
+          </h1>
+          <p className="text-muted-foreground mt-2">Manage and monitor autonomous robot task execution</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 bg-muted/30 p-1 rounded-lg">
+            <Button
+              variant={viewMode === 'kanban' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('kanban')}
+              className="gap-2"
+            >
+              <KanbanIcon size={16} />
+              Kanban
+            </Button>
+            <Button
+              variant={viewMode === 'list' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('list')}
+              className="gap-2"
+            >
+              <ListNumbers size={16} />
+              List
+            </Button>
+          </div>
+          <Button onClick={refresh} variant="outline" size="sm" className="gap-2">
+            <ArrowsClockwise size={16} />
+            Refresh
+          </Button>
+          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="gap-2">
+                <Plus size={18} weight="bold" />
+                New Task
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Create Robot Task</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="task-name">Task Name</Label>
+                  <Input
+                    id="task-name"
+                    placeholder="e.g., Inspect Building A - North Facade"
+                    value={newTask.name}
+                    onChange={(e) => setNewTask({ ...newTask, name: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="task-type">Task Type</Label>
+                  <Select
+                    value={newTask.type}
+                    onValueChange={(value) => setNewTask({ ...newTask, type: value })}
+                  >
+                    <SelectTrigger id="task-type">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {taskTypes.map((type) => (
+                        <SelectItem key={type.value} value={type.value}>
+                          {type.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="task-priority">Priority</Label>
+                  <Select
+                    value={String(newTask.priority)}
+                    onValueChange={(value) => setNewTask({ ...newTask, priority: Number(value) })}
+                  >
+                    <SelectTrigger id="task-priority">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {priorities.map((priority) => (
+                        <SelectItem key={priority.value} value={String(priority.value)}>
+                          {priority.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="robot-id">Robot ID (Optional)</Label>
+                  <Input
+                    id="robot-id"
+                    placeholder="e.g., ROBOT-001"
+                    value={newTask.robotId}
+                    onChange={(e) => setNewTask({ ...newTask, robotId: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={handleCreateTask} disabled={isCreating}>
+                  {isCreating ? 'Creating...' : 'Create Task'}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <Card className="p-4 bg-card/50 backdrop-blur-xl border-border/50">
+          <div className="flex items-center gap-2 mb-2">
+            <Clock size={18} className="text-muted-foreground" />
+            <p className="text-xs font-medium text-muted-foreground mono uppercase tracking-wider">Queued</p>
+          </div>
+          <p className="text-3xl font-bold text-primary">{statusCounts.queued}</p>
+        </Card>
+        <Card className="p-4 bg-card/50 backdrop-blur-xl border-border/50">
+          <div className="flex items-center gap-2 mb-2">
+            <PlayCircle size={18} className="text-blue-400" weight="fill" />
+            <p className="text-xs font-medium text-muted-foreground mono uppercase tracking-wider">Running</p>
+          </div>
+          <p className="text-3xl font-bold text-blue-400">{statusCounts.running}</p>
+        </Card>
+        <Card className="p-4 bg-card/50 backdrop-blur-xl border-border/50">
+          <div className="flex items-center gap-2 mb-2">
+            <CheckCircle size={18} className="text-green-400" weight="fill" />
+            <p className="text-xs font-medium text-muted-foreground mono uppercase tracking-wider">Completed</p>
+          </div>
+          <p className="text-3xl font-bold text-green-400">{statusCounts.completed}</p>
+        </Card>
+        <Card className="p-4 bg-card/50 backdrop-blur-xl border-border/50">
+          <div className="flex items-center gap-2 mb-2">
+            <XCircle size={18} className="text-destructive" weight="fill" />
+            <p className="text-xs font-medium text-muted-foreground mono uppercase tracking-wider">Failed</p>
+          </div>
+          <p className="text-3xl font-bold text-destructive">{statusCounts.failed}</p>
+        </Card>
+        <Card className="p-4 bg-card/50 backdrop-blur-xl border-border/50">
+          <div className="flex items-center gap-2 mb-2">
+            <StopCircle size={18} className="text-muted-foreground" weight="fill" />
+            <p className="text-xs font-medium text-muted-foreground mono uppercase tracking-wider">Cancelled</p>
+          </div>
+          <p className="text-3xl font-bold">{statusCounts.cancelled}</p>
+        </Card>
+      </div>
+
+      {isLoading ? (
+        <div className="space-y-4">
+          <Skeleton className="h-32 w-full" />
+          <Skeleton className="h-32 w-full" />
+          <Skeleton className="h-32 w-full" />
+        </div>
+      ) : viewMode === 'kanban' ? (
+        <KanbanBoard
+          tasks={tasks}
+          onUpdateStatus={handleUpdateStatus}
+          onCancel={handleCancelTask}
+          onRetry={handleRetryTask}
+        />
+      ) : (
+        <TaskList
+          tasks={tasks}
+          onUpdateStatus={handleUpdateStatus}
+          onCancel={handleCancelTask}
+          onRetry={handleRetryTask}
+        />
+      )}
+    </div>
+  )
+}

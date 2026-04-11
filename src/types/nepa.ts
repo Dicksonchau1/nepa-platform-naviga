@@ -71,7 +71,7 @@ export interface CreateTaskRequest {
 }
 
 export interface UpdateTaskStatusRequest {
-  status: 'running' | 'completed' | 'failed' | 'cancelled'
+  status: 'queued' | 'running' | 'completed' | 'failed' | 'cancelled'
   progress?: number
   error?: string
 }
