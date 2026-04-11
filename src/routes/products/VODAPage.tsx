@@ -126,6 +126,31 @@ export function VODAPage() {
       <div className="fixed inset-0 bg-gradient-to-br from-black via-zinc-900 to-zinc-950 -z-10" />
 
       <section className="relative min-h-screen flex items-center overflow-hidden pt-20 pb-20">
+        
+        <div 
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'radial-gradient(ellipse 90% 70% at 40% 30%, rgba(0,212,255,0.10) 0%, transparent 55%), radial-gradient(ellipse 70% 60% at 65% 70%, rgba(0,102,255,0.07) 0%, transparent 50%)'
+          }}
+        />
+        
+        <div 
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'linear-gradient(135deg, rgba(0,212,255,0.08) 0%, transparent 30%, rgba(107,33,255,0.05) 70%, transparent 100%)'
+          }}
+        />
+        
+        <div 
+          className="absolute inset-0 pointer-events-none opacity-30"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px)`,
+            backgroundSize: '48px 48px',
+          }}
+        />
+
         <div className="container mx-auto px-6 max-w-6xl relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             

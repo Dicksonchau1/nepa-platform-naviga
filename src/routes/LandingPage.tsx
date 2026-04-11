@@ -87,6 +87,20 @@ export function LandingPage() {
 
       <section className="relative min-h-screen flex items-center overflow-hidden">
 
+        <div 
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'radial-gradient(ellipse 100% 60% at 30% 40%, rgba(0,212,255,0.12) 0%, transparent 60%), radial-gradient(ellipse 80% 50% at 70% 60%, rgba(0,102,255,0.08) 0%, transparent 50%)'
+          }}
+        />
+
+        <div 
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'linear-gradient(120deg, rgba(0,212,255,0.06) 0%, transparent 35%, rgba(107,33,255,0.04) 65%, transparent 100%)'
+          }}
+        />
+
         <div className="absolute inset-0 pointer-events-none"
           style={{
             backgroundImage: `

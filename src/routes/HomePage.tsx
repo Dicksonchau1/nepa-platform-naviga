@@ -45,12 +45,26 @@ export function HomePage() {
       </video>
 
       <div 
+        className="absolute inset-0 transition-opacity duration-1500"
+        style={{ 
+          opacity: heroVisible ? 1 : 0,
+          background: 'radial-gradient(ellipse 120% 80% at 20% 50%, rgba(0,212,255,0.08) 0%, transparent 50%), radial-gradient(ellipse 100% 70% at 80% 30%, rgba(0,102,255,0.06) 0%, transparent 60%)'
+        }}
+      />
+      <div 
         className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-transparent transition-opacity duration-1500"
         style={{ opacity: heroVisible ? 1 : 0 }}
       />
       <div 
         className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/80 transition-opacity duration-1500"
         style={{ opacity: heroVisible ? 1 : 0 }}
+      />
+      <div 
+        className="absolute inset-0 transition-opacity duration-1500"
+        style={{ 
+          opacity: heroVisible ? 1 : 0,
+          background: 'linear-gradient(135deg, rgba(0,212,255,0.05) 0%, transparent 30%, rgba(107,33,255,0.03) 70%, transparent 100%)'
+        }}
       />
       
       <div 
