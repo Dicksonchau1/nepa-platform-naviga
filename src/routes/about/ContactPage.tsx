@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { EnvelopeSimple, MapPin, Phone } from '@phosphor-icons/react'
 import { toast } from 'sonner'
+import { sendContactFormNotification, sendConfirmationEmail } from '@/lib/emailNotifications'
 
 type ContactSubmission = {
   id: string
@@ -42,19 +43,43 @@ export function ContactPage() {
     e.preventDefault()
     setIsSubmitting(true)
 
-    await new Promise(resolve => setTimeout(resolve, 800))
-
     const submission: ContactSubmission = {
       id: `contact-${Date.now()}-${Math.random().toString(36).substring(7)}`,
       ...formData,
       timestamp: new Date().toISOString(),
     }
 
-    setSubmissions((current) => [...(current || []), submission])
+    try {
+      setSubmissions((current) => [...(current || []), submission])
 
-    toast.success('Message sent successfully! We\'ll be in touch soon.')
-    setFormData({ name: '', email: '', company: '', subject: '', message: '' })
-    setIsSubmitting(false)
+      const notificationResult = await sendContactFormNotification(formData, submission.timestamp)
+      
+      if (notificationResult.success) {
+        console.log(`📧 Notification sent to: ${notificationResult.recipients.join(', ')}`)
+        
+        const confirmationResult = await sendConfirmationEmail(formData.email, formData.name)
+        
+        if (confirmationResult.success) {
+          toast.success(
+            'Message sent successfully!',
+            {
+              description: `We've sent a confirmation to ${formData.email} and notified our team. Expect a response within 1 business day.`
+            }
+          )
+        } else {
+          toast.success('Message received! Our team has been notified.')
+        }
+      } else {
+        toast.success('Message saved! Our team will review it shortly.')
+      }
+
+      setFormData({ name: '', email: '', company: '', subject: '', message: '' })
+    } catch (error) {
+      console.error('Form submission error:', error)
+      toast.error('Failed to send message. Please try again or email us directly.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleChange = (

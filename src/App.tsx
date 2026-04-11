@@ -16,6 +16,7 @@ import { LoginPage } from '@/routes/dashboard/LoginPage'
 import { DashboardLayout } from '@/routes/dashboard/DashboardLayout'
 import { DashboardPage } from '@/routes/dashboard/DashboardPage'
 import { RobotTasksPage } from '@/routes/dashboard/RobotTasksPage'
+import { ContactSubmissionsPage } from '@/routes/dashboard/ContactSubmissionsPage'
 
 import { VODAPage } from '@/routes/products/VODAPage'
 import { RODAPage } from '@/routes/products/RODAPage'
@@ -109,6 +110,7 @@ function AppRoutes() {
         <Route index element={<DashboardPage />} />
         <Route path="facade" element={<DashboardPage />} />
         <Route path="tasks" element={<RobotTasksPage />} />
+        <Route path="contacts" element={<ContactSubmissionsPage />} />
         <Route path="audit" element={<DashboardPage />} />
         <Route path="live" element={<DashboardPage />} />
       </Route>
