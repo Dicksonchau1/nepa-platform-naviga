@@ -1,5 +1,6 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useKV } from '@github/spark/hooks'
+import { AuthProvider, useAuth } from '@/contexts/AuthContext'
 import { AppLayout } from '@/components/AppLayout'
 
 import { HomePage } from '@/routes/HomePage'
@@ -10,6 +11,10 @@ import { ResetPasswordPage } from '@/routes/ResetPasswordPage'
 import { TwoFactorSetupPage } from '@/routes/TwoFactorSetupPage'
 import { TwoFactorVerifyPage } from '@/routes/TwoFactorVerifyPage'
 import { PlaygroundPage } from '@/routes/PlaygroundPage'
+
+import { LoginPage } from '@/routes/dashboard/LoginPage'
+import { DashboardLayout } from '@/routes/dashboard/DashboardLayout'
+import { DashboardPage } from '@/routes/dashboard/DashboardPage'
 
 import { VODAPage } from '@/routes/products/VODAPage'
 import { RODAPage } from '@/routes/products/RODAPage'
@@ -32,46 +37,89 @@ import { PrivacyPage } from '@/routes/about/PrivacyPage'
 import { TermsPage } from '@/routes/about/TermsPage'
 import { SecurityPage } from '@/routes/about/SecurityPage'
 
-function App() {
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { user, isLoading } = useAuth()
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-muted-foreground">Loading...</p>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />
+  }
+
+  return <>{children}</>
+}
+
+function AppRoutes() {
   const [pendingEmail, setPendingEmail] = useKV<string>('aura-pending-email', '')
 
   return (
+    <Routes>
+      <Route element={<AppLayout />}>
+        <Route path="/" element={<HomePage />} />
+        
+        <Route path="/signin" element={<SignInPage setPendingEmail={setPendingEmail} />} />
+        <Route path="/signup" element={<SignUpPage setPendingEmail={setPendingEmail} />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/2fa-setup" element={<TwoFactorSetupPage pendingEmail={pendingEmail || ''} />} />
+        <Route path="/2fa-verify" element={<TwoFactorVerifyPage pendingEmail={pendingEmail || ''} />} />
+
+        <Route path="/playground" element={<PlaygroundPage />} />
+
+        <Route path="/products/voda" element={<VODAPage />} />
+        <Route path="/products/roda" element={<RODAPage />} />
+        <Route path="/products/eoda" element={<EODAPage />} />
+        <Route path="/products/foda" element={<FODAPage />} />
+        <Route path="/products/soda" element={<SODAPage />} />
+
+        <Route path="/resources/docs" element={<DocsPage />} />
+        <Route path="/resources/api" element={<ApiReferencePage />} />
+        <Route path="/resources/guides" element={<GuidesPage />} />
+        <Route path="/resources/changelog" element={<ChangelogPage />} />
+        <Route path="/resources/status" element={<StatusPage />} />
+
+        <Route path="/about/company" element={<CompanyPage />} />
+        <Route path="/about/technology" element={<TechnologyPage />} />
+        <Route path="/about/careers" element={<CareersPage />} />
+        <Route path="/about/community" element={<CommunityPage />} />
+        <Route path="/about/contact" element={<ContactPage />} />
+        <Route path="/about/privacy" element={<PrivacyPage />} />
+        <Route path="/about/terms" element={<TermsPage />} />
+        <Route path="/about/security" element={<SecurityPage />} />
+      </Route>
+
+      <Route path="/login" element={<LoginPage />} />
+
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<DashboardPage />} />
+        <Route path="facade" element={<DashboardPage />} />
+        <Route path="tasks" element={<DashboardPage />} />
+        <Route path="audit" element={<DashboardPage />} />
+        <Route path="live" element={<DashboardPage />} />
+      </Route>
+    </Routes>
+  )
+}
+
+function App() {
+  return (
     <BrowserRouter>
-      <Routes>
-        <Route element={<AppLayout />}>
-          <Route path="/" element={<HomePage />} />
-          
-          <Route path="/signin" element={<SignInPage setPendingEmail={setPendingEmail} />} />
-          <Route path="/signup" element={<SignUpPage setPendingEmail={setPendingEmail} />} />
-          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="/reset-password" element={<ResetPasswordPage />} />
-          <Route path="/2fa-setup" element={<TwoFactorSetupPage pendingEmail={pendingEmail || ''} />} />
-          <Route path="/2fa-verify" element={<TwoFactorVerifyPage pendingEmail={pendingEmail || ''} />} />
-
-          <Route path="/playground" element={<PlaygroundPage />} />
-
-          <Route path="/products/voda" element={<VODAPage />} />
-          <Route path="/products/roda" element={<RODAPage />} />
-          <Route path="/products/eoda" element={<EODAPage />} />
-          <Route path="/products/foda" element={<FODAPage />} />
-          <Route path="/products/soda" element={<SODAPage />} />
-
-          <Route path="/resources/docs" element={<DocsPage />} />
-          <Route path="/resources/api" element={<ApiReferencePage />} />
-          <Route path="/resources/guides" element={<GuidesPage />} />
-          <Route path="/resources/changelog" element={<ChangelogPage />} />
-          <Route path="/resources/status" element={<StatusPage />} />
-
-          <Route path="/about/company" element={<CompanyPage />} />
-          <Route path="/about/technology" element={<TechnologyPage />} />
-          <Route path="/about/careers" element={<CareersPage />} />
-          <Route path="/about/community" element={<CommunityPage />} />
-          <Route path="/about/contact" element={<ContactPage />} />
-          <Route path="/about/privacy" element={<PrivacyPage />} />
-          <Route path="/about/terms" element={<TermsPage />} />
-          <Route path="/about/security" element={<SecurityPage />} />
-        </Route>
-      </Routes>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
     </BrowserRouter>
   )
 }

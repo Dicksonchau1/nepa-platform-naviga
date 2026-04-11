@@ -173,6 +173,15 @@ export function Navbar() {
             <Button
               asChild
               size="sm"
+              variant="outline"
+              className="text-sm font-medium border-primary/30 text-primary hover:bg-primary/10"
+            >
+              <Link to="/dashboard">Console</Link>
+            </Button>
+
+            <Button
+              asChild
+              size="sm"
               className="bg-primary text-primary-foreground hover:bg-primary/90 border border-primary/20 text-sm px-6"
             >
               <Link to="/signup">Get started</Link>

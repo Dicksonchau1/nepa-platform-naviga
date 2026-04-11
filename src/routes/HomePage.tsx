@@ -1,4 +1,7 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
+import { Terminal } from '@phosphor-icons/react'
 import heroVideo from '@/assets/video/home-hero.mp4'
 
 export function HomePage() {
@@ -84,6 +87,25 @@ export function HomePage() {
           >
             Neuromorphic Edge Perception Agent
           </p>
+
+          <div
+            className="mt-10 opacity-0 animate-fade-in-3"
+            style={{
+              animationDelay: '3.2s',
+              animationFillMode: 'forwards'
+            }}
+          >
+            <Button
+              asChild
+              size="lg"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground border border-primary/30 shadow-lg shadow-primary/20 px-8 py-6 text-lg gap-3"
+            >
+              <Link to="/dashboard">
+                <Terminal size={24} weight="duotone" />
+                Launch NEPA Console
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
     </div>
