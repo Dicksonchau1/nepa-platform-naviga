@@ -6,11 +6,21 @@ import { CountUp } from '@/components/CountUp'
 import heroVideo from '@/assets/video/home-hero.mp4'
 
 export function HomePage() {
-  const [visible, setVisible] = useState(false)
+  const [videoPlaying, setVideoPlaying] = useState(true)
+  const [nepaRevealed, setNepaRevealed] = useState(false)
+  const [heroVisible, setHeroVisible] = useState(false)
 
   useEffect(() => {
-    const t = setTimeout(() => setVisible(true), 100)
-    return () => clearTimeout(t)
+    const nepaTimer = setTimeout(() => setNepaRevealed(true), 2000)
+    const heroTimer = setTimeout(() => {
+      setHeroVisible(true)
+      setVideoPlaying(false)
+    }, 3500)
+    
+    return () => {
+      clearTimeout(nepaTimer)
+      clearTimeout(heroTimer)
+    }
   }, [])
 
   return (
@@ -20,31 +30,45 @@ export function HomePage() {
         muted
         loop
         playsInline
-        className="absolute top-0 left-0 w-full h-full object-cover opacity-20"
+        className="absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1500"
+        style={{ opacity: videoPlaying ? 0.3 : 0.15 }}
       >
         <source src={heroVideo} type="video/mp4" />
       </video>
 
-      <div className="absolute inset-0 bg-gradient-to-r from-white via-white/85 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/90" />
+      <div 
+        className="absolute inset-0 bg-gradient-to-r from-white/60 via-white/40 to-transparent transition-opacity duration-1500"
+        style={{ opacity: heroVisible ? 1 : 0 }}
+      />
+      <div 
+        className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/70 transition-opacity duration-1500"
+        style={{ opacity: heroVisible ? 1 : 0 }}
+      />
       
-      <div className="absolute inset-0 opacity-30" 
+      <div 
+        className="absolute inset-0 opacity-20 transition-opacity duration-1500" 
         style={{
           backgroundImage: 'radial-gradient(circle, rgba(0,150,220,0.08) 1px, transparent 1px)',
-          backgroundSize: '40px 40px'
+          backgroundSize: '40px 40px',
+          opacity: heroVisible ? 0.2 : 0
         }}
       />
 
-      <div className="absolute left-0 right-0 h-px pointer-events-none"
+      <div 
+        className="absolute left-0 right-0 h-px pointer-events-none transition-opacity duration-1500"
         style={{
           background: 'linear-gradient(90deg, rgba(0,150,220,0.4) 0%, transparent 60%)',
           animation: 'sweep 8s linear infinite',
+          opacity: heroVisible ? 1 : 0
         }}
       />
 
       <div className="relative z-20 container mx-auto px-8 pt-32 pb-16 min-h-screen flex flex-col justify-center">
         <div className="max-w-5xl">
-          <div className="flex items-center gap-3 mb-12">
+          <div 
+            className="flex items-center gap-3 mb-12 transition-opacity duration-1000"
+            style={{ opacity: heroVisible ? 1 : 0 }}
+          >
             <div className="relative flex items-center justify-center w-3 h-3">
               <div className="absolute w-3 h-3 bg-blue-500 rounded-full animate-ping opacity-75" />
               <div className="relative w-2 h-2 bg-blue-600 rounded-full" />
@@ -57,8 +81,8 @@ export function HomePage() {
           <div
             className="mb-10 transition-all duration-1000 ease-out"
             style={{
-              opacity: visible ? 1 : 0,
-              transform: visible ? 'translateY(0)' : 'translateY(32px)',
+              opacity: heroVisible ? 1 : 0,
+              transform: heroVisible ? 'translateY(0)' : 'translateY(32px)',
             }}
           >
             <h1 className="text-7xl md:text-9xl font-bold tracking-tight leading-[0.95] mb-4">
@@ -68,8 +92,8 @@ export function HomePage() {
               className="text-4xl md:text-6xl font-light tracking-tight leading-tight text-blue-600"
               style={{
                 transition: 'opacity 1s ease-out 0.3s, transform 1s ease-out 0.3s',
-                opacity: visible ? 1 : 0,
-                transform: visible ? 'translateY(0)' : 'translateY(24px)',
+                opacity: heroVisible ? 1 : 0,
+                transform: heroVisible ? 'translateY(0)' : 'translateY(24px)',
               }}
             >
               Video Agent
@@ -78,16 +102,34 @@ export function HomePage() {
 
           <div
             className="mb-12 transition-opacity duration-1000 ease-out delay-700"
-            style={{ opacity: visible ? 1 : 0 }}
+            style={{ opacity: heroVisible ? 1 : 0 }}
           >
             <div className="inline-block border-l-2 border-blue-500/40 pl-6 mb-8">
-              <p className="font-mono text-xs tracking-[0.28em] text-blue-600/70 uppercase mb-3">
+              <p 
+                className="font-mono text-xs tracking-[0.28em] text-blue-600/70 uppercase mb-3 transition-all duration-700"
+                style={{
+                  opacity: nepaRevealed ? 1 : 0,
+                  transform: nepaRevealed ? 'translateX(0)' : 'translateX(-12px)'
+                }}
+              >
                 NEPA
               </p>
-              <p className="text-xl md:text-2xl font-light text-gray-700 leading-relaxed mb-1">
+              <p 
+                className="text-xl md:text-2xl font-light text-gray-700 leading-relaxed mb-1 transition-all duration-700 delay-200"
+                style={{
+                  opacity: nepaRevealed ? 1 : 0,
+                  transform: nepaRevealed ? 'translateX(0)' : 'translateX(-12px)'
+                }}
+              >
                 Neuromorphic
               </p>
-              <p className="text-xl md:text-2xl font-light text-gray-700 leading-relaxed">
+              <p 
+                className="text-xl md:text-2xl font-light text-gray-700 leading-relaxed transition-all duration-700 delay-300"
+                style={{
+                  opacity: nepaRevealed ? 1 : 0,
+                  transform: nepaRevealed ? 'translateX(0)' : 'translateX(-12px)'
+                }}
+              >
                 Edge Perception Agent
               </p>
             </div>
@@ -101,7 +143,7 @@ export function HomePage() {
 
           <div
             className="flex items-center gap-4 flex-wrap mb-16 transition-opacity duration-1000 ease-out delay-1000"
-            style={{ opacity: visible ? 1 : 0 }}
+            style={{ opacity: heroVisible ? 1 : 0 }}
           >
             <Button
               asChild
@@ -126,7 +168,7 @@ export function HomePage() {
 
           <div
             className="font-mono text-[11px] flex items-center gap-8 flex-wrap border-t border-gray-200 pt-8 transition-opacity duration-1000 ease-out delay-1000"
-            style={{ opacity: visible ? 1 : 0 }}
+            style={{ opacity: heroVisible ? 1 : 0 }}
           >
             <div className="flex flex-col gap-1">
               <span className="text-gray-400 text-[10px] tracking-wider uppercase">Inference Latency</span>
