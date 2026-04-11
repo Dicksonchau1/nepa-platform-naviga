@@ -19,7 +19,7 @@ export function Navbar() {
   const isActive = (path: string) => location.pathname === path
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/20 bg-background/70 backdrop-blur-xl">
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-cyan-glow/10 bg-[#050508]/80 backdrop-blur-xl">
       <div className="container mx-auto px-6 py-3">
         <div className="flex items-center justify-between gap-8">
           <Link to="/" className="flex items-center gap-3 group">
@@ -29,19 +29,22 @@ export function Navbar() {
               className="h-8 w-8 md:h-9 md:w-9 object-contain"
             />
             <div className="flex flex-col leading-tight">
-              <span className="text-base md:text-lg font-semibold tracking-[0.08em] uppercase group-hover:text-primary transition-colors">
+              <span className="text-base md:text-lg font-semibold tracking-[0.08em] uppercase group-hover:text-cyan-glow transition-colors">
                 AuraSense
               </span>
-              <span className="text-[11px] md:text-xs font-medium tracking-[0.22em] text-muted-foreground/80">
-                NEPA PLATFORM
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] md:text-xs font-mono font-medium tracking-[0.22em] text-muted-foreground/80">
+                  NEPA PLATFORM
+                </span>
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-glow flicker shadow-[0_0_6px_rgba(0,212,255,0.6)]" />
+              </div>
             </div>
           </Link>
 
           <div className="flex items-center gap-6">
             <DropdownMenu open={isProductsOpen} onOpenChange={setIsProductsOpen}>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1 text-xs md:text-sm font-medium tracking-[0.14em] uppercase text-muted-foreground hover:text-foreground transition-colors">
+                <button className="flex items-center gap-1 font-mono text-[11px] tracking-[0.2em] uppercase text-cyan-glow/50 hover:text-cyan-glow transition-colors">
                   Products
                   <CaretDown
                     size={14}
@@ -120,7 +123,7 @@ export function Navbar() {
 
             <DropdownMenu open={isResourcesOpen} onOpenChange={setIsResourcesOpen}>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1 text-xs md:text-sm font-medium tracking-[0.14em] uppercase text-muted-foreground hover:text-foreground transition-colors">
+                <button className="flex items-center gap-1 font-mono text-[11px] tracking-[0.2em] uppercase text-cyan-glow/50 hover:text-cyan-glow transition-colors">
                   Resources
                   <CaretDown
                     size={14}
@@ -173,7 +176,7 @@ export function Navbar() {
 
             <DropdownMenu open={isAboutOpen} onOpenChange={setIsAboutOpen}>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1 text-xs md:text-sm font-medium tracking-[0.14em] uppercase text-muted-foreground hover:text-foreground transition-colors">
+                <button className="flex items-center gap-1 font-mono text-[11px] tracking-[0.2em] uppercase text-cyan-glow/50 hover:text-cyan-glow transition-colors">
                   About
                   <CaretDown
                     size={14}
@@ -218,18 +221,9 @@ export function Navbar() {
             <div className="flex items-center gap-3">
               <Button
                 asChild
-                variant="ghost"
-                size="sm"
-                className="text-xs md:text-sm font-medium tracking-[0.16em] uppercase text-muted-foreground hover:text-foreground"
-              >
-                <Link to="/signin">Sign in</Link>
-              </Button>
-
-              <Button
-                asChild
                 size="sm"
                 variant="outline"
-                className="text-xs md:text-sm font-medium tracking-[0.16em] uppercase border-border/40 text-foreground hover:bg-accent/40"
+                className="border border-cyan-glow/40 text-cyan-glow bg-transparent hover:bg-cyan-glow/10 hover:border-cyan-glow font-mono text-[11px] tracking-[0.18em] uppercase px-4 py-2"
               >
                 <Link to="/dashboard">Console</Link>
               </Button>
@@ -237,7 +231,7 @@ export function Navbar() {
               <Button
                 asChild
                 size="sm"
-                className="bg-primary text-primary-foreground hover:bg-primary/90 border border-primary/40 text-[11px] md:text-xs font-semibold tracking-[0.18em] uppercase px-5"
+                className="bg-cyan-glow text-black hover:bg-cyan-glow/90 font-mono font-bold text-[11px] tracking-[0.2em] uppercase px-5"
               >
                 <Link to="/signup">Get started</Link>
               </Button>
