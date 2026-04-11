@@ -17,6 +17,8 @@ export const API_CONFIG = {
       create: '/tasks',
       update: (id: string) => `/tasks/${id}`,
       status: (id: string) => `/tasks/${id}/status`,
+      bulkUpdate: '/tasks/bulk/status',
+      bulkDelete: '/tasks/bulk/delete',
     },
     facade: {
       findings: '/facade/findings',

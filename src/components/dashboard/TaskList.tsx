@@ -1,6 +1,7 @@
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,6 +35,8 @@ interface TaskListProps {
   onUpdateStatus: (taskId: string, status: RobotTask['status']) => Promise<void>
   onCancel: (taskId: string) => Promise<void>
   onRetry: (taskId: string) => Promise<void>
+  selectedTaskIds?: Set<string>
+  onToggleSelect?: (taskId: string) => void
 }
 
 const priorityColors = {
@@ -83,7 +86,7 @@ const statusConfig = {
   },
 }
 
-export function TaskList({ tasks, onUpdateStatus, onCancel, onRetry }: TaskListProps) {
+export function TaskList({ tasks, onUpdateStatus, onCancel, onRetry, selectedTaskIds, onToggleSelect }: TaskListProps) {
   const sortedTasks = [...tasks].sort((a, b) => {
     if (a.status !== b.status) {
       const statusOrder = ['running', 'queued', 'failed', 'completed', 'cancelled']
@@ -97,6 +100,7 @@ export function TaskList({ tasks, onUpdateStatus, onCancel, onRetry }: TaskListP
       <Table>
         <TableHeader>
           <TableRow className="hover:bg-transparent border-border/30">
+            {onToggleSelect && <TableHead className="w-12"></TableHead>}
             <TableHead className="w-12">Status</TableHead>
             <TableHead>Task Name</TableHead>
             <TableHead>Type</TableHead>
@@ -110,7 +114,7 @@ export function TaskList({ tasks, onUpdateStatus, onCancel, onRetry }: TaskListP
         <TableBody>
           {sortedTasks.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={8} className="text-center text-muted-foreground py-12">
+              <TableCell colSpan={onToggleSelect ? 9 : 8} className="text-center text-muted-foreground py-12">
                 No tasks found
               </TableCell>
             </TableRow>
@@ -120,7 +124,21 @@ export function TaskList({ tasks, onUpdateStatus, onCancel, onRetry }: TaskListP
               const StatusIcon = statusInfo.icon
 
               return (
-                <TableRow key={task.id} className="border-border/30">
+                <TableRow 
+                  key={task.id} 
+                  className={cn(
+                    'border-border/30',
+                    selectedTaskIds?.has(task.id) && 'bg-primary/5'
+                  )}
+                >
+                  {onToggleSelect && (
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedTaskIds?.has(task.id)}
+                        onCheckedChange={() => onToggleSelect(task.id)}
+                      />
+                    </TableCell>
+                  )}
                   <TableCell>
                     <StatusIcon
                       size={20}

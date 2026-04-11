@@ -6,6 +6,8 @@ import {
   RobotTasksResponse,
   CreateTaskRequest,
   UpdateTaskStatusRequest,
+  BulkUpdateTasksRequest,
+  BulkDeleteTasksRequest,
 } from '@/types/nepa'
 
 export function useRobotTasks(autoFetch = true) {
@@ -127,6 +129,68 @@ export function useRobotTasks(autoFetch = true) {
     return task
   }, [accessToken, logout, refresh, fetchTasks])
 
+  const bulkUpdateTasks = useCallback(async (request: BulkUpdateTasksRequest) => {
+    if (!accessToken) {
+      throw new Error('No access token available')
+    }
+
+    const response = await fetch(
+      `${API_CONFIG.baseUrl}${API_CONFIG.endpoints.tasks.bulkUpdate}`,
+      {
+        method: 'PATCH',
+        headers: getAuthHeaders(accessToken),
+        body: JSON.stringify(request),
+      }
+    )
+
+    if (response.status === 401) {
+      try {
+        await refresh()
+        return bulkUpdateTasks(request)
+      } catch {
+        logout()
+        throw new Error('Authentication failed')
+      }
+    }
+
+    if (!response.ok) {
+      throw new Error('Failed to bulk update tasks')
+    }
+
+    await fetchTasks()
+  }, [accessToken, logout, refresh, fetchTasks])
+
+  const bulkDeleteTasks = useCallback(async (request: BulkDeleteTasksRequest) => {
+    if (!accessToken) {
+      throw new Error('No access token available')
+    }
+
+    const response = await fetch(
+      `${API_CONFIG.baseUrl}${API_CONFIG.endpoints.tasks.bulkDelete}`,
+      {
+        method: 'DELETE',
+        headers: getAuthHeaders(accessToken),
+        body: JSON.stringify(request),
+      }
+    )
+
+    if (response.status === 401) {
+      try {
+        await refresh()
+        return bulkDeleteTasks(request)
+      } catch {
+        logout()
+        throw new Error('Authentication failed')
+      }
+    }
+
+    if (!response.ok) {
+      throw new Error('Failed to bulk delete tasks')
+    }
+
+    await fetchTasks()
+  }, [accessToken, logout, refresh, fetchTasks])
+
   useEffect(() => {
     if (autoFetch && accessToken) {
       fetchTasks()
@@ -141,5 +205,7 @@ export function useRobotTasks(autoFetch = true) {
     refresh: fetchTasks,
     createTask,
     updateTaskStatus,
+    bulkUpdateTasks,
+    bulkDeleteTasks,
   }
 }

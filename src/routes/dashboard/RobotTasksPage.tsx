@@ -4,12 +4,15 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
+  DialogFooter,
 } from '@/components/ui/dialog'
 import {
   DropdownMenu,
@@ -39,11 +42,16 @@ import {
   Robot,
   ListNumbers,
   Kanban as KanbanIcon,
+  Checks,
+  Trash,
+  Square,
+  CheckSquare,
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { RobotTask, CreateTaskRequest } from '@/types/nepa'
 import { KanbanBoard } from '@/components/dashboard/KanbanBoard'
 import { TaskList } from '@/components/dashboard/TaskList'
+import { cn } from '@/lib/utils'
 
 type ViewMode = 'kanban' | 'list'
 
@@ -64,10 +72,14 @@ const priorities = [
 ]
 
 export function RobotTasksPage() {
-  const { tasks, total, isLoading, error, refresh, createTask, updateTaskStatus } = useRobotTasks()
+  const { tasks, total, isLoading, error, refresh, createTask, updateTaskStatus, bulkUpdateTasks, bulkDeleteTasks } = useRobotTasks()
   const [viewMode, setViewMode] = useState<ViewMode>('kanban')
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isCreating, setIsCreating] = useState(false)
+  const [selectedTaskIds, setSelectedTaskIds] = useState<Set<string>>(new Set())
+  const [isBulkActionsDialogOpen, setIsBulkActionsDialogOpen] = useState(false)
+  const [bulkActionStatus, setBulkActionStatus] = useState<RobotTask['status']>('queued')
+  const [isBulkOperating, setIsBulkOperating] = useState(false)
   
   const [newTask, setNewTask] = useState<CreateTaskRequest>({
     name: '',
@@ -126,6 +138,72 @@ export function RobotTasksPage() {
       toast.success('Task requeued')
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to retry task')
+    }
+  }
+
+  const toggleSelectTask = (taskId: string) => {
+    setSelectedTaskIds((prev) => {
+      const newSet = new Set(prev)
+      if (newSet.has(taskId)) {
+        newSet.delete(taskId)
+      } else {
+        newSet.add(taskId)
+      }
+      return newSet
+    })
+  }
+
+  const toggleSelectAll = () => {
+    if (selectedTaskIds.size === tasks.length && tasks.length > 0) {
+      setSelectedTaskIds(new Set())
+    } else {
+      setSelectedTaskIds(new Set(tasks.map(t => t.id)))
+    }
+  }
+
+  const clearSelection = () => {
+    setSelectedTaskIds(new Set())
+  }
+
+  const handleBulkUpdateStatus = async () => {
+    if (selectedTaskIds.size === 0) {
+      toast.error('No tasks selected')
+      return
+    }
+
+    setIsBulkOperating(true)
+    try {
+      await bulkUpdateTasks({
+        taskIds: Array.from(selectedTaskIds),
+        status: bulkActionStatus,
+      })
+      toast.success(`${selectedTaskIds.size} tasks updated to ${bulkActionStatus}`)
+      setIsBulkActionsDialogOpen(false)
+      clearSelection()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to bulk update tasks')
+    } finally {
+      setIsBulkOperating(false)
+    }
+  }
+
+  const handleBulkDelete = async () => {
+    if (selectedTaskIds.size === 0) {
+      toast.error('No tasks selected')
+      return
+    }
+
+    setIsBulkOperating(true)
+    try {
+      await bulkDeleteTasks({
+        taskIds: Array.from(selectedTaskIds),
+      })
+      toast.success(`${selectedTaskIds.size} tasks deleted`)
+      clearSelection()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to bulk delete tasks')
+    } finally {
+      setIsBulkOperating(false)
     }
   }
 
@@ -265,6 +343,83 @@ export function RobotTasksPage() {
         </div>
       </div>
 
+      {selectedTaskIds.size > 0 && (
+        <Card className="p-4 bg-primary/10 border-primary/30">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Checkbox
+                checked={selectedTaskIds.size === tasks.length && tasks.length > 0}
+                onCheckedChange={toggleSelectAll}
+              />
+              <p className="text-sm font-medium">
+                {selectedTaskIds.size} task{selectedTaskIds.size !== 1 ? 's' : ''} selected
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Dialog open={isBulkActionsDialogOpen} onOpenChange={setIsBulkActionsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <Checks size={16} weight="bold" />
+                    Bulk Update Status
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Bulk Update Task Status</DialogTitle>
+                    <DialogDescription>
+                      Update the status of {selectedTaskIds.size} selected task{selectedTaskIds.size !== 1 ? 's' : ''}
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="bulk-status">New Status</Label>
+                      <Select
+                        value={bulkActionStatus}
+                        onValueChange={(value) => setBulkActionStatus(value as RobotTask['status'])}
+                      >
+                        <SelectTrigger id="bulk-status">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="queued">Queued</SelectItem>
+                          <SelectItem value="running">Running</SelectItem>
+                          <SelectItem value="completed">Completed</SelectItem>
+                          <SelectItem value="failed">Failed</SelectItem>
+                          <SelectItem value="cancelled">Cancelled</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setIsBulkActionsDialogOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button onClick={handleBulkUpdateStatus} disabled={isBulkOperating}>
+                      {isBulkOperating ? 'Updating...' : 'Update Tasks'}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+
+              <Button
+                variant="destructive"
+                size="sm"
+                className="gap-2"
+                onClick={handleBulkDelete}
+                disabled={isBulkOperating}
+              >
+                <Trash size={16} weight="bold" />
+                Delete Selected
+              </Button>
+
+              <Button variant="ghost" size="sm" onClick={clearSelection}>
+                Clear
+              </Button>
+            </div>
+          </div>
+        </Card>
+      )}
+
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <Card className="p-4 bg-card/50 backdrop-blur-xl border-border/50">
           <div className="flex items-center gap-2 mb-2">
@@ -315,6 +470,8 @@ export function RobotTasksPage() {
           onUpdateStatus={handleUpdateStatus}
           onCancel={handleCancelTask}
           onRetry={handleRetryTask}
+          selectedTaskIds={selectedTaskIds}
+          onToggleSelect={toggleSelectTask}
         />
       ) : (
         <TaskList
@@ -322,6 +479,8 @@ export function RobotTasksPage() {
           onUpdateStatus={handleUpdateStatus}
           onCancel={handleCancelTask}
           onRetry={handleRetryTask}
+          selectedTaskIds={selectedTaskIds}
+          onToggleSelect={toggleSelectTask}
         />
       )}
     </div>

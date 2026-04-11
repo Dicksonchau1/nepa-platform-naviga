@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,6 +28,8 @@ interface KanbanBoardProps {
   onUpdateStatus: (taskId: string, status: RobotTask['status']) => Promise<void>
   onCancel: (taskId: string) => Promise<void>
   onRetry: (taskId: string) => Promise<void>
+  selectedTaskIds?: Set<string>
+  onToggleSelect?: (taskId: string) => void
 }
 
 interface TaskCardProps {
@@ -34,6 +37,8 @@ interface TaskCardProps {
   onUpdateStatus: (taskId: string, status: RobotTask['status']) => Promise<void>
   onCancel: (taskId: string) => Promise<void>
   onRetry: (taskId: string) => Promise<void>
+  isSelected?: boolean
+  onToggleSelect?: () => void
 }
 
 const priorityColors = {
@@ -50,7 +55,7 @@ const priorityLabels = {
   4: 'Critical',
 }
 
-function TaskCard({ task, onUpdateStatus, onCancel, onRetry }: TaskCardProps) {
+function TaskCard({ task, onUpdateStatus, onCancel, onRetry, isSelected, onToggleSelect }: TaskCardProps) {
   const [isDragging, setIsDragging] = useState(false)
 
   const handleDragStart = (e: React.DragEvent) => {
@@ -85,11 +90,19 @@ function TaskCard({ task, onUpdateStatus, onCancel, onRetry }: TaskCardProps) {
       onDragEnd={handleDragEnd}
       className={cn(
         'p-4 cursor-move hover:border-primary/50 transition-all',
-        isDragging && 'opacity-50 scale-95'
+        isDragging && 'opacity-50 scale-95',
+        isSelected && 'border-primary ring-2 ring-primary/20'
       )}
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2">
+          {onToggleSelect && (
+            <Checkbox
+              checked={isSelected}
+              onCheckedChange={onToggleSelect}
+              onClick={(e) => e.stopPropagation()}
+            />
+          )}
           {getStatusIcon()}
           <h3 className="font-semibold text-sm line-clamp-2">{task.name}</h3>
         </div>
@@ -189,9 +202,11 @@ interface ColumnProps {
   onUpdateStatus: (taskId: string, status: RobotTask['status']) => Promise<void>
   onCancel: (taskId: string) => Promise<void>
   onRetry: (taskId: string) => Promise<void>
+  selectedTaskIds?: Set<string>
+  onToggleSelect?: (taskId: string) => void
 }
 
-function Column({ title, status, tasks, icon, count, onUpdateStatus, onCancel, onRetry }: ColumnProps) {
+function Column({ title, status, tasks, icon, count, onUpdateStatus, onCancel, onRetry, selectedTaskIds, onToggleSelect }: ColumnProps) {
   const [isDragOver, setIsDragOver] = useState(false)
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -243,6 +258,8 @@ function Column({ title, status, tasks, icon, count, onUpdateStatus, onCancel, o
               onUpdateStatus={onUpdateStatus}
               onCancel={onCancel}
               onRetry={onRetry}
+              isSelected={selectedTaskIds?.has(task.id)}
+              onToggleSelect={onToggleSelect ? () => onToggleSelect(task.id) : undefined}
             />
           ))
         )}
@@ -251,7 +268,7 @@ function Column({ title, status, tasks, icon, count, onUpdateStatus, onCancel, o
   )
 }
 
-export function KanbanBoard({ tasks, onUpdateStatus, onCancel, onRetry }: KanbanBoardProps) {
+export function KanbanBoard({ tasks, onUpdateStatus, onCancel, onRetry, selectedTaskIds, onToggleSelect }: KanbanBoardProps) {
   const queuedTasks = tasks.filter(t => t.status === 'queued')
   const runningTasks = tasks.filter(t => t.status === 'running')
   const completedTasks = tasks.filter(t => t.status === 'completed')
@@ -268,6 +285,8 @@ export function KanbanBoard({ tasks, onUpdateStatus, onCancel, onRetry }: Kanban
         onUpdateStatus={onUpdateStatus}
         onCancel={onCancel}
         onRetry={onRetry}
+        selectedTaskIds={selectedTaskIds}
+        onToggleSelect={onToggleSelect}
       />
       <Column
         title="Running"
@@ -278,6 +297,8 @@ export function KanbanBoard({ tasks, onUpdateStatus, onCancel, onRetry }: Kanban
         onUpdateStatus={onUpdateStatus}
         onCancel={onCancel}
         onRetry={onRetry}
+        selectedTaskIds={selectedTaskIds}
+        onToggleSelect={onToggleSelect}
       />
       <Column
         title="Completed"
@@ -288,6 +309,8 @@ export function KanbanBoard({ tasks, onUpdateStatus, onCancel, onRetry }: Kanban
         onUpdateStatus={onUpdateStatus}
         onCancel={onCancel}
         onRetry={onRetry}
+        selectedTaskIds={selectedTaskIds}
+        onToggleSelect={onToggleSelect}
       />
       <Column
         title="Failed"
@@ -298,6 +321,8 @@ export function KanbanBoard({ tasks, onUpdateStatus, onCancel, onRetry }: Kanban
         onUpdateStatus={onUpdateStatus}
         onCancel={onCancel}
         onRetry={onRetry}
+        selectedTaskIds={selectedTaskIds}
+        onToggleSelect={onToggleSelect}
       />
     </div>
   )

@@ -76,6 +76,15 @@ export interface UpdateTaskStatusRequest {
   error?: string
 }
 
+export interface BulkUpdateTasksRequest {
+  taskIds: string[]
+  status: 'queued' | 'running' | 'completed' | 'failed' | 'cancelled'
+}
+
+export interface BulkDeleteTasksRequest {
+  taskIds: string[]
+}
+
 export interface FacadeFinding {
   id: string
   buildingId: string
