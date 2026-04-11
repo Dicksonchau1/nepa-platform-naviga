@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Terminal } from '@phosphor-icons/react'
@@ -9,6 +9,7 @@ export function HomePage() {
   const [videoPlaying, setVideoPlaying] = useState(true)
   const [nepaRevealed, setNepaRevealed] = useState(false)
   const [heroVisible, setHeroVisible] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
     const nepaTimer = setTimeout(() => setNepaRevealed(true), 2000)
@@ -23,13 +24,20 @@ export function HomePage() {
     }
   }, [])
 
+  const handleVideoEnded = () => {
+    if (videoRef.current) {
+      videoRef.current.pause()
+    }
+  }
+
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-white">
       <video
+        ref={videoRef}
         autoPlay
         muted
-        loop
         playsInline
+        onEnded={handleVideoEnded}
         className="absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1500"
         style={{ opacity: videoPlaying ? 0.3 : 0.15 }}
       >
