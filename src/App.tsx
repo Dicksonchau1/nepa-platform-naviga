@@ -6,11 +6,14 @@ import { SignInPage } from '@/components/pages/SignInPage'
 import { SignUpPage } from '@/components/pages/SignUpPage'
 import { ForgotPasswordPage } from '@/components/pages/ForgotPasswordPage'
 import { ResetPasswordPage } from '@/components/pages/ResetPasswordPage'
+import { TwoFactorSetupPage } from '@/components/pages/TwoFactorSetupPage'
+import { TwoFactorVerifyPage } from '@/components/pages/TwoFactorVerifyPage'
 import { Toaster } from '@/components/ui/sonner'
 import { PlaceholderPage } from '@/components/pages/PlaceholderPage'
 
 function App() {
   const [currentPage, setCurrentPage] = useKV<string>('aura-current-page', 'home')
+  const [pendingEmail, setPendingEmail] = useKV<string>('aura-pending-email', '')
 
   const handleNavigate = (page: string) => {
     setCurrentPage(page)
@@ -38,9 +41,23 @@ function App() {
       case 'careers':
         return <PlaceholderPage title="Careers" subtitle="Join our team building perception infrastructure" onNavigate={handleNavigate} />
       case 'signin':
-        return <SignInPage onNavigate={handleNavigate} />
+        return <SignInPage onNavigate={handleNavigate} onRequire2FA={(email: string) => {
+          setPendingEmail(email)
+          handleNavigate('2fa-verify')
+        }} />
       case 'signup':
-        return <SignUpPage onNavigate={handleNavigate} />
+        return <SignUpPage onNavigate={handleNavigate} onSignUpSuccess={(email: string) => {
+          setPendingEmail(email)
+          handleNavigate('2fa-setup')
+        }} />
+      case '2fa-setup':
+        return <TwoFactorSetupPage onNavigate={handleNavigate} userEmail={pendingEmail} />
+      case '2fa-verify':
+        return <TwoFactorVerifyPage 
+          onNavigate={handleNavigate} 
+          userEmail={pendingEmail}
+          onVerified={() => handleNavigate('home')}
+        />
       case 'forgot-password':
         return <ForgotPasswordPage onNavigate={handleNavigate} />
       case 'reset-password':

@@ -9,9 +9,10 @@ import { toast } from 'sonner'
 
 interface SignInPageProps {
   onNavigate: (page: string) => void
+  onRequire2FA?: (email: string) => void
 }
 
-export function SignInPage({ onNavigate }: SignInPageProps) {
+export function SignInPage({ onNavigate, onRequire2FA }: SignInPageProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -23,8 +24,15 @@ export function SignInPage({ onNavigate }: SignInPageProps) {
 
     setTimeout(() => {
       setIsLoading(false)
-      toast.success('Sign in successful')
-      onNavigate('home')
+      
+      const userHas2FA = Math.random() > 0.5
+      
+      if (userHas2FA && onRequire2FA) {
+        onRequire2FA(email)
+      } else {
+        toast.success('Sign in successful')
+        onNavigate('home')
+      }
     }, 1500)
   }
 

@@ -10,9 +10,10 @@ import { toast } from 'sonner'
 
 interface SignUpPageProps {
   onNavigate: (page: string) => void
+  onSignUpSuccess?: (email: string) => void
 }
 
-export function SignUpPage({ onNavigate }: SignUpPageProps) {
+export function SignUpPage({ onNavigate, onSignUpSuccess }: SignUpPageProps) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -37,7 +38,12 @@ export function SignUpPage({ onNavigate }: SignUpPageProps) {
     setTimeout(() => {
       setIsLoading(false)
       toast.success('Account created successfully')
-      onNavigate('home')
+      
+      if (onSignUpSuccess) {
+        onSignUpSuccess(formData.email)
+      } else {
+        onNavigate('home')
+      }
     }, 1500)
   }
 
