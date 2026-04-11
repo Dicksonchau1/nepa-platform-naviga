@@ -41,6 +41,8 @@ import { PrivacyPage } from '@/routes/about/PrivacyPage'
 import { TermsPage } from '@/routes/about/TermsPage'
 import { SecurityPage } from '@/routes/about/SecurityPage'
 
+import { PricingPage } from '@/routes/PricingPage'
+
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth()
   const location = useLocation()
@@ -79,6 +81,8 @@ function AppRoutes() {
         <Route path="/playground" element={<PlaygroundPage />} />
         <Route path="/agent" element={<AgentChat />} />
         <Route path="/chat" element={<AgentChat />} />
+
+        <Route path="/pricing" element={<PricingPage />} />
 
         <Route path="/products/voda" element={<VODAPage />} />
         <Route path="/products/roda" element={<RODAPage />} />
