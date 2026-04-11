@@ -24,11 +24,11 @@ const FEED_LABELS = [
 const SPEC = [
   { k: 'AGENT_ID',      v: 'VODA-v2.3' },
   { k: 'DOMAIN',        v: 'Video operations & real-time detection' },
-  { k: 'INFERENCE_RT',  v: '< 36ms on Jetson Nano' },
-  { k: 'MODEL_BACKEND', v: 'YOLOv8 + ONNX + TensorRT' },
-  { k: 'CAMERA_INPUTS', v: 'Up to 16 concurrent streams' },
+  { k: 'INFERENCE_RT',  v: '< 42ms average' },
+  { k: 'MODEL_BACKEND', v: 'YOLOv8 + vision transformers' },
+  { k: 'VIDEO_INPUTS', v: 'Files, streams, URLs, live feeds' },
   { k: 'AUDIT_CHAIN',   v: 'SHA-256 hash-linked event log' },
-  { k: 'DEPLOYMENT',    v: 'Edge-only — no cloud egress' },
+  { k: 'DEPLOYMENT',    v: 'Cloud, edge, or hybrid' },
   { k: 'COMPLIANCE',    v: 'PDPO · GDPR by default' },
   { k: 'STATUS',        v: 'Operational' },
 ]
@@ -37,32 +37,32 @@ const CAPABILITIES = [
   {
     n: '01',
     title: 'Real-time object detection',
-    desc: 'YOLOv8-powered multi-class detection at up to 30 FPS on edge hardware. People, objects, zones, and events — classified on-device without any cloud round-trip.',
+    desc: 'YOLOv8-powered multi-class detection across video files, streams, and live feeds. People, objects, zones, and events classified with high accuracy.',
   },
   {
     n: '02',
-    title: 'Multi-camera stream management',
-    desc: 'VODA handles up to 16 concurrent camera feeds with independent per-channel inference, frame buffering, and a unified event stream for the dashboard.',
+    title: 'Multi-source video processing',
+    desc: 'VODA handles video files, URLs, live camera streams, and RTSP feeds with independent per-source inference and unified event tracking.',
   },
   {
     n: '03',
     title: 'Behavioural pattern recognition',
-    desc: 'Dwell time tracking, crowd density estimation, loitering detection, and movement trajectory analysis. All alerts generated on-device and written to the audit ledger.',
+    desc: 'Dwell time tracking, crowd density estimation, loitering detection, and movement trajectory analysis with configurable alert thresholds.',
   },
   {
     n: '04',
     title: 'Anomaly classification',
-    desc: 'A fine-tuned classification head flags operational anomalies — unauthorised zone access, shelf tampering, equipment failure — with configurable sensitivity per camera.',
+    desc: 'Fine-tuned classification for operational anomalies — zone breaches, tampering events, equipment failures — with adjustable sensitivity.',
   },
   {
     n: '05',
     title: 'Cryptographic audit logging',
-    desc: 'Every detection event is SHA-256 hash-chained into an immutable audit record, timestamped to millisecond precision. Tamper-evident compliance out of the box.',
+    desc: 'Every detection event is SHA-256 hash-chained into an immutable audit record, timestamped to millisecond precision for compliance.',
   },
   {
     n: '06',
-    title: 'Edge-only privacy architecture',
-    desc: 'No video frame ever leaves the edge node. Inference, classification, alerting, and logging all happen on-device. PDPO and GDPR compliant without additional configuration.',
+    title: 'Flexible deployment architecture',
+    desc: 'Deploy on edge hardware for zero-cloud privacy, in cloud for scale, or hybrid for balanced performance. PDPO and GDPR compliant across all modes.',
   },
 ]
 
@@ -83,21 +83,21 @@ const USE_CASES = [
 
 const PLANS = [
   {
-    name:      'Pilot',
-    price:     'HK$20,000',
-    period:    'one-time installation',
+    name:      'Starter',
+    price:     'HK$15,000',
+    period:    'one-time setup',
     highlight: false,
-    tag:       '30-day pilot programme',
+    tag:       '30-day trial programme',
     features: [
-      'On-site hardware assessment & installation',
-      'Full VODA agent deployment (up to 8 streams)',
+      'Initial setup and configuration',
+      'VODA agent deployment (up to 8 video sources)',
       'NEPA console — full access',
       'Full audit ledger (30-day retention)',
-      'Dedicated AuraSense engineer on-site setup',
-      'Team backup throughout pilot period',
-      'Joint review session at pilot close',
+      'Dedicated AuraSense engineer for setup',
+      'Team support throughout trial period',
+      'Joint review session at trial close',
     ],
-    cta: 'Apply for pilot',
+    cta: 'Start trial',
     to:  '/about/contact',
   },
   {
@@ -107,7 +107,7 @@ const PLANS = [
     highlight: true,
     tag:       'Included from day one',
     features: [
-      'Full AuraSense team backup',
+      'Full AuraSense team support',
       'Remote monitoring & incident response',
       'Model updates and inference tuning',
       'Alert threshold reconfiguration',
@@ -126,7 +126,7 @@ const PLANS = [
     highlight: false,
     tag:       'Multi-site commercial rollout',
     features: [
-      'Up to 16 camera streams per node',
+      'Unlimited video sources',
       'Multi-site deployment',
       'Custom model fine-tuning',
       'Unlimited audit log retention',
@@ -142,18 +142,18 @@ const PLANS = [
 const TRIAL_STEPS = [
   {
     n:     '01',
-    title: 'Contact us to arrange the pilot',
-    desc:  'Submit your site details — number of cameras, facility type, and what you want to detect. We respond within 2 business days.',
+    title: 'Contact us to arrange the trial',
+    desc:  'Submit your requirements — video sources, use case, and what you want to detect. We respond within 2 business days.',
   },
   {
     n:     '02',
-    title: 'Hardware assessment',
-    desc:  'Our team assesses your edge hardware compatibility (Jetson Nano, Intel NUC) and prepares your deployment configuration.',
+    title: 'Configuration & setup',
+    desc:  'Our team configures VODA for your specific deployment model (edge, cloud, or hybrid) and prepares your configuration.',
   },
   {
     n:     '03',
-    title: 'On-site installation',
-    desc:  'AuraSense engineers install VODA on your edge hardware, configure camera streams, zones, and alert thresholds on your site.',
+    title: 'Deployment & integration',
+    desc:  'AuraSense engineers deploy VODA, configure video sources, zones, and alert thresholds for your environment.',
   },
   {
     n:     '04',
@@ -163,7 +163,7 @@ const TRIAL_STEPS = [
   {
     n:     '05',
     title: 'Joint review and scale decision',
-    desc:  'At pilot close we review results together. If VODA delivers value, we discuss a production rollout scoped to your operation.',
+    desc:  'At trial close we review results together. If VODA delivers value, we discuss a production rollout scoped to your needs.',
   },
 ]
 
@@ -271,10 +271,9 @@ export function VODAPage() {
               }}
             >
               VODA is the video intelligence agent of the NEPA platform. It
-              processes up to 16 concurrent camera streams entirely on-device,
-              classifying objects, behaviours, and anomalies in under 36ms —
-              with every event cryptographically logged to a tamper-evident
-              audit chain.
+              processes video files, live streams, and camera feeds to classify
+              objects, behaviours, and anomalies in real time — with every
+              event cryptographically logged to a tamper-evident audit chain.
             </p>
 
             <div
@@ -312,10 +311,10 @@ export function VODAPage() {
               }}
             >
               {[
-                { label: 'Inference latency', value: '< 36ms',   note: 'on Jetson Nano' },
-                { label: 'Camera streams',    value: 'Up to 16', note: 'concurrent' },
+                { label: 'Inference latency', value: '< 42ms',   note: 'average' },
+                { label: 'Video sources',     value: 'Files, streams, URLs', note: 'all formats' },
                 { label: 'Audit log',         value: 'SHA-256',  note: 'hash-chained' },
-                { label: 'Cloud dependency',  value: 'Zero',     note: 'edge-only' },
+                { label: 'Deployment',        value: 'Flexible', note: 'cloud, edge, hybrid' },
               ].map((m) => (
                 <div key={m.label}>
                   <p className="text-white/25 text-xs mb-1">{m.label}</p>
@@ -396,7 +395,7 @@ export function VODAPage() {
           </HudPanel>
 
           <p className="text-xs text-white/15 mt-3 font-mono">
-            Simulated feed for demonstration. Live deployment requires Jetson Nano or Intel NUC on-site.
+            Simulated feed for demonstration. Actual deployment processes your video sources with real-time inference.
           </p>
         </div>
       </section>
@@ -432,11 +431,11 @@ export function VODAPage() {
                 </p>
                 <div className="space-y-2.5">
                   {[
-                    'A cloud-dependent surveillance SaaS',
-                    'A proprietary hardware system',
-                    'A black-box with no audit trail',
-                    'A system that sends your video to a remote server',
-                    'A one-size-fits-all CCTV recorder',
+                    'A cloud-dependent SaaS with monthly subscriptions',
+                    'A generic video player or converter',
+                    'A black-box system with no audit trail',
+                    'Limited to specific camera brands or hardware',
+                    'A one-size-fits-all recording solution',
                   ].map((item) => (
                     <div key={item} className="flex items-start gap-3">
                       <span className="text-red-400/50 shrink-0 mt-0.5 text-sm">✕</span>
@@ -448,20 +447,20 @@ export function VODAPage() {
 
               <HudPanel className="bg-[#050508] p-6 flex-1">
                 <p className="text-xs text-cyan-400/50 tracking-widest font-mono uppercase mb-4">
-                  Compatible hardware
+                  Deployment options
                 </p>
                 <div className="space-y-2.5">
                   {[
-                    { hw: 'NVIDIA Jetson Nano',  note: 'Recommended — primary target' },
-                    { hw: 'Intel NUC',           note: 'Supported — x86 edge deployment' },
-                    { hw: 'Jetson Xavier NX',    note: 'Supported — higher throughput' },
-                    { hw: 'Generic x86 Linux',   note: 'Compatible — no TensorRT optimisation' },
+                    { mode: 'Edge hardware',  note: 'On-site privacy, zero cloud egress' },
+                    { mode: 'Cloud inference',           note: 'Scale processing, managed infrastructure' },
+                    { mode: 'Hybrid deployment',    note: 'Balance local privacy with cloud scale' },
+                    { mode: 'API-first integration',   note: 'Embed into existing systems' },
                   ].map((h) => (
                     <div
-                      key={h.hw}
+                      key={h.mode}
                       className="flex items-center justify-between border-b border-white/5 pb-2.5 last:border-0 last:pb-0"
                     >
-                      <span className="text-xs font-mono text-white/55">{h.hw}</span>
+                      <span className="text-xs font-mono text-white/55">{h.mode}</span>
                       <span className="text-xs text-white/25">{h.note}</span>
                     </div>
                   ))}
@@ -514,15 +513,15 @@ export function VODAPage() {
       <section className="py-24 border-t border-white/8">
         <div className="container mx-auto px-6 max-w-6xl">
           <p className="text-xs text-cyan-400/50 tracking-[0.28em] font-mono uppercase mb-3">
-            Pricing & pilot programme
+            Pricing & trial programme
           </p>
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
             How to get VODA
           </h2>
           <p className="text-white/35 max-w-2xl mb-14 text-sm leading-relaxed">
-            Start with a 30-day pilot. We install, configure, and validate VODA at your
-            site. Monthly support ensures your deployment stays operational. Production
-            rollouts are scoped to your environment.
+            Start with a 30-day trial. We set up, configure, and validate VODA for your
+            environment. Monthly support ensures your deployment stays operational. Production
+            rollouts are scoped to your requirements.
           </p>
           <div className="grid md:grid-cols-3 gap-6">
             {PLANS.map((plan) => (
@@ -574,14 +573,14 @@ export function VODAPage() {
       <section className="py-24 border-t border-white/8 bg-[#080B12]">
         <div className="container mx-auto px-6 max-w-6xl">
           <p className="text-xs text-cyan-400/50 tracking-[0.28em] font-mono uppercase mb-3">
-            Pilot programme
+            Trial programme
           </p>
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
-            How the pilot works
+            How the trial works
           </h2>
           <p className="text-white/35 max-w-2xl mb-14 text-sm leading-relaxed">
-            We handle everything from hardware assessment to on-site installation. You
-            see live results from day one. At pilot close, we review together and decide
+            We handle everything from configuration to deployment. You
+            see live results from day one. At trial close, we review together and decide
             if a full rollout makes sense.
           </p>
           <div className="space-y-6">
@@ -606,15 +605,15 @@ export function VODAPage() {
             Ready to deploy VODA?
           </h2>
           <p className="text-white/35 max-w-xl mx-auto mb-10 text-sm leading-relaxed">
-            Contact us to arrange an on-site pilot. We respond within 2 business days and
-            can have VODA running at your site within a week.
+            Contact us to arrange a trial. We respond within 2 business days and
+            can have VODA processing your video sources within a week.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Link
               to="/about/contact"
               className="bg-cyan-500 text-black font-semibold text-sm px-8 py-3.5 hover:bg-cyan-400 transition-colors"
             >
-              Apply for pilot
+              Start trial
             </Link>
             <Link
               to="/dashboard"
