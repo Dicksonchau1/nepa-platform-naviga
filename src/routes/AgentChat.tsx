@@ -24,6 +24,7 @@ type Message = {
   attachment?: Attachment
   thinking?: boolean
   agentUsed?: string
+  streaming?: boolean
 }
 
 const SUGGESTIONS = [
@@ -48,6 +49,12 @@ const SUGGESTIONS = [
     prompt: 'Set up a RODA delivery mission for an autonomous robot navigating a retail floor.',
   },
 ]
+
+function StreamingCursor() {
+  return (
+    <span className="inline-block w-1.5 h-4 bg-cyan-400/70 ml-0.5" style={{ animation: 'blink-cursor 1s steps(2) infinite' }} />
+  )
+}
 
 
 function uid() {
@@ -155,25 +162,51 @@ export function AgentChat() {
     if (fileRef.current) fileRef.current.value = ''
     setIsThinking(true)
 
+    const agentMsgId = uid()
+    let agentMsgContent = ''
+    let detectedAgent: AgentType | undefined
+
     try {
-      const response = await nepaService.infer({
+      const stream = nepaService.streamInfer({
         prompt: text,
         videoUrl: currentAttachment?.type === 'video-url' ? currentAttachment.url : undefined,
         videoFile: currentAttachment?.type === 'video-file' ? currentAttachment.file : undefined,
         imageFile: currentAttachment?.type === 'image' ? currentAttachment.file : undefined,
       })
 
-      setAgent(response.agent)
-
-      const agentMsg: Message = {
-        id: uid(),
-        role: 'agent',
-        content: response.content,
-        timestamp: new Date(),
-        agentUsed: response.agent,
+      for await (const chunk of stream) {
+        if (chunk.agent && !detectedAgent) {
+          detectedAgent = chunk.agent
+          setAgent(chunk.agent)
+          setIsThinking(false)
+          
+          setMessages((prev) => [...prev, {
+            id: agentMsgId,
+            role: 'agent',
+            content: chunk.content || '',
+            timestamp: new Date(),
+            agentUsed: chunk.agent,
+            streaming: true,
+          }])
+          agentMsgContent = chunk.content || ''
+        } else if (chunk.content) {
+          agentMsgContent += (agentMsgContent ? ' ' : '') + chunk.content
+          
+          setMessages((prev) => prev.map(msg => 
+            msg.id === agentMsgId 
+              ? { ...msg, content: agentMsgContent }
+              : msg
+          ))
+        }
       }
-      setMessages((prev) => [...prev, agentMsg])
+
+      setMessages((prev) => prev.map(msg => 
+        msg.id === agentMsgId 
+          ? { ...msg, streaming: false }
+          : msg
+      ))
     } catch (error) {
+      setIsThinking(false)
       const errorMsg: Message = {
         id: uid(),
         role: 'agent',
@@ -183,8 +216,6 @@ export function AgentChat() {
       }
       setMessages((prev) => [...prev, errorMsg])
       toast.error('Failed to connect to NEPA backend')
-    } finally {
-      setIsThinking(false)
     }
   }
 
@@ -198,6 +229,11 @@ export function AgentChat() {
   const handleSuggestion = (prompt: string) => {
     setInput(prompt)
     textRef.current?.focus()
+  }
+
+  const clearChat = () => {
+    setMessages([])
+    setAgent(null)
   }
 
   const isEmpty = messages.length === 0
@@ -234,9 +270,17 @@ export function AgentChat() {
               </div>
             )}
             <LiveBadge />
+            {!isEmpty && (
+              <button
+                onClick={clearChat}
+                className="text-xs border border-white/10 text-white/40 px-3 py-1.5 hover:border-white/25 hover:text-white/60 transition-colors font-mono rounded"
+              >
+                Clear
+              </button>
+            )}
             <Link
               to="/dashboard"
-              className="text-xs border border-white/15 text-white/50 px-3 py-1.5 hover:border-white/30 hover:text-white/80 transition-colors font-mono"
+              className="text-xs border border-white/15 text-white/50 px-3 py-1.5 hover:border-white/30 hover:text-white/80 transition-colors font-mono rounded"
             >
               Console
             </Link>
@@ -385,7 +429,12 @@ export function AgentChat() {
                       }`}
                     >
                       {msg.role === 'agent'
-                        ? <div className="space-y-1">{formatContent(msg.content)}</div>
+                        ? (
+                          <div className="space-y-1">
+                            {formatContent(msg.content)}
+                            {msg.streaming && <StreamingCursor />}
+                          </div>
+                        )
                         : msg.content
                       }
                     </div>
@@ -552,6 +601,10 @@ export function AgentChat() {
         @keyframes spin {
           from { transform: rotate(0deg); }
           to   { transform: rotate(360deg); }
+        }
+        @keyframes blink-cursor {
+          0%, 100% { opacity: 1; }
+          50%       { opacity: 0; }
         }
       `}</style>
     </div>
