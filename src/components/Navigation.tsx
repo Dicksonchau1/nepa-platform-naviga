@@ -4,8 +4,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { CaretDown } from '@phosphor-icons/react'
@@ -16,7 +14,10 @@ interface NavigationProps {
 }
 
 export function Navigation({ onNavigate, currentPage }: NavigationProps) {
-  const [isBusinessOpen, setIsBusinessOpen] = useState(false)
+  const [isProductsOpen, setIsProductsOpen] = useState(false)
+  const [isSolutionsOpen, setIsSolutionsOpen] = useState(false)
+  const [isResourcesOpen, setIsResourcesOpen] = useState(false)
+  const [isAboutOpen, setIsAboutOpen] = useState(false)
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/20 bg-background/60 backdrop-blur-xl">
@@ -24,124 +25,146 @@ export function Navigation({ onNavigate, currentPage }: NavigationProps) {
         <div className="flex items-center justify-between">
           <button
             onClick={() => onNavigate('home')}
-            className="text-xl font-bold tracking-tight hover:text-primary transition-colors mono"
+            className="text-xl font-bold tracking-tight hover:text-primary transition-colors"
           >
-            NEPA
+            AuraSense NEPA
           </button>
 
-          <div className="flex items-center gap-8">
-            <button
-              onClick={() => onNavigate('platform')}
-              className={`text-sm font-medium transition-colors hover:text-primary ${
-                currentPage === 'platform' ? 'text-primary' : 'text-foreground'
-              }`}
-            >
-              PLATFORM
-            </button>
-
-            <DropdownMenu open={isBusinessOpen} onOpenChange={setIsBusinessOpen}>
+          <div className="flex items-center gap-6">
+            <DropdownMenu open={isProductsOpen} onOpenChange={setIsProductsOpen}>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-1 text-sm font-medium transition-colors hover:text-primary">
-                  BUSINESS
+                  Products
                   <CaretDown
                     size={14}
-                    className={`transition-transform ${isBusinessOpen ? 'rotate-180' : ''}`}
+                    className={`transition-transform ${isProductsOpen ? 'rotate-180' : ''}`}
                   />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-80 bg-card/95 backdrop-blur-xl border-border/30">
-                <DropdownMenuLabel className="text-xs text-muted-foreground mono">
-                  ── NEPA PLATFORM ──
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => {
-                    onNavigate('voda')
-                    setIsBusinessOpen(false)
-                  }}
-                  className="cursor-pointer"
-                >
+              <DropdownMenuContent align="center" className="w-72 bg-card/95 backdrop-blur-xl border-border/30">
+                <DropdownMenuItem onClick={() => { onNavigate('products'); setIsProductsOpen(false) }} className="cursor-pointer">
                   <div className="flex flex-col gap-0.5">
-                    <span className="font-semibold mono">VODA</span>
-                    <span className="text-xs text-muted-foreground">
-                      Video Operations Decision Agent
-                    </span>
+                    <span className="font-semibold">NEPA VODEC Agent</span>
+                    <span className="text-xs text-muted-foreground">Real-time world model from camera streams</span>
                   </div>
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    onNavigate('roda')
-                    setIsBusinessOpen(false)
-                  }}
-                  className="cursor-pointer"
-                >
+                <DropdownMenuItem onClick={() => { onNavigate('products'); setIsProductsOpen(false) }} className="cursor-pointer">
                   <div className="flex flex-col gap-0.5">
-                    <span className="font-semibold mono">RODA</span>
-                    <span className="text-xs text-muted-foreground">
-                      Robotic Operations Decision Agent
-                    </span>
+                    <span className="font-semibold">NEPA Edge Runtime</span>
+                    <span className="text-xs text-muted-foreground">Jetson-class deployment</span>
                   </div>
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    onNavigate('eoda')
-                    setIsBusinessOpen(false)
-                  }}
-                  className="cursor-pointer"
-                >
+                <DropdownMenuItem onClick={() => { onNavigate('products'); setIsProductsOpen(false) }} className="cursor-pointer">
                   <div className="flex flex-col gap-0.5">
-                    <span className="font-semibold mono">EODA</span>
-                    <span className="text-xs text-muted-foreground">
-                      Edge Operations Decision Agent
-                    </span>
-                  </div>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    onNavigate('foda')
-                    setIsBusinessOpen(false)
-                  }}
-                  className="cursor-pointer"
-                >
-                  <div className="flex flex-col gap-0.5">
-                    <span className="font-semibold mono">FODA</span>
-                    <span className="text-xs text-muted-foreground">
-                      Facade Operations Decision Agent
-                    </span>
-                  </div>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    onNavigate('soda')
-                    setIsBusinessOpen(false)
-                  }}
-                  className="cursor-pointer"
-                >
-                  <div className="flex flex-col gap-0.5">
-                    <span className="font-semibold mono">SODA</span>
-                    <span className="text-xs text-muted-foreground">
-                      Surveillance Operations Decision Agent
-                    </span>
+                    <span className="font-semibold">NEPA Cloud Console</span>
+                    <span className="text-xs text-muted-foreground">Multi-site management</span>
                   </div>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
+            <DropdownMenu open={isSolutionsOpen} onOpenChange={setIsSolutionsOpen}>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-1 text-sm font-medium transition-colors hover:text-primary">
+                  Solutions
+                  <CaretDown
+                    size={14}
+                    className={`transition-transform ${isSolutionsOpen ? 'rotate-180' : ''}`}
+                  />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="center" className="w-64 bg-card/95 backdrop-blur-xl border-border/30">
+                <DropdownMenuItem onClick={() => { onNavigate('solutions-retail'); setIsSolutionsOpen(false) }} className="cursor-pointer">
+                  Unmanned Retail
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => { onNavigate('solutions-inspection'); setIsSolutionsOpen(false) }} className="cursor-pointer">
+                  Autonomous Inspection
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => { onNavigate('solutions-robotics'); setIsSolutionsOpen(false) }} className="cursor-pointer">
+                  Service & Delivery Robotics
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <button
-              onClick={() => onNavigate('company')}
+              onClick={() => onNavigate('technology')}
               className={`text-sm font-medium transition-colors hover:text-primary ${
-                currentPage === 'company' ? 'text-primary' : 'text-foreground'
+                currentPage === 'technology' ? 'text-primary' : 'text-foreground'
               }`}
             >
-              COMPANY
+              Technology
             </button>
 
-            <Button
-              onClick={() => onNavigate('contact')}
-              size="sm"
-              className="bg-primary/90 text-primary-foreground hover:bg-primary border border-primary/20 mono text-xs px-6"
+            <DropdownMenu open={isResourcesOpen} onOpenChange={setIsResourcesOpen}>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-1 text-sm font-medium transition-colors hover:text-primary">
+                  Resources
+                  <CaretDown
+                    size={14}
+                    className={`transition-transform ${isResourcesOpen ? 'rotate-180' : ''}`}
+                  />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="center" className="w-48 bg-card/95 backdrop-blur-xl border-border/30">
+                <DropdownMenuItem onClick={() => { onNavigate('resources'); setIsResourcesOpen(false) }} className="cursor-pointer">
+                  Documentation
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => { onNavigate('resources'); setIsResourcesOpen(false) }} className="cursor-pointer">
+                  Playground
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => { onNavigate('resources'); setIsResourcesOpen(false) }} className="cursor-pointer">
+                  Changelog
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => { onNavigate('resources'); setIsResourcesOpen(false) }} className="cursor-pointer">
+                  Security & Compliance
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <button
+              onClick={() => onNavigate('community')}
+              className={`text-sm font-medium transition-colors hover:text-primary ${
+                currentPage === 'community' ? 'text-primary' : 'text-foreground'
+              }`}
             >
-              CONTACT
+              Community
+            </button>
+
+            <DropdownMenu open={isAboutOpen} onOpenChange={setIsAboutOpen}>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-1 text-sm font-medium transition-colors hover:text-primary">
+                  About
+                  <CaretDown
+                    size={14}
+                    className={`transition-transform ${isAboutOpen ? 'rotate-180' : ''}`}
+                  />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="center" className="w-48 bg-card/95 backdrop-blur-xl border-border/30">
+                <DropdownMenuItem onClick={() => { onNavigate('about'); setIsAboutOpen(false) }} className="cursor-pointer">
+                  About Us
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => { onNavigate('careers'); setIsAboutOpen(false) }} className="cursor-pointer">
+                  Careers
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Button
+              onClick={() => onNavigate('signin')}
+              variant="ghost"
+              size="sm"
+              className="text-sm font-medium"
+            >
+              Sign in
+            </Button>
+
+            <Button
+              onClick={() => onNavigate('signup')}
+              size="sm"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 border border-primary/20 text-sm px-6"
+            >
+              Get started
             </Button>
           </div>
         </div>

@@ -1,17 +1,12 @@
-import { useState } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Navigation } from '@/components/Navigation'
 import { Footer } from '@/components/Footer'
 import { HomePage } from '@/components/pages/HomePage'
-import { VODAPage } from '@/components/pages/VODAPage'
-import { RODAPage } from '@/components/pages/RODAPage'
-import { EODAPage } from '@/components/pages/EODAPage'
-import { FODAPage } from '@/components/pages/FODAPage'
-import { SODAPage } from '@/components/pages/SODAPage'
 import { Toaster } from '@/components/ui/sonner'
+import { PlaceholderPage } from '@/components/pages/PlaceholderPage'
 
 function App() {
-  const [currentPage, setCurrentPage] = useKV<string>('nepa-current-page', 'home')
+  const [currentPage, setCurrentPage] = useKV<string>('aura-current-page', 'home')
 
   const handleNavigate = (page: string) => {
     setCurrentPage(page)
@@ -20,22 +15,38 @@ function App() {
 
   const renderPage = () => {
     switch (currentPage) {
-      case 'voda':
-        return <VODAPage onNavigate={handleNavigate} />
-      case 'roda':
-        return <RODAPage onNavigate={handleNavigate} />
-      case 'eoda':
-        return <EODAPage onNavigate={handleNavigate} />
-      case 'foda':
-        return <FODAPage onNavigate={handleNavigate} />
-      case 'soda':
-        return <SODAPage onNavigate={handleNavigate} />
-      case 'platform':
-        return <PlatformPlaceholder onNavigate={handleNavigate} />
-      case 'company':
-        return <CompanyPlaceholder onNavigate={handleNavigate} />
+      case 'products':
+        return <PlaceholderPage title="Products" subtitle="NEPA VODEC Agent, Edge Runtime, and Cloud Console" onNavigate={handleNavigate} />
+      case 'solutions-retail':
+        return <PlaceholderPage title="Unmanned Retail" subtitle="NEPA for unmanned shops and micro-retail" onNavigate={handleNavigate} />
+      case 'solutions-inspection':
+        return <PlaceholderPage title="Autonomous Inspection" subtitle="For drones and ground robots" onNavigate={handleNavigate} />
+      case 'solutions-robotics':
+        return <PlaceholderPage title="Service & Delivery Robotics" subtitle="Shared perception layer for autonomous systems" onNavigate={handleNavigate} />
+      case 'technology':
+        return <PlaceholderPage title="Technology" subtitle="Neuromorphic edge processing, LLM-agnostic interfaces" onNavigate={handleNavigate} />
+      case 'resources':
+        return <PlaceholderPage title="Resources" subtitle="Documentation, playground, changelog" onNavigate={handleNavigate} />
+      case 'community':
+        return <PlaceholderPage title="Community" subtitle="Forum, early adopter program, partners" onNavigate={handleNavigate} />
+      case 'about':
+        return <PlaceholderPage title="About Us" subtitle="Mission, story, leadership, values" onNavigate={handleNavigate} />
+      case 'careers':
+        return <PlaceholderPage title="Careers" subtitle="Join our team building perception infrastructure" onNavigate={handleNavigate} />
+      case 'signin':
+        return <PlaceholderPage title="Sign in" subtitle="Access your deployments and APIs" onNavigate={handleNavigate} />
+      case 'signup':
+        return <PlaceholderPage title="Get started" subtitle="Create an account to deploy NEPA" onNavigate={handleNavigate} />
       case 'contact':
-        return <ContactPlaceholder onNavigate={handleNavigate} />
+        return <PlaceholderPage title="Contact" subtitle="Get in touch with our team" onNavigate={handleNavigate} />
+      case 'privacy':
+        return <PlaceholderPage title="Privacy Policy" subtitle="" onNavigate={handleNavigate} />
+      case 'terms':
+        return <PlaceholderPage title="Terms of Service" subtitle="" onNavigate={handleNavigate} />
+      case 'security':
+        return <PlaceholderPage title="Security" subtitle="Data handling and governance" onNavigate={handleNavigate} />
+      case 'status':
+        return <PlaceholderPage title="System Status" subtitle="" onNavigate={handleNavigate} />
       default:
         return <HomePage onNavigate={handleNavigate} />
     }
@@ -47,39 +58,6 @@ function App() {
       <main className="pt-16">{renderPage()}</main>
       <Footer onNavigate={handleNavigate} />
       <Toaster />
-    </div>
-  )
-}
-
-function PlatformPlaceholder({ onNavigate }: { onNavigate: (page: string) => void }) {
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Platform Overview</h1>
-        <p className="text-muted-foreground">Coming soon</p>
-      </div>
-    </div>
-  )
-}
-
-function CompanyPlaceholder({ onNavigate }: { onNavigate: (page: string) => void }) {
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">About NEPA</h1>
-        <p className="text-muted-foreground">Coming soon</p>
-      </div>
-    </div>
-  )
-}
-
-function ContactPlaceholder({ onNavigate }: { onNavigate: (page: string) => void }) {
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Contact Us</h1>
-        <p className="text-muted-foreground">Coming soon</p>
-      </div>
     </div>
   )
 }

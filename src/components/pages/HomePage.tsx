@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { ArrowRight, Cpu, Eye, CloudArrowDown } from '@phosphor-icons/react'
-import { CinematicBackground, FloatingNodes, ScopeLines, ScrollHUD, ScanlineOverlay, TickerBar, StatStrip } from '@/components/CinematicBackground'
+import { ArrowRight, VideoCamera, Robot, Cube, ShoppingCart, Drone, Package } from '@phosphor-icons/react'
+import { CinematicBackground, FloatingNodes, ScopeLines, ScrollHUD, ScanlineOverlay } from '@/components/CinematicBackground'
 
 interface HomePageProps {
   onNavigate: (page: string) => void
@@ -20,103 +20,77 @@ export function HomePage({ onNavigate }: HomePageProps) {
         
         <div className="container mx-auto px-6 relative z-10 pt-24">
           <div className="max-w-4xl mx-auto text-center">
-            <Badge className="mb-8 bg-primary/5 text-primary border border-primary/20 mono text-xs px-4 py-2 uppercase tracking-wider">
-              Neuromorphic Edge Processing
-            </Badge>
+            <div className="flex items-center justify-center gap-4 mb-8 flex-wrap">
+              <Badge className="bg-primary/10 text-primary border border-primary/30 text-xs px-3 py-1.5">
+                Edge-native
+              </Badge>
+              <Badge className="bg-primary/10 text-primary border border-primary/30 text-xs px-3 py-1.5">
+                LLM-agnostic
+              </Badge>
+              <Badge className="bg-primary/10 text-primary border border-primary/30 text-xs px-3 py-1.5">
+                Real-time VODEC agent
+              </Badge>
+            </div>
             
             <h1 className="hero-h1-cinematic">
-              Decision Intelligence for{' '}
-              <span className="accent-word">Governed</span> Environments
+              Turn any camera feed into a{' '}
+              <span className="accent-word">reliable</span> autonomous agent
             </h1>
             
-            <p className="text-base text-muted-foreground mb-12 leading-relaxed max-w-2xl mx-auto">
-              Deterministic neuromorphic inference at the edge. No cloud dependency. 
-              Sub-2ms latency. Every decision cryptographically auditable.
+            <p className="text-lg text-muted-foreground mb-12 leading-relaxed max-w-2xl mx-auto">
+              NEPA is a neuromorphic edge perception platform that provides a live, LLM-ready world model 
+              for unmanned retail, inspection, and robotics.
             </p>
             
             <div className="flex items-center justify-center gap-4">
               <Button 
                 size="lg" 
-                className="bg-primary/90 text-primary-foreground hover:bg-primary shadow-lg shadow-primary/10 px-8 h-12 rounded-lg mono text-sm border border-primary/20"
-                onClick={() => onNavigate('contact')}
+                className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 px-8 h-12 rounded-full text-sm"
+                onClick={() => onNavigate('signup')}
               >
-                REQUEST BRIEFING
+                Get started
                 <ArrowRight className="ml-2" weight="bold" size={16} />
               </Button>
               <Button 
                 size="lg" 
                 variant="outline"
-                className="border-border hover:border-primary/40 backdrop-blur-sm bg-background/20 h-12 px-8 rounded-lg mono text-sm"
-                onClick={() => onNavigate('platform')}
+                className="border-border hover:border-primary/40 backdrop-blur-sm bg-background/20 h-12 px-8 rounded-full text-sm"
+                onClick={() => onNavigate('contact')}
               >
-                API DOCS
+                Talk to us
               </Button>
             </div>
           </div>
         </div>
       </section>
 
-      <TickerBar />
-
-      <section className="relative z-10">
-        <StatStrip />
-      </section>
-
       <section className="py-32 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-card to-background" />
         
         <div className="container mx-auto px-6 relative z-10">
-          <div className="max-w-3xl mx-auto text-center mb-20">
-            <h2 className="text-5xl font-bold mb-6">
-              What is NEPA?
-            </h2>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              Neuromorphic Edge Processing Architecture: a deterministic spike-timing inference engine 
-              built for regulated environments where every decision must be traceable, auditable, and accountable.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            <div className="backdrop-blur-xl bg-card/60 border border-border/50 rounded-2xl p-8 hover:border-primary/50 transition-all duration-300 group relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative z-10">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <Cpu size={24} className="text-primary" weight="duotone" />
-                </div>
-                <h3 className="text-xl font-bold mb-4">Deterministic Core</h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  Identical inputs always produce identical outputs. No probabilistic drift. 
-                  Fully reproducible inference chains for regulatory compliance.
-                </p>
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-6xl mx-auto">
+            <div className="text-center">
+              <h3 className="text-xl font-bold mb-4">For unmanned operations</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Reduce false alarms, missed events, and manual monitoring. NEPA turns raw video into structured, 
+                timestamped events your systems can trust.
+              </p>
             </div>
 
-            <div className="backdrop-blur-xl bg-card/60 border border-border/50 rounded-2xl p-8 hover:border-primary/50 transition-all duration-300 group relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative z-10">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <CloudArrowDown size={24} className="text-primary" weight="duotone" />
-                </div>
-                <h3 className="text-xl font-bold mb-4">Edge-First Design</h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  Deploy anywhere. No cloud round-trips. Sub-2ms latency contract enforced at the node. 
-                  Works offline, always.
-                </p>
-              </div>
+            <div className="text-center">
+              <h3 className="text-xl font-bold mb-4">For AI agents</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Any LLM can connect via tools to query the environment, reason over timelines, and propose safe 
+                actions without parsing pixels.
+              </p>
             </div>
 
-            <div className="backdrop-blur-xl bg-card/60 border border-border/50 rounded-2xl p-8 hover:border-primary/50 transition-all duration-300 group relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative z-10">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <Eye size={24} className="text-primary" weight="duotone" />
-                </div>
-                <h3 className="text-xl font-bold mb-4">Audit Trail Built-In</h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  Every inference sealed with cryptographic proof-of-execution. 
-                  Chain of custody from sensor to decision.
-                </p>
-              </div>
+            <div className="text-center">
+              <h3 className="text-xl font-bold mb-4">For edge deployments</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Neuromorphic-style sparse processing keeps latency low and compute costs predictable on Jetson 
+                and similar hardware.
+              </p>
             </div>
           </div>
         </div>
@@ -128,131 +102,139 @@ export function HomePage({ onNavigate }: HomePageProps) {
         
         <div className="container mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
-            <Badge className="mb-6 bg-primary/10 text-primary border-primary/30 mono text-xs px-4 py-1.5">
-              NEPA PLATFORM
-            </Badge>
-            <h2 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-              One Engine. Five Operating Agents.
+            <h2 className="text-5xl font-bold mb-6">
+              How it works
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Every XODA agent is powered by the same NEPA neuromorphic inference core — 
-              deterministic, auditable, deployable at the edge.
+              Three steps to turn camera feeds into actionable intelligence
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 max-w-7xl mx-auto">
-            <div 
-              className="backdrop-blur-xl bg-card/60 border border-border/50 rounded-2xl p-8 hover:border-primary/50 cursor-pointer transition-all duration-300 group relative overflow-hidden"
-              onClick={() => onNavigate('voda')}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="absolute -top-20 -right-20 w-40 h-40 bg-accent/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div className="backdrop-blur-xl bg-card/60 border border-border/50 rounded-2xl p-8 hover:border-primary/50 transition-all duration-300 group relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative z-10">
-                <Badge className="mb-4 bg-accent/10 text-accent border-accent/30 text-xs px-3 py-1">VIDEO</Badge>
-                <h3 className="text-2xl font-bold mb-4 group-hover:text-primary transition-colors">
-                  Video Operations Decision Agent
-                </h3>
-                <p className="text-muted-foreground mb-8 leading-relaxed text-sm">
-                  Governed video diagnostics agent. Converts raw camera streams into structured, 
-                  auditable findings through deterministic multi-lane neuromorphic inference.
-                </p>
-                <div className="flex items-center gap-2 text-primary font-semibold mono text-sm group-hover:gap-3 transition-all">
-                  VODA <ArrowRight size={16} weight="bold" />
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <VideoCamera size={24} className="text-primary" weight="duotone" />
                 </div>
+                <h3 className="text-2xl font-bold mb-4">Ingest</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  NEPA connects to cameras and sensors, generating a sparse event stream and world model.
+                </p>
               </div>
             </div>
 
-            <div 
-              className="backdrop-blur-xl bg-card/60 border border-border/50 rounded-2xl p-8 hover:border-primary/50 cursor-pointer transition-all duration-300 group relative overflow-hidden"
-              onClick={() => onNavigate('roda')}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="absolute -top-20 -right-20 w-40 h-40 bg-accent/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="backdrop-blur-xl bg-card/60 border border-border/50 rounded-2xl p-8 hover:border-primary/50 transition-all duration-300 group relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative z-10">
-                <Badge className="mb-4 bg-accent/10 text-accent border-accent/30 text-xs px-3 py-1">ROBOTIC</Badge>
-                <h3 className="text-2xl font-bold mb-4 group-hover:text-primary transition-colors">
-                  Robotic Operations Decision Agent
-                </h3>
-                <p className="text-muted-foreground mb-8 leading-relaxed text-sm">
-                  Spike-timing-dependent path adaptation for autonomous robots in dynamic 
-                  environments. Structured mission control with HRI escalation and real-time telemetry.
-                </p>
-                <div className="flex items-center gap-2 text-primary font-semibold mono text-sm group-hover:gap-3 transition-all">
-                  RODA <ArrowRight size={16} weight="bold" />
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <Robot size={24} className="text-primary" weight="duotone" />
                 </div>
+                <h3 className="text-2xl font-bold mb-4">Understand</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  LLMs and backends query the signature map over time slices, entities, and relations.
+                </p>
               </div>
             </div>
 
-            <div 
-              className="backdrop-blur-xl bg-card/60 border border-border/50 rounded-2xl p-8 hover:border-primary/50 cursor-pointer transition-all duration-300 group relative overflow-hidden"
-              onClick={() => onNavigate('eoda')}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="absolute -top-20 -right-20 w-40 h-40 bg-accent/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="backdrop-blur-xl bg-card/60 border border-border/50 rounded-2xl p-8 hover:border-primary/50 transition-all duration-300 group relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative z-10">
-                <Badge className="mb-4 bg-accent/10 text-accent border-accent/30 text-xs px-3 py-1">EDGE</Badge>
-                <h3 className="text-2xl font-bold mb-4 group-hover:text-primary transition-colors">
-                  Edge Operations Decision Agent
-                </h3>
-                <p className="text-muted-foreground mb-8 leading-relaxed text-sm">
-                  Thin-client neuromorphic inference deployable on any edge-class hardware. 
-                  No cloud round-trips. Sub-2ms latency contract enforced at the node.
-                </p>
-                <div className="flex items-center gap-2 text-primary font-semibold mono text-sm group-hover:gap-3 transition-all">
-                  EODA <ArrowRight size={16} weight="bold" />
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <Cube size={24} className="text-primary" weight="duotone" />
                 </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-            <div 
-              className="backdrop-blur-xl bg-card/60 border border-border/50 rounded-2xl p-8 hover:border-primary/50 cursor-pointer transition-all duration-300 group relative overflow-hidden"
-              onClick={() => onNavigate('foda')}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="absolute -top-20 -right-20 w-40 h-40 bg-accent/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative z-10">
-                <Badge className="mb-4 bg-accent/10 text-accent border-accent/30 text-xs px-3 py-1">FACADE</Badge>
-                <h3 className="text-2xl font-bold mb-4 group-hover:text-primary transition-colors">
-                  Facade Operations Decision Agent
-                </h3>
-                <p className="text-muted-foreground mb-8 leading-relaxed text-sm">
-                  Aerial structural inspection for building facades. Real-time spike processing 
-                  of RGB and thermal feeds during drone flight with cryptographic audit sealing per run.
+                <h3 className="text-2xl font-bold mb-4">Act</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  NEPA validates actions, enforces safety, and drives lights, doors, devices, or alerts.
                 </p>
-                <div className="flex items-center gap-2 text-primary font-semibold mono text-sm group-hover:gap-3 transition-all">
-                  FODA <ArrowRight size={16} weight="bold" />
-                </div>
-              </div>
-            </div>
-
-            <div 
-              className="backdrop-blur-xl bg-card/60 border border-border/50 rounded-2xl p-8 hover:border-primary/50 cursor-pointer transition-all duration-300 group relative overflow-hidden"
-              onClick={() => onNavigate('soda')}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="absolute -top-20 -right-20 w-40 h-40 bg-accent/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative z-10">
-                <Badge className="mb-4 bg-accent/10 text-accent border-accent/30 text-xs px-3 py-1">SURVEILLANCE</Badge>
-                <h3 className="text-2xl font-bold mb-4 group-hover:text-primary transition-colors">
-                  Surveillance Operations Decision Agent
-                </h3>
-                <p className="text-muted-foreground mb-8 leading-relaxed text-sm">
-                  Multi-camera live monitoring, alert escalation, and operator-authenticated 
-                  access control across facility nodes. No shared mutable state across camera lanes.
-                </p>
-                <div className="flex items-center gap-2 text-primary font-semibold mono text-sm group-hover:gap-3 transition-all">
-                  SODA <ArrowRight size={16} weight="bold" />
-                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="py-32 relative overflow-hidden">
+      <section className="py-32 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-card to-background" />
+        
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-bold mb-6">
+              Primary use cases
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              From unmanned retail to autonomous inspection
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+            <div 
+              className="backdrop-blur-xl bg-card/60 border border-border/50 rounded-2xl p-8 hover:border-primary/50 cursor-pointer transition-all duration-300 group relative overflow-hidden"
+              onClick={() => onNavigate('solutions-retail')}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative z-10">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <ShoppingCart size={24} className="text-primary" weight="duotone" />
+                </div>
+                <h3 className="text-xl font-bold mb-3">Unmanned convenience and micro-retail</h3>
+              </div>
+            </div>
+
+            <div 
+              className="backdrop-blur-xl bg-card/60 border border-border/50 rounded-2xl p-8 hover:border-primary/50 cursor-pointer transition-all duration-300 group relative overflow-hidden"
+              onClick={() => onNavigate('solutions-retail')}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative z-10">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <ShoppingCart size={24} className="text-primary" weight="duotone" />
+                </div>
+                <h3 className="text-xl font-bold mb-3">Smart stalls and pop-up stores</h3>
+              </div>
+            </div>
+
+            <div 
+              className="backdrop-blur-xl bg-card/60 border border-border/50 rounded-2xl p-8 hover:border-primary/50 cursor-pointer transition-all duration-300 group relative overflow-hidden"
+              onClick={() => onNavigate('solutions-inspection')}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative z-10">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <Drone size={24} className="text-primary" weight="duotone" />
+                </div>
+                <h3 className="text-xl font-bold mb-3">Drone and robotic inspection</h3>
+              </div>
+            </div>
+
+            <div 
+              className="backdrop-blur-xl bg-card/60 border border-border/50 rounded-2xl p-8 hover:border-primary/50 cursor-pointer transition-all duration-300 group relative overflow-hidden"
+              onClick={() => onNavigate('solutions-robotics')}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative z-10">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <Package size={24} className="text-primary" weight="duotone" />
+                </div>
+                <h3 className="text-xl font-bold mb-3">Indoor delivery and service robots</h3>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center mt-12">
+            <Button
+              variant="outline"
+              className="border-border hover:border-primary/40 backdrop-blur-sm bg-background/20"
+              onClick={() => onNavigate('solutions-retail')}
+            >
+              View use cases
+              <ArrowRight className="ml-2" size={16} weight="bold" />
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-32 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-background to-card" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(0.12_0.08_145)_0%,transparent_60%)] opacity-30" />
         
         <div className="container mx-auto px-6 relative z-10">
@@ -264,19 +246,29 @@ export function HomePage({ onNavigate }: HomePageProps) {
               
               <div className="text-center relative z-10">
                 <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                  Powered by NEPA
+                  Ready to get started?
                 </h2>
                 <p className="text-xl text-muted-foreground mb-10 leading-relaxed">
-                  Deterministic. Traceable. Accountable.
+                  Turn your camera feeds into reliable autonomous agents
                 </p>
-                <Button 
-                  size="lg"
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 px-10 h-14 rounded-full text-base"
-                  onClick={() => onNavigate('contact')}
-                >
-                  REQUEST BRIEFING
-                  <ArrowRight className="ml-2" weight="bold" />
-                </Button>
+                <div className="flex items-center justify-center gap-4">
+                  <Button 
+                    size="lg"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 px-10 h-14 rounded-full text-base"
+                    onClick={() => onNavigate('signup')}
+                  >
+                    Get started
+                    <ArrowRight className="ml-2" weight="bold" />
+                  </Button>
+                  <Button 
+                    size="lg"
+                    variant="outline"
+                    className="border-border hover:border-primary/40 backdrop-blur-sm bg-background/20 h-14 px-10 rounded-full text-base"
+                    onClick={() => onNavigate('contact')}
+                  >
+                    Talk to us
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
