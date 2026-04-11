@@ -2,6 +2,12 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { LiveBadge } from '@/components/LiveBadge'
 import { HudPanel } from '@/components/HudPanel'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
 
 const AGENTS = [
   {
@@ -484,6 +490,232 @@ export function LandingPage() {
               className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors underline underline-offset-4"
             >
               Compare all features →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-28 border-t border-white/8 bg-[#080B12]">
+        <div className="container mx-auto px-6 max-w-4xl">
+          <div className="text-center mb-16">
+            <p className="text-xs text-cyan-400/60 tracking-widest uppercase font-mono mb-4">
+              Frequently asked questions
+            </p>
+            <h2
+              className="text-4xl md:text-5xl font-bold tracking-tight text-white"
+              style={{
+                textShadow: '0 4px 12px rgba(0,0,0,0.8), 0 8px 24px rgba(0,0,0,0.4)',
+                transform: 'translateZ(20px)',
+              }}
+            >
+              Questions? Answered.
+            </h2>
+          </div>
+
+          <Accordion type="single" collapsible className="space-y-4">
+            <AccordionItem
+              value="what-is-nepa"
+              className="border border-white/10 bg-gradient-to-br from-[#0A0A0A] via-[#141414] to-[#0A0A0A] rounded-lg px-6 py-2"
+            >
+              <AccordionTrigger
+                className="text-left text-white hover:text-cyan-400 transition-colors"
+                style={{
+                  textShadow: '0 2px 6px rgba(0,0,0,0.4)',
+                }}
+              >
+                What is NEPA and how does it work?
+              </AccordionTrigger>
+              <AccordionContent className="text-white/60 leading-relaxed pt-2 pb-4">
+                NEPA (Neuromorphic Edge Perception Agent) is a spike-timing inference engine
+                that runs entirely on edge hardware like NVIDIA Jetson Nano or Intel NUC.
+                It processes video streams, detects objects and behaviors, and logs every
+                decision to a cryptographic audit trail — all without sending data to the cloud.
+                Think of it as an AI perception system that lives where your cameras are, not
+                on someone else's server.
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem
+              value="free-vs-paid"
+              className="border border-white/10 bg-gradient-to-br from-[#0A0A0A] via-[#141414] to-[#0A0A0A] rounded-lg px-6 py-2"
+            >
+              <AccordionTrigger
+                className="text-left text-white hover:text-cyan-400 transition-colors"
+                style={{
+                  textShadow: '0 2px 6px rgba(0,0,0,0.4)',
+                }}
+              >
+                What's included in the free NEPA Diagnostic plan?
+              </AccordionTrigger>
+              <AccordionContent className="text-white/60 leading-relaxed pt-2 pb-4">
+                The free plan gives you up to 3 diagnostic scans per month. You can upload
+                video clips or paste stream URLs, and NEPA will analyze them for motion
+                inconsistency, jitter, lighting issues, background problems, and ROI anomalies.
+                It's designed to help you identify problems before you invest in corrective
+                workflows. No credit card required.
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem
+              value="hardware-requirements"
+              className="border border-white/10 bg-gradient-to-br from-[#0A0A0A] via-[#141414] to-[#0A0A0A] rounded-lg px-6 py-2"
+            >
+              <AccordionTrigger
+                className="text-left text-white hover:text-cyan-400 transition-colors"
+                style={{
+                  textShadow: '0 2px 6px rgba(0,0,0,0.4)',
+                }}
+              >
+                What hardware do I need to run NEPA on-site?
+              </AccordionTrigger>
+              <AccordionContent className="text-white/60 leading-relaxed pt-2 pb-4">
+                NEPA is optimized for NVIDIA Jetson Nano (recommended), Intel NUC, or Jetson
+                Xavier NX. It can also run on generic x86 Linux machines, though you won't get
+                TensorRT acceleration. For pilot deployments, we assess your existing hardware
+                and help you choose the right edge node for your environment. Most customers
+                start with a single Jetson Nano per 4-8 camera feeds.
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem
+              value="data-privacy"
+              className="border border-white/10 bg-gradient-to-br from-[#0A0A0A] via-[#141414] to-[#0A0A0A] rounded-lg px-6 py-2"
+            >
+              <AccordionTrigger
+                className="text-left text-white hover:text-cyan-400 transition-colors"
+                style={{
+                  textShadow: '0 2px 6px rgba(0,0,0,0.4)',
+                }}
+              >
+                Does NEPA send my video data to the cloud?
+              </AccordionTrigger>
+              <AccordionContent className="text-white/60 leading-relaxed pt-2 pb-4">
+                No. NEPA runs entirely on your edge hardware. Video frames are processed locally,
+                and only metadata (detection events, timestamps, classifications) is written to
+                the audit log. No video stream ever leaves your network unless you explicitly
+                configure external integrations. This architecture is PDPO and GDPR compliant
+                by default — no additional configuration needed.
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem
+              value="pilot-program"
+              className="border border-white/10 bg-gradient-to-br from-[#0A0A0A] via-[#141414] to-[#0A0A0A] rounded-lg px-6 py-2"
+            >
+              <AccordionTrigger
+                className="text-left text-white hover:text-cyan-400 transition-colors"
+                style={{
+                  textShadow: '0 2px 6px rgba(0,0,0,0.4)',
+                }}
+              >
+                How does the pilot program work?
+              </AccordionTrigger>
+              <AccordionContent className="text-white/60 leading-relaxed pt-2 pb-4">
+                Submit your interest via the contact form, and we'll review your use case
+                within 2 business days. If accepted, we assess your hardware compatibility,
+                prepare a deployment configuration, and schedule an on-site installation.
+                You get full NEPA console access, live inference feeds, and audit log visibility
+                from day one. After the pilot period, we review results together and discuss
+                a commercial arrangement if NEPA delivers value to your operation.
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem
+              value="monthly-support"
+              className="border border-white/10 bg-gradient-to-br from-[#0A0A0A] via-[#141414] to-[#0A0A0A] rounded-lg px-6 py-2"
+            >
+              <AccordionTrigger
+                className="text-left text-white hover:text-cyan-400 transition-colors"
+                style={{
+                  textShadow: '0 2px 6px rgba(0,0,0,0.4)',
+                }}
+              >
+                What's included in the monthly support package?
+              </AccordionTrigger>
+              <AccordionContent className="text-white/60 leading-relaxed pt-2 pb-4">
+                The HK$9,000/month support package includes full AuraSense team backup,
+                remote monitoring, model updates, alert threshold reconfiguration, console
+                and dashboard updates, monthly operational review reports, and priority
+                support with a 4-hour response SLA. It's included from day one of your
+                deployment and ensures your system stays tuned to your environment.
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem
+              value="enterprise-custom"
+              className="border border-white/10 bg-gradient-to-br from-[#0A0A0A] via-[#141414] to-[#0A0A0A] rounded-lg px-6 py-2"
+            >
+              <AccordionTrigger
+                className="text-left text-white hover:text-cyan-400 transition-colors"
+                style={{
+                  textShadow: '0 2px 6px rgba(0,0,0,0.4)',
+                }}
+              >
+                When should I consider the Enterprise plan?
+              </AccordionTrigger>
+              <AccordionContent className="text-white/60 leading-relaxed pt-2 pb-4">
+                The Enterprise plan is for platforms, studios, and teams that need to embed
+                NEPA into production systems at scale. It includes API access for integrations,
+                custom model fine-tuning, unlimited audit log retention, SLA-backed uptime
+                guarantees, and a dedicated account manager. If you're deploying across
+                multiple sites or building NEPA into your own product, this is the right tier.
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem
+              value="agents-explained"
+              className="border border-white/10 bg-gradient-to-br from-[#0A0A0A] via-[#141414] to-[#0A0A0A] rounded-lg px-6 py-2"
+            >
+              <AccordionTrigger
+                className="text-left text-white hover:text-cyan-400 transition-colors"
+                style={{
+                  textShadow: '0 2px 6px rgba(0,0,0,0.4)',
+                }}
+              >
+                What's the difference between VODA, FODA, SODA, RODA, and EODA?
+              </AccordionTrigger>
+              <AccordionContent className="text-white/60 leading-relaxed pt-2 pb-4">
+                These are specialized agents built on the NEPA platform. <strong className="text-white">VODA</strong> handles
+                multi-camera video operations and real-time detection. <strong className="text-white">FODA</strong> is for
+                drone-based facade inspection with BRS and defect classification. <strong className="text-white">SODA</strong> manages
+                multi-site surveillance with pattern recognition. <strong className="text-white">RODA</strong> orchestrates
+                autonomous robot navigation and mission planning. <strong className="text-white">EODA</strong> is the core
+                inference runtime all agents are built on. When you talk to NEPA, it automatically
+                routes your request to the right agent based on your use case.
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem
+              value="cancel-anytime"
+              className="border border-white/10 bg-gradient-to-br from-[#0A0A0A] via-[#141414] to-[#0A0A0A] rounded-lg px-6 py-2"
+            >
+              <AccordionTrigger
+                className="text-left text-white hover:text-cyan-400 transition-colors"
+                style={{
+                  textShadow: '0 2px 6px rgba(0,0,0,0.4)',
+                }}
+              >
+                Can I cancel my plan at any time?
+              </AccordionTrigger>
+              <AccordionContent className="text-white/60 leading-relaxed pt-2 pb-4">
+                Yes. All monthly plans (Creator, Studio, Growth) can be cancelled at any time
+                with no penalty. Your access continues until the end of your current billing
+                period. For pilot programs and Enterprise deployments, terms are agreed on a
+                case-by-case basis during the onboarding process. We don't lock you into
+                multi-year contracts unless it's part of a custom enterprise agreement.
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+
+          <div className="text-center mt-12">
+            <p className="text-white/40 mb-4">
+              Still have questions?
+            </p>
+            <Link
+              to="/about/contact"
+              className="inline-block bg-cyan-500 text-black font-semibold text-sm px-7 py-3 hover:bg-cyan-400 transition-colors"
+            >
+              Contact our team
             </Link>
           </div>
         </div>
