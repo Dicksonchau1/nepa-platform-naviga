@@ -1,10 +1,31 @@
 import { useState } from 'react'
+import { useKV } from '@github/spark/hooks'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { EnvelopeSimple, MapPin, Phone } from '@phosphor-icons/react'
 import { toast } from 'sonner'
+
+type ContactSubmission = {
+  id: string
+  name: string
+  email: string
+  company: string
+  subject: string
+  message: string
+  timestamp: string
+}
+
+const SUBJECT_OPTIONS = [
+  'Pilot partnership',
+  'Investment / funding',
+  'Technology licensing',
+  'Research collaboration',
+  'Careers',
+  'General enquiry',
+]
 
 export function ContactPage() {
   const [formData, setFormData] = useState({
@@ -15,22 +36,35 @@ export function ContactPage() {
     message: '',
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submissions, setSubmissions] = useKV<ContactSubmission[]>('aura-contact-submissions', [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
 
-    setTimeout(() => {
-      toast.success('Message sent successfully! We\'ll be in touch soon.')
-      setFormData({ name: '', email: '', company: '', subject: '', message: '' })
-      setIsSubmitting(false)
-    }, 1000)
+    await new Promise(resolve => setTimeout(resolve, 800))
+
+    const submission: ContactSubmission = {
+      id: `contact-${Date.now()}-${Math.random().toString(36).substring(7)}`,
+      ...formData,
+      timestamp: new Date().toISOString(),
+    }
+
+    setSubmissions((current) => [...(current || []), submission])
+
+    toast.success('Message sent successfully! We\'ll be in touch soon.')
+    setFormData({ name: '', email: '', company: '', subject: '', message: '' })
+    setIsSubmitting(false)
   }
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+  }
+
+  const handleSelectChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, subject: value }))
   }
 
   return (
@@ -139,14 +173,18 @@ export function ContactPage() {
                 <Label htmlFor="subject" className="text-sm font-medium">
                   Subject *
                 </Label>
-                <Input
-                  id="subject"
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  required
-                  className="bg-card/30 border-border/40"
-                />
+                <Select value={formData.subject} onValueChange={handleSelectChange} required>
+                  <SelectTrigger className="bg-card/30 border-border/40">
+                    <SelectValue placeholder="Select a subject" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SUBJECT_OPTIONS.map((subject) => (
+                      <SelectItem key={subject} value={subject}>
+                        {subject}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">
