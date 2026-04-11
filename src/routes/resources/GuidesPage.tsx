@@ -1,10 +1,16 @@
+import { useState } from 'react'
 import { Rocket, ShoppingCart, Robot, Building, Video, Wrench } from '@phosphor-icons/react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { DocsSearch, SearchTrigger } from '@/components/DocsSearch'
 
 export function GuidesPage() {
+  const [searchOpen, setSearchOpen] = useState(false)
+
   return (
     <div className="min-h-screen relative">
+      <DocsSearch open={searchOpen} onOpenChange={setSearchOpen} />
+      
       <div className="page-bg">
         <div className="glow-orb glow-orb-1" />
         <div className="glow-orb glow-orb-2" />
@@ -15,9 +21,12 @@ export function GuidesPage() {
         <div className="mb-12">
           <Badge className="mb-4 mono" variant="outline">RESOURCES · GUIDES</Badge>
           <h1 className="text-5xl font-bold mb-6">Guides & Tutorials</h1>
-          <p className="text-xl text-muted-foreground max-w-3xl">
+          <p className="text-xl text-muted-foreground max-w-3xl mb-6">
             Step-by-step deployment guides, integration tutorials, and production best practices for NEPA agents.
           </p>
+          <div className="max-w-md">
+            <SearchTrigger onOpen={() => setSearchOpen(true)} />
+          </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 mb-12">

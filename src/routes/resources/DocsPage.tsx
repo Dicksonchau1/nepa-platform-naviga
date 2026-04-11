@@ -1,11 +1,17 @@
+import { useState } from 'react'
 import { Book, Code, Cpu, Database, Globe, Lock, Lightning } from '@phosphor-icons/react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
+import { DocsSearch, SearchTrigger } from '@/components/DocsSearch'
 
 export function DocsPage() {
+  const [searchOpen, setSearchOpen] = useState(false)
+
   return (
     <div className="min-h-screen relative">
+      <DocsSearch open={searchOpen} onOpenChange={setSearchOpen} />
+      
       <div className="page-bg">
         <div className="glow-orb glow-orb-1" />
         <div className="glow-orb glow-orb-2" />
@@ -16,9 +22,12 @@ export function DocsPage() {
         <div className="mb-12">
           <Badge className="mb-4 mono" variant="outline">RESOURCES · DOCUMENTATION</Badge>
           <h1 className="text-5xl font-bold mb-6">Documentation</h1>
-          <p className="text-xl text-muted-foreground max-w-3xl">
+          <p className="text-xl text-muted-foreground max-w-3xl mb-6">
             Complete technical documentation for deploying, integrating, and operating NEPA neuromorphic agents.
           </p>
+          <div className="max-w-md">
+            <SearchTrigger onOpen={() => setSearchOpen(true)} />
+          </div>
         </div>
 
         <Tabs defaultValue="quickstart" className="space-y-8">

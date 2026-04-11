@@ -1,10 +1,16 @@
+import { useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CheckCircle, Clock, Globe, HardDrives, Database, Lightning } from '@phosphor-icons/react'
+import { DocsSearch, SearchTrigger } from '@/components/DocsSearch'
 
 export function StatusPage() {
+  const [searchOpen, setSearchOpen] = useState(false)
+
   return (
     <div className="min-h-screen relative">
+      <DocsSearch open={searchOpen} onOpenChange={setSearchOpen} />
+      
       <div className="page-bg">
         <div className="glow-orb glow-orb-1" />
         <div className="glow-orb glow-orb-2" />
@@ -18,9 +24,12 @@ export function StatusPage() {
           <p className="text-xl text-muted-foreground max-w-3xl mb-6">
             Current operational status and uptime for all NEPA platform services.
           </p>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 mb-6">
             <CheckCircle className="w-6 h-6 text-green-500" weight="fill" />
             <span className="text-lg font-semibold">All Systems Operational</span>
+          </div>
+          <div className="max-w-md">
+            <SearchTrigger onOpen={() => setSearchOpen(true)} />
           </div>
         </div>
 

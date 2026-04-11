@@ -1,10 +1,16 @@
+import { useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { GitCommit, Sparkle, Bug, Lightning } from '@phosphor-icons/react'
+import { DocsSearch, SearchTrigger } from '@/components/DocsSearch'
 
 export function ChangelogPage() {
+  const [searchOpen, setSearchOpen] = useState(false)
+
   return (
     <div className="min-h-screen relative">
+      <DocsSearch open={searchOpen} onOpenChange={setSearchOpen} />
+      
       <div className="page-bg">
         <div className="glow-orb glow-orb-1" />
         <div className="glow-orb glow-orb-2" />
@@ -15,9 +21,12 @@ export function ChangelogPage() {
         <div className="mb-12">
           <Badge className="mb-4 mono" variant="outline">RESOURCES · CHANGELOG</Badge>
           <h1 className="text-5xl font-bold mb-6">Changelog</h1>
-          <p className="text-xl text-muted-foreground max-w-3xl">
+          <p className="text-xl text-muted-foreground max-w-3xl mb-6">
             Latest updates, releases, and improvements to the NEPA neuromorphic platform.
           </p>
+          <div className="max-w-md">
+            <SearchTrigger onOpen={() => setSearchOpen(true)} />
+          </div>
         </div>
 
         <div className="space-y-8">

@@ -1,11 +1,17 @@
+import { useState } from 'react'
 import { Code, Lock, Plugs, Lightning } from '@phosphor-icons/react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { DocsSearch, SearchTrigger } from '@/components/DocsSearch'
 
 export function ApiReferencePage() {
+  const [searchOpen, setSearchOpen] = useState(false)
+
   return (
     <div className="min-h-screen relative">
+      <DocsSearch open={searchOpen} onOpenChange={setSearchOpen} />
+      
       <div className="page-bg">
         <div className="glow-orb glow-orb-1" />
         <div className="glow-orb glow-orb-2" />
@@ -19,9 +25,12 @@ export function ApiReferencePage() {
           <p className="text-xl text-muted-foreground max-w-3xl mb-6">
             REST and gRPC interfaces for querying the NEPA world model, proposing actions, and managing edge deployments.
           </p>
-          <div className="flex gap-4">
+          <div className="flex gap-4 mb-6 flex-wrap">
             <Badge variant="outline" className="mono">Base URL: https://api.nepa.dev/v1</Badge>
             <Badge variant="outline" className="mono">gRPC: grpc.nepa.dev:443</Badge>
+          </div>
+          <div className="max-w-md">
+            <SearchTrigger onOpen={() => setSearchOpen(true)} />
           </div>
         </div>
 
