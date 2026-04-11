@@ -1,288 +1,339 @@
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Video, GitBranch, CheckCircle, ArrowRight, Check } from '@phosphor-icons/react'
-import { CinematicBackground, FloatingNodes, ScopeLines, ScrollHUD, ScanlineOverlay } from '@/components/CinematicBackground'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { HudPanel } from '@/components/HudPanel'
+import { LiveBadge } from '@/components/LiveBadge'
+import { TerminalLine } from '@/components/TerminalLine'
+import { CountUp } from '@/components/CountUp'
+import { SensorSweep } from '@/components/SensorSweep'
 
 interface VODAPageProps {
   onNavigate: (page: string) => void
 }
 
+const FEED_CYCLES = [
+  { id: 'OBJ_01', label: 'PERSON',          status: 'TRACKED',   x: '18%', y: '28%' },
+  { id: 'OBJ_02', label: 'ANOMALY',         status: 'NONE',      x: '54%', y: '42%' },
+  { id: 'OBJ_03', label: 'SHELF_ZONE',      status: 'MONITORED', x: '72%', y: '60%' },
+  { id: 'OBJ_04', label: 'OCCUPANCY',       status: '4',         x: '36%', y: '70%' },
+  { id: 'OBJ_05', label: 'DWELL_TIME',      status: '00:34s',    x: '82%', y: '22%' },
+]
+
+const ALERT_CYCLE = [
+  'MOTION_EVENT: AISLE_3 — CONFIRMED',
+  'SHOPFRONT_CLEAR: TRUE',
+  'CROWD_DENSITY: LOW',
+  'LOITERING_ALERT: NONE',
+  'CAMERA_HEALTH: ALL_NOMINAL',
+  'INFERENCE_FPS: 28.4',
+]
+
+const SPEC_LINES = [
+  { label: 'AGENT_ID',       value: 'VODA-v2.3' },
+  { label: 'DOMAIN',         value: 'VIDEO OPERATIONS & DETECTION' },
+  { label: 'INFERENCE_RT',   value: '<36ms @ Jetson Nano' },
+  { label: 'MODEL_BACKEND',  value: 'YOLOv8 + ONNX + TensorRT' },
+  { label: 'CAMERA_INPUTS',  value: 'UP TO 16 CONCURRENT STREAMS' },
+  { label: 'AUDIT_CHAIN',    value: 'SHA-256 HASH-LINKED' },
+  { label: 'DEPLOYMENT',     value: 'EDGE-ONLY — NO CLOUD EGRESS' },
+  { label: 'STATUS',         value: 'OPERATIONAL' },
+]
+
+const CAPABILITIES = [
+  {
+    code: '01',
+    title: 'Real-time object detection',
+    desc: 'YOLOv8-powered multi-class detection running at up to 30 FPS on edge hardware. Detects people, objects, anomalies, and events without cloud round-trips.',
+  },
+  {
+    code: '02',
+    title: 'Multi-camera stream management',
+    desc: 'VODA handles up to 16 concurrent camera streams with per-channel inference, independent frame buffers, and unified event aggregation.',
+  },
+  {
+    code: '03',
+    title: 'Behavioural pattern recognition',
+    desc: 'Tracks dwell time, crowd density, loitering, and movement trajectories. Alerts are generated on-device and pushed to the NEPA audit ledger.',
+  },
+  {
+    code: '04',
+    title: 'Anomaly classification',
+    desc: 'A fine-tuned classification head identifies operational anomalies — unauthorised access, shelf tampering, equipment failure — with configurable sensitivity thresholds.',
+  },
+  {
+    code: '05',
+    title: 'Cryptographic event logging',
+    desc: 'Every inference event is hash-chained into an immutable audit record. Operators have a tamper-evident log of every detection VODA made, timestamped to millisecond precision.',
+  },
+  {
+    code: '06',
+    title: 'Edge-only privacy architecture',
+    desc: 'No video frames leave the edge node. All inference, classification, and alerting happens on-device. PDPO and GDPR compliant by default.',
+  },
+]
+
+const USE_CASES = [
+  {
+    env: 'Unmanned retail',
+    desc: 'Monitor shopfronts, aisles, and self-checkout zones 24/7 with no staff required. Detect shoplifting attempts, occupancy limits, and equipment faults in real time.',
+  },
+  {
+    env: 'Facility security',
+    desc: 'Multi-camera coverage of lobbies, corridors, and perimeters. Behavioural alerts trigger within one inference cycle — no human review required for routine events.',
+  },
+  {
+    env: 'Logistics & warehousing',
+    desc: 'Track pallet movement, worker safety compliance, and zone access across large floor plans. VODA correlates events across cameras to build a unified operational picture.',
+  },
+]
+
 export function VODAPage({ onNavigate }: VODAPageProps) {
+  const [alertIndex, setAlertIndex] = useState(0)
+  const [tick, setTick] = useState(0)
+
+  useEffect(() => {
+    const alertTimer = setInterval(() => {
+      setAlertIndex((i) => (i + 1) % ALERT_CYCLE.length)
+    }, 2800)
+    const tickTimer = setInterval(() => setTick((t) => t + 1), 1000)
+    return () => { clearInterval(alertTimer); clearInterval(tickTimer) }
+  }, [])
+
+  const uptime = `${String(Math.floor(tick / 3600)).padStart(2,'0')}:${String(Math.floor((tick % 3600) / 60)).padStart(2,'0')}:${String(tick % 60).padStart(2,'0')}`
+
   return (
-    <div className="flex flex-col relative">
-      <CinematicBackground />
-      
-      <section className="min-h-screen flex items-center justify-center relative overflow-hidden">
-        <ScanlineOverlay />
-        <FloatingNodes />
-        <ScopeLines />
-        <ScrollHUD />
-        
-        <div className="container mx-auto px-6 relative z-10 pt-24">
-          <div className="max-w-5xl mx-auto text-center">
-            <Badge className="bg-primary/10 text-primary border border-primary/30 text-xs px-4 py-1.5 mb-6">
-              NEPA PLATFORM · VIDEO AGENT
-            </Badge>
-            
-            <h1 className="hero-h1-cinematic">
-              VODA — Video Operations{' '}
-              <span className="accent-word">Decision</span> Agent
+    <main className="min-h-screen bg-[#050508] text-foreground overflow-x-hidden">
+
+      <section className="relative min-h-screen flex flex-col justify-center grid-bg scanlines overflow-hidden pt-24">
+
+        <SensorSweep />
+
+        <div
+          aria-hidden
+          className="absolute inset-0 flex items-center justify-center pointer-events-none select-none"
+        >
+          <span className="font-mono font-black text-[20vw] text-cyan-500/[0.04] tracking-widest">
+            VODA
+          </span>
+        </div>
+
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              'radial-gradient(ellipse 70% 55% at 38% 50%, rgba(0,102,255,0.10) 0%, transparent 70%)',
+          }}
+        />
+
+        <div className="container mx-auto px-6 max-w-6xl relative z-10">
+
+          <div className="flex items-center gap-3 font-mono text-[10px] tracking-widest text-cyan-400/50 mb-12">
+            <LiveBadge />
+            <span>VODA AGENT // ACTIVE</span>
+            <span className="text-cyan-500/30">|</span>
+            <span>NODE: HK-KOWLOON-01</span>
+            <span className="text-cyan-500/30">|</span>
+            <span>SESSION: {uptime}</span>
+          </div>
+
+          <div className="mb-8">
+            <p className="font-mono text-[11px] tracking-[0.28em] text-cyan-400/50 uppercase mb-4">
+              AuraSense NEPA — Video Agent
+            </p>
+            <h1 className="text-5xl md:text-7xl font-black tracking-tight leading-none mb-2 text-reveal"
+                style={{ animationDelay: '0.2s' }}>
+              VIDEO
             </h1>
-            
-            <p className="text-xl text-muted-foreground mb-12 leading-relaxed max-w-3xl mx-auto">
-              A neuromorphic edge perception agent that turns multi-camera video into a live, LLM-ready world model for unmanned retail, inspection, and robotics. Governed. Deterministic. Auditable.
-            </p>
-            
-            <div className="flex items-center justify-center gap-4">
-              <Button 
-                size="lg" 
-                className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 px-8 h-12 rounded-full text-sm"
-                asChild
-              >
-                <Link to="/signup">
-                  Get started
-                  <ArrowRight className="ml-2" size={16} />
-                </Link>
-              </Button>
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="border-primary/30 bg-background/50 backdrop-blur-sm hover:bg-primary/10 px-8 h-12 rounded-full text-sm"
-                asChild
-              >
-                <Link to="/about/contact">Talk to sales</Link>
-              </Button>
+            <h1 className="text-5xl md:text-7xl font-black tracking-tight leading-none mb-2 text-reveal"
+                style={{ animationDelay: '0.5s' }}>
+              OPERATIONS
+            </h1>
+            <h1 className="text-5xl md:text-7xl font-black tracking-tight leading-none text-cyan-400 text-reveal"
+                style={{ animationDelay: '0.8s' }}>
+              & DETECTION
+            </h1>
+          </div>
+
+          <p className="text-sm text-muted-foreground max-w-xl leading-relaxed mb-10">
+            VODA is the real-time video intelligence agent of the NEPA platform.
+            It processes up to 16 concurrent camera streams on-device, classifying
+            objects, behaviours, and anomalies in under 36 milliseconds — with
+            every event logged to a tamper-evident audit chain.
+          </p>
+
+          <div className="flex items-center gap-4 mb-16">
+            <Link
+              to="/dashboard"
+              className="glow-pulse font-mono text-[11px] tracking-[0.2em] uppercase border border-cyan-500/50 text-cyan-400 px-6 py-3 hover:bg-cyan-500/10 hover:border-cyan-400 transition-all"
+            >
+              Launch console
+            </Link>
+            <Link
+              to="/about/contact"
+              className="font-mono text-[11px] tracking-[0.2em] uppercase border border-border/30 text-muted-foreground px-6 py-3 hover:border-cyan-500/30 hover:text-cyan-300/70 transition-all"
+            >
+              Request pilot access
+            </Link>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-6 font-mono text-[11px] text-cyan-300/60 border-t border-cyan-500/10 pt-6">
+            <div>
+              INFERENCE LATENCY&nbsp;
+              <span className="text-cyan-300">
+                &lt;<CountUp target={36} suffix="ms" />
+              </span>
+            </div>
+            <span className="text-cyan-500/20">|</span>
+            <div>
+              CAMERA STREAMS&nbsp;
+              <span className="text-cyan-300">
+                <CountUp target={16} />
+              </span>
+            </div>
+            <span className="text-cyan-500/20">|</span>
+            <div>
+              EVENTS LOGGED TODAY&nbsp;
+              <span className="text-cyan-300">
+                <CountUp target={5214} />
+              </span>
+            </div>
+            <span className="text-cyan-500/20">|</span>
+            <div>
+              UPTIME&nbsp;
+              <span className="text-cyan-300">99.97%</span>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="relative z-10 py-32 bg-background/80">
-        <div className="container mx-auto px-6">
-          <div className="max-w-4xl mx-auto text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Designed for unmanned environments</h2>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              NEPA VODA ingests multi-camera streams, builds a structured timeline of entities and events, 
-              and exposes it as a stable API that any LLM or backend can query by time slice, entity, or relation.
-              Actions proposed by agents are validated at the edge, keeping execution safe, deterministic, and auditable.
-            </p>
-          </div>
+      <section className="py-24 container mx-auto px-6 max-w-6xl">
+        <div className="flex items-center gap-3 mb-8">
+          <LiveBadge />
+          <span className="font-mono text-[10px] tracking-[0.22em] uppercase text-cyan-400/60">
+            Live inference feed — Camera array HK-01
+          </span>
         </div>
-      </section>
 
-      <section className="relative z-10 py-32 bg-card/20">
-        <div className="container mx-auto px-6">
-          <div className="max-w-4xl mx-auto text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Key Capabilities</h2>
-          </div>
+        <HudPanel className="relative w-full aspect-video bg-[#080B12] overflow-hidden">
+          <div className="absolute inset-0 grid-bg opacity-40" />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <div className="glass-card text-center">
-              <Video size={48} className="text-primary mx-auto mb-6" />
-              <h3 className="text-xl font-semibold mb-3">Stream Ingestion</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                Multi-lane video ingestion with per-stream isolation. Frame-level timestamping ensures 
-                reproducible replay of entire inference sessions.
-              </p>
-            </div>
-
-            <div className="glass-card text-center">
-              <GitBranch size={48} className="text-primary mx-auto mb-6" />
-              <h3 className="text-xl font-semibold mb-3">Governed Inference</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                Every detection passes through deterministic spike-timing gates. No probabilistic drift across runs. 
-                Identical frames always produce identical outputs.
-              </p>
-            </div>
-
-            <div className="glass-card text-center">
-              <CheckCircle size={48} className="text-primary mx-auto mb-6" />
-              <h3 className="text-xl font-semibold mb-3">POE Evidence Chain</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                Cryptographically sealed proof-of-execution for every frame processed. Complete audit trail 
-                from camera feed to final decision, immutable and verifiable.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="relative z-10 py-32 bg-background/80">
-        <div className="container mx-auto px-6">
-          <div className="max-w-4xl mx-auto text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Pricing</h2>
-            <p className="text-lg text-muted-foreground">
-              Transparent pricing for teams of all sizes
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <Card className="glass-card border-border/20">
-              <CardHeader>
-                <CardTitle className="text-2xl">Starter</CardTitle>
-                <CardDescription>Perfect for testing and small deployments</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="mb-6">
-                  <span className="text-4xl font-bold text-primary mono">$199</span>
-                  <span className="text-muted-foreground"> / month</span>
-                </div>
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-start gap-2">
-                    <Check size={20} className="text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">Up to 4 cameras</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check size={20} className="text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">1 site location</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check size={20} className="text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">Core VODA event stream</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check size={20} className="text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">Web dashboard access</span>
-                  </li>
-                </ul>
-                <Button className="w-full" variant="outline" asChild>
-                  <Link to="/signup">Get started</Link>
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="glass-card border-primary/50 shadow-lg shadow-primary/10 relative">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                <Badge className="bg-primary text-primary-foreground">Most Popular</Badge>
+          {FEED_CYCLES.map((obj) => (
+            <div
+              key={obj.id}
+              className="absolute"
+              style={{ left: obj.x, top: obj.y }}
+            >
+              <div className="border border-cyan-400/60 px-2 py-1 min-w-[90px]">
+                <p className="font-mono text-[9px] text-cyan-400/80 tracking-widest">
+                  {obj.label}
+                </p>
+                <p className="font-mono text-[9px] text-cyan-300 tracking-widest">
+                  {obj.status}
+                </p>
               </div>
-              <CardHeader>
-                <CardTitle className="text-2xl">Growth</CardTitle>
-                <CardDescription>For growing teams and multi-site operations</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="mb-6">
-                  <span className="text-4xl font-bold text-primary mono">$499</span>
-                  <span className="text-muted-foreground"> / month</span>
-                </div>
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-start gap-2">
-                    <Check size={20} className="text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">Up to 12 cameras</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check size={20} className="text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">3 site locations</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check size={20} className="text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">Full API access for LLM agents</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check size={20} className="text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">Audit logging & replay</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check size={20} className="text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">Email support</span>
-                  </li>
-                </ul>
-                <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90" asChild>
-                  <Link to="/signup">Get started</Link>
-                </Button>
-              </CardContent>
-            </Card>
+            </div>
+          ))}
 
-            <Card className="glass-card border-border/20">
-              <CardHeader>
-                <CardTitle className="text-2xl">Enterprise</CardTitle>
-                <CardDescription>Custom solutions for large deployments</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="mb-6">
-                  <span className="text-4xl font-bold text-primary">Custom</span>
-                </div>
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-start gap-2">
-                    <Check size={20} className="text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">Unlimited cameras & sites</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check size={20} className="text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">Multi-site roll-out support</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check size={20} className="text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">Custom integrations</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check size={20} className="text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">SLAs & dedicated support</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check size={20} className="text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">On-prem or VPC deployment</span>
-                  </li>
-                </ul>
-                <Button className="w-full" variant="outline" asChild>
-                  <Link to="/about/contact">Talk to sales</Link>
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      <section className="relative z-10 py-32 bg-card/20">
-        <div className="container mx-auto px-6">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold mb-6">How VODA Connects to NEPA Core</h2>
-            <p className="text-lg text-muted-foreground mb-8">
-              VODA runs on the same neuromorphic inference engine as all other XODA agents. 
-              Deploy via REST or gRPC endpoints. Real-time or batch processing modes available. 
-              Fully containerized for edge or cloud deployment.
-            </p>
-            <p className="text-muted-foreground">
-              Every XODA agent is powered by the same NEPA neuromorphic inference core — deterministic, 
-              auditable, deployable at the edge.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="relative z-10 py-32 bg-primary/5">
-        <div className="container mx-auto px-6">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-4xl font-bold mb-6">
-              Ready to deploy VODA?
-            </h2>
-            <p className="text-lg text-muted-foreground mb-10">
-              Start with NEPA VODA and build reliable autonomous video operations with deterministic outputs.
-            </p>
-            <div className="flex items-center justify-center gap-4">
-              <Button 
-                size="lg" 
-                className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 px-8 h-12 rounded-full"
-                asChild
-              >
-                <Link to="/signup">
-                  Get started
-                  <ArrowRight className="ml-2" size={16} />
-                </Link>
-              </Button>
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="border-primary/30 hover:bg-primary/10 px-8 h-12 rounded-full"
-                asChild
-              >
-                <Link to="/resources/docs">View documentation</Link>
-              </Button>
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="relative w-12 h-12">
+              <div className="absolute top-0 left-1/2 w-px h-4 bg-cyan-400/30 -translate-x-1/2" />
+              <div className="absolute bottom-0 left-1/2 w-px h-4 bg-cyan-400/30 -translate-x-1/2" />
+              <div className="absolute left-0 top-1/2 w-4 h-px bg-cyan-400/30 -translate-y-1/2" />
+              <div className="absolute right-0 top-1/2 w-4 h-px bg-cyan-400/30 -translate-y-1/2" />
+              <div className="absolute inset-0 m-auto w-1.5 h-1.5 rounded-full bg-cyan-400/60 glow-pulse" />
             </div>
           </div>
+
+          <div className="absolute bottom-0 left-0 right-0 border-t border-cyan-500/20 bg-[#050508]/80 px-4 py-2">
+            <p className="font-mono text-[10px] tracking-[0.2em] text-cyan-400/70 flicker">
+              ▶ {ALERT_CYCLE[alertIndex]}
+            </p>
+          </div>
+
+          <div className="absolute top-3 left-3 font-mono text-[9px] text-cyan-400/40 tracking-widest">
+            CAM_ARRAY // HK-01
+          </div>
+          <div className="absolute top-3 right-3 font-mono text-[9px] text-cyan-400/40 tracking-widest">
+            REC ● LIVE
+          </div>
+        </HudPanel>
+      </section>
+
+      <section className="py-24 bg-[#080B12] border-y border-cyan-500/10">
+        <div className="container mx-auto px-6 max-w-6xl">
+          <p className="font-mono text-[11px] tracking-[0.28em] uppercase text-cyan-400/50 mb-10">
+            System specification
+          </p>
+          <HudPanel className="bg-[#050508] p-8">
+            <div className="space-y-2">
+              {SPEC_LINES.map((line, i) => (
+                <TerminalLine key={line.label} label={line.label} value={line.value} delay={i * 120} />
+              ))}
+            </div>
+          </HudPanel>
         </div>
       </section>
-    </div>
+
+      <section className="py-24 container mx-auto px-6 max-w-6xl">
+        <p className="font-mono text-[11px] tracking-[0.28em] uppercase text-cyan-400/50 mb-12">
+          Core capabilities
+        </p>
+        <div className="grid md:grid-cols-2 gap-6">
+          {CAPABILITIES.map((cap) => (
+            <HudPanel key={cap.code} className="bg-[#080B12] p-6">
+              <div className="flex items-start gap-4">
+                <span className="font-mono text-xs font-bold text-cyan-400 bg-cyan-400/10 px-2 py-1 rounded shrink-0">
+                  {cap.code}
+                </span>
+                <div>
+                  <h3 className="text-sm font-semibold mb-2">{cap.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{cap.desc}</p>
+                </div>
+              </div>
+            </HudPanel>
+          ))}
+        </div>
+      </section>
+
+      <section className="py-24 bg-[#080B12] border-y border-cyan-500/10">
+        <div className="container mx-auto px-6 max-w-6xl">
+          <p className="font-mono text-[11px] tracking-[0.28em] uppercase text-cyan-400/50 mb-12">
+            Deployment scenarios
+          </p>
+          <div className="space-y-6">
+            {USE_CASES.map((useCase) => (
+              <HudPanel key={useCase.env} className="bg-[#050508] p-6">
+                <h3 className="text-sm font-semibold text-cyan-300 mb-2">{useCase.env}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{useCase.desc}</p>
+              </HudPanel>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-32 container mx-auto px-6 max-w-4xl text-center">
+        <h2 className="text-3xl md:text-4xl font-bold mb-6">
+          Ready to deploy VODA?
+        </h2>
+        <p className="text-muted-foreground mb-10 max-w-2xl mx-auto">
+          Start with a pilot deployment and see how NEPA VODA transforms multi-camera 
+          surveillance into actionable intelligence — on-device, in real time.
+        </p>
+        <div className="flex items-center justify-center gap-4">
+          <Link
+            to="/dashboard"
+            className="glow-pulse font-mono text-[11px] tracking-[0.2em] uppercase border border-cyan-500/50 text-cyan-400 px-6 py-3 hover:bg-cyan-500/10 hover:border-cyan-400 transition-all"
+          >
+            Launch console
+          </Link>
+          <Link
+            to="/about/contact"
+            className="font-mono text-[11px] tracking-[0.2em] uppercase border border-border/30 text-muted-foreground px-6 py-3 hover:border-cyan-500/30 hover:text-cyan-300/70 transition-all"
+          >
+            Request pilot access
+          </Link>
+        </div>
+      </section>
+    </main>
   )
 }
