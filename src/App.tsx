@@ -2,6 +2,8 @@ import { useKV } from '@github/spark/hooks'
 import { Navigation } from '@/components/Navigation'
 import { Footer } from '@/components/Footer'
 import { HomePage } from '@/components/pages/HomePage'
+import { SignInPage } from '@/components/pages/SignInPage'
+import { SignUpPage } from '@/components/pages/SignUpPage'
 import { Toaster } from '@/components/ui/sonner'
 import { PlaceholderPage } from '@/components/pages/PlaceholderPage'
 
@@ -34,9 +36,9 @@ function App() {
       case 'careers':
         return <PlaceholderPage title="Careers" subtitle="Join our team building perception infrastructure" onNavigate={handleNavigate} />
       case 'signin':
-        return <PlaceholderPage title="Sign in" subtitle="Access your deployments and APIs" onNavigate={handleNavigate} />
+        return <SignInPage onNavigate={handleNavigate} />
       case 'signup':
-        return <PlaceholderPage title="Get started" subtitle="Create an account to deploy NEPA" onNavigate={handleNavigate} />
+        return <SignUpPage onNavigate={handleNavigate} />
       case 'contact':
         return <PlaceholderPage title="Contact" subtitle="Get in touch with our team" onNavigate={handleNavigate} />
       case 'privacy':
