@@ -1,89 +1,75 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { useKV } from '@github/spark/hooks'
-import { Navigation } from '@/components/Navigation'
-import { Footer } from '@/components/Footer'
-import { HomePage } from '@/components/pages/HomePage'
-import { SignInPage } from '@/components/pages/SignInPage'
-import { SignUpPage } from '@/components/pages/SignUpPage'
-import { ForgotPasswordPage } from '@/components/pages/ForgotPasswordPage'
-import { ResetPasswordPage } from '@/components/pages/ResetPasswordPage'
-import { TwoFactorSetupPage } from '@/components/pages/TwoFactorSetupPage'
-import { TwoFactorVerifyPage } from '@/components/pages/TwoFactorVerifyPage'
-import { Toaster } from '@/components/ui/sonner'
-import { PlaceholderPage } from '@/components/pages/PlaceholderPage'
+import { AppLayout } from '@/components/AppLayout'
+
+import { HomePage } from '@/routes/HomePage'
+import { SignInPage } from '@/routes/SignInPage'
+import { SignUpPage } from '@/routes/SignUpPage'
+import { ForgotPasswordPage } from '@/routes/ForgotPasswordPage'
+import { ResetPasswordPage } from '@/routes/ResetPasswordPage'
+import { TwoFactorSetupPage } from '@/routes/TwoFactorSetupPage'
+import { TwoFactorVerifyPage } from '@/routes/TwoFactorVerifyPage'
+
+import { VODAPage } from '@/routes/products/VODAPage'
+import { RODAPage } from '@/routes/products/RODAPage'
+import { EODAPage } from '@/routes/products/EODAPage'
+import { FODAPage } from '@/routes/products/FODAPage'
+import { SODAPage } from '@/routes/products/SODAPage'
+
+import { DocsPage } from '@/routes/resources/DocsPage'
+import { ApiReferencePage } from '@/routes/resources/ApiReferencePage'
+import { GuidesPage } from '@/routes/resources/GuidesPage'
+import { ChangelogPage } from '@/routes/resources/ChangelogPage'
+import { StatusPage } from '@/routes/resources/StatusPage'
+
+import { CompanyPage } from '@/routes/about/CompanyPage'
+import { TechnologyPage } from '@/routes/about/TechnologyPage'
+import { CareersPage } from '@/routes/about/CareersPage'
+import { CommunityPage } from '@/routes/about/CommunityPage'
+import { ContactPage } from '@/routes/about/ContactPage'
+import { PrivacyPage } from '@/routes/about/PrivacyPage'
+import { TermsPage } from '@/routes/about/TermsPage'
+import { SecurityPage } from '@/routes/about/SecurityPage'
 
 function App() {
-  const [currentPage, setCurrentPage] = useKV<string>('aura-current-page', 'home')
   const [pendingEmail, setPendingEmail] = useKV<string>('aura-pending-email', '')
 
-  const handleNavigate = (page: string) => {
-    setCurrentPage(page)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-
-  const renderPage = () => {
-    switch (currentPage) {
-      case 'products':
-        return <PlaceholderPage title="Products" subtitle="NEPA VODEC Agent, Edge Runtime, and Cloud Console" onNavigate={handleNavigate} />
-      case 'solutions-retail':
-        return <PlaceholderPage title="Unmanned Retail" subtitle="NEPA for unmanned shops and micro-retail" onNavigate={handleNavigate} />
-      case 'solutions-inspection':
-        return <PlaceholderPage title="Autonomous Inspection" subtitle="For drones and ground robots" onNavigate={handleNavigate} />
-      case 'solutions-robotics':
-        return <PlaceholderPage title="Service & Delivery Robotics" subtitle="Shared perception layer for autonomous systems" onNavigate={handleNavigate} />
-      case 'technology':
-        return <PlaceholderPage title="Technology" subtitle="Neuromorphic edge processing, LLM-agnostic interfaces" onNavigate={handleNavigate} />
-      case 'resources':
-        return <PlaceholderPage title="Resources" subtitle="Documentation, playground, changelog" onNavigate={handleNavigate} />
-      case 'community':
-        return <PlaceholderPage title="Community" subtitle="Forum, early adopter program, partners" onNavigate={handleNavigate} />
-      case 'about':
-        return <PlaceholderPage title="About Us" subtitle="Mission, story, leadership, values" onNavigate={handleNavigate} />
-      case 'careers':
-        return <PlaceholderPage title="Careers" subtitle="Join our team building perception infrastructure" onNavigate={handleNavigate} />
-      case 'signin':
-        return <SignInPage onNavigate={handleNavigate} onRequire2FA={(email: string) => {
-          setPendingEmail(email)
-          handleNavigate('2fa-verify')
-        }} />
-      case 'signup':
-        return <SignUpPage onNavigate={handleNavigate} onSignUpSuccess={(email: string) => {
-          setPendingEmail(email)
-          handleNavigate('2fa-setup')
-        }} />
-      case '2fa-setup':
-        return <TwoFactorSetupPage onNavigate={handleNavigate} userEmail={pendingEmail} />
-      case '2fa-verify':
-        return <TwoFactorVerifyPage 
-          onNavigate={handleNavigate} 
-          userEmail={pendingEmail}
-          onVerified={() => handleNavigate('home')}
-        />
-      case 'forgot-password':
-        return <ForgotPasswordPage onNavigate={handleNavigate} />
-      case 'reset-password':
-        return <ResetPasswordPage onNavigate={handleNavigate} />
-      case 'contact':
-        return <PlaceholderPage title="Contact" subtitle="Get in touch with our team" onNavigate={handleNavigate} />
-      case 'privacy':
-        return <PlaceholderPage title="Privacy Policy" subtitle="" onNavigate={handleNavigate} />
-      case 'terms':
-        return <PlaceholderPage title="Terms of Service" subtitle="" onNavigate={handleNavigate} />
-      case 'security':
-        return <PlaceholderPage title="Security" subtitle="Data handling and governance" onNavigate={handleNavigate} />
-      case 'status':
-        return <PlaceholderPage title="System Status" subtitle="" onNavigate={handleNavigate} />
-      default:
-        return <HomePage onNavigate={handleNavigate} />
-    }
-  }
-
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation onNavigate={handleNavigate} currentPage={currentPage || 'home'} />
-      <main className="pt-16">{renderPage()}</main>
-      <Footer onNavigate={handleNavigate} />
-      <Toaster />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<HomePage />} />
+          
+          <Route path="/signin" element={<SignInPage setPendingEmail={setPendingEmail} />} />
+          <Route path="/signup" element={<SignUpPage setPendingEmail={setPendingEmail} />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/2fa-setup" element={<TwoFactorSetupPage pendingEmail={pendingEmail} />} />
+          <Route path="/2fa-verify" element={<TwoFactorVerifyPage pendingEmail={pendingEmail} />} />
+
+          <Route path="/products/voda" element={<VODAPage />} />
+          <Route path="/products/roda" element={<RODAPage />} />
+          <Route path="/products/eoda" element={<EODAPage />} />
+          <Route path="/products/foda" element={<FODAPage />} />
+          <Route path="/products/soda" element={<SODAPage />} />
+
+          <Route path="/resources/docs" element={<DocsPage />} />
+          <Route path="/resources/api" element={<ApiReferencePage />} />
+          <Route path="/resources/guides" element={<GuidesPage />} />
+          <Route path="/resources/changelog" element={<ChangelogPage />} />
+          <Route path="/resources/status" element={<StatusPage />} />
+
+          <Route path="/about/company" element={<CompanyPage />} />
+          <Route path="/about/technology" element={<TechnologyPage />} />
+          <Route path="/about/careers" element={<CareersPage />} />
+          <Route path="/about/community" element={<CommunityPage />} />
+          <Route path="/about/contact" element={<ContactPage />} />
+          <Route path="/about/privacy" element={<PrivacyPage />} />
+          <Route path="/about/terms" element={<TermsPage />} />
+          <Route path="/about/security" element={<SecurityPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
 
