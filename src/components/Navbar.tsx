@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import {
@@ -14,12 +14,22 @@ export function Navbar() {
   const [isProductsOpen, setIsProductsOpen] = useState(false)
   const [isResourcesOpen, setIsResourcesOpen] = useState(false)
   const [isAboutOpen, setIsAboutOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
   const location = useLocation()
 
   const isActive = (path: string) => location.pathname === path
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-gray-200 bg-white/95 backdrop-blur-md">
+    <nav className={`fixed top-0 left-0 right-0 z-50 border-b border-gray-200 bg-white/95 backdrop-blur-md transition-shadow duration-300 ${isScrolled ? 'shadow-sm' : ''}`}>
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between gap-8">
           <Link to="/" className="flex items-center gap-2.5 group">
