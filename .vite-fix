@@ -1,0 +1,12 @@
+# Vite Cache Fix
+
+This file forces Vite to invalidate its cache.
+
+If you're seeing "Failed to resolve import react-router-dom" errors:
+
+1. Stop the dev server (Ctrl+C)
+2. Delete the `.vite` directory: `rm -rf .vite node_modules/.vite`
+3. Restart: `npm run dev`
+
+The package is installed correctly in package.json.
+This is a Vite dependency pre-bundling cache issue.
