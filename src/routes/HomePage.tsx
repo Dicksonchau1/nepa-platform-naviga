@@ -31,7 +31,7 @@ export function HomePage() {
   }
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-black via-gray-900 to-black">
+    <div className="relative min-h-screen w-full overflow-hidden bg-background">
       <video
         ref={videoRef}
         autoPlay
@@ -45,7 +45,7 @@ export function HomePage() {
       </video>
 
       <div 
-        className="absolute inset-0 bg-gradient-to-r from-black/80 via-gray-900/60 to-transparent transition-opacity duration-1500"
+        className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-transparent transition-opacity duration-1500"
         style={{ opacity: heroVisible ? 1 : 0 }}
       />
       <div 
