@@ -186,6 +186,144 @@ code, pre, .mono {
   }
 }
 
+.scroll-gradient-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    135deg,
+    oklch(0.05 0 0) 0%,
+    oklch(0.08 0.04 240) 50%,
+    oklch(0.05 0 0) 100%
+  );
+  background-size: 200% 200%;
+  animation: gradient-shift 15s ease infinite;
+  opacity: 0.6;
+  transition: opacity 0.8s ease;
+}
+
+.scroll-gradient-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 80% 50% at var(--gradient-x, 50%) var(--gradient-y, 50%),
+    oklch(0.75 0.18 200 / 0.08) 0%,
+    transparent 70%
+  );
+  transition: --gradient-x 0.3s ease, --gradient-y 0.3s ease;
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes gradient-pulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.gradient-text {
+  background: linear-gradient(
+    135deg,
+    oklch(0.98 0 0) 0%,
+    oklch(0.75 0.18 200) 50%,
+    oklch(0.98 0 0) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-text-flow 8s ease infinite;
+}
+
+@keyframes gradient-text-flow {
+  0%, 100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+}
+
+.gradient-border {
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    oklch(0.75 0.18 200 / 0.2) 0%,
+    oklch(0.45 0.22 285 / 0.2) 50%,
+    oklch(0.75 0.18 200 / 0.2) 100%
+  );
+  background-size: 200% 200%;
+  animation: gradient-shift 10s ease infinite;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  background: var(--background);
+  border-radius: inherit;
+  z-index: -1;
+}
+
+.scroll-fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.scroll-fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.gradient-bg-section {
+  position: relative;
+  background: linear-gradient(
+    to bottom,
+    oklch(0.05 0 0) 0%,
+    oklch(0.08 0.04 240) 50%,
+    oklch(0.05 0 0) 100%
+  );
+}
+
+.gradient-bg-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 70% 50% at 50% 50%,
+    oklch(0.75 0.18 200 / 0.08) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  animation: gradient-pulse 8s ease-in-out infinite;
+}
+
+.hover-gradient-shift {
+  transition: background-position 0.5s ease;
+  background-size: 200% 200%;
+}
+
+.hover-gradient-shift:hover {
+  background-position: 100% 50%;
+}
+
 .page-bg {
   position: fixed;
   inset: 0;
