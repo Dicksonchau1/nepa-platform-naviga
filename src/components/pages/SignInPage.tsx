@@ -93,7 +93,7 @@ export function SignInPage({ onNavigate }: SignInPageProps) {
                 <div className="flex items-center justify-between text-sm">
                   <button
                     type="button"
-                    onClick={() => toast.info('Password reset link sent to your email')}
+                    onClick={() => onNavigate('forgot-password')}
                     className="text-primary hover:text-primary/80 transition-colors"
                   >
                     Forgot password?

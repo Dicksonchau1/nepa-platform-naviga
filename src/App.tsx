@@ -4,6 +4,8 @@ import { Footer } from '@/components/Footer'
 import { HomePage } from '@/components/pages/HomePage'
 import { SignInPage } from '@/components/pages/SignInPage'
 import { SignUpPage } from '@/components/pages/SignUpPage'
+import { ForgotPasswordPage } from '@/components/pages/ForgotPasswordPage'
+import { ResetPasswordPage } from '@/components/pages/ResetPasswordPage'
 import { Toaster } from '@/components/ui/sonner'
 import { PlaceholderPage } from '@/components/pages/PlaceholderPage'
 
@@ -39,6 +41,10 @@ function App() {
         return <SignInPage onNavigate={handleNavigate} />
       case 'signup':
         return <SignUpPage onNavigate={handleNavigate} />
+      case 'forgot-password':
+        return <ForgotPasswordPage onNavigate={handleNavigate} />
+      case 'reset-password':
+        return <ResetPasswordPage onNavigate={handleNavigate} />
       case 'contact':
         return <PlaceholderPage title="Contact" subtitle="Get in touch with our team" onNavigate={handleNavigate} />
       case 'privacy':
