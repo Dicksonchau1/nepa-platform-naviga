@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -11,6 +11,7 @@ import { toast } from 'sonner'
 
 export function LoginPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { login, isLoading, error } = useAuth()
   
   const [email, setEmail] = useState('')
@@ -27,7 +28,9 @@ export function LoginPage() {
     try {
       await login({ email, password })
       toast.success('Login successful')
-      navigate('/dashboard')
+      
+      const from = location.state?.from?.pathname || '/dashboard'
+      navigate(from, { replace: true })
     } catch (err) {
       toast.error('Login failed')
     }

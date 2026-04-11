@@ -57,6 +57,13 @@ A neuromorphic edge perception platform website that turns camera feeds into rel
 - **Progression**: User enters query → Selects context (retail/inspection/robotics) → Submits → AI generates response → Response displays with syntax highlighting → User can save/copy queries
 - **Success criteria**: Users can experiment with queries, understand response format, and see value in under 30 seconds
 
+### Protected Dashboard Routes
+- **Functionality**: Authentication-gated dashboard routes that require login with JWT token management
+- **Purpose**: Secure access to NEPA console features (facade inspection, robot tasks, audit logs, live intelligence)
+- **Trigger**: User attempts to access `/dashboard/*` routes
+- **Progression**: Unauthenticated access → Redirect to `/login` (with return URL saved) → User enters credentials → API validates → Tokens stored → Redirect to original destination → Dashboard accessible
+- **Success criteria**: Unauthorized users cannot access dashboard, login flow is seamless with automatic redirect-after-login, sessions persist across page refreshes
+
 ## Edge Case Handling
 - **Missing/Future Content** — Placeholder pages with clear messaging and back navigation for sections under construction
 - **Deep Linking** — Persistent state ensures users can refresh and stay on the same page
