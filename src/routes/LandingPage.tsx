@@ -1,0 +1,417 @@
+import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import { LiveBadge } from '@/components/LiveBadge'
+import { HudPanel } from '@/components/HudPanel'
+
+const AGENTS = [
+  {
+    code: 'VODA',
+    name: 'Video Agent',
+    desc: 'Multi-camera real-time detection and behavioural intelligence on-device.',
+    to: '/products/voda',
+    status: 'OPERATIONAL',
+  },
+  {
+    code: 'RODA',
+    name: 'Robotic Agent',
+    desc: 'Autonomous navigation, mission planning, and robot task orchestration.',
+    to: '/products/roda',
+    status: 'IN DEVELOPMENT',
+  },
+  {
+    code: 'EODA',
+    name: 'Edge Agent',
+    desc: 'The core hardware-agnostic inference runtime all agents are built on.',
+    to: '/products/eoda',
+    status: 'OPERATIONAL',
+  },
+  {
+    code: 'FODA',
+    name: 'Facade Agent',
+    desc: 'Drone-based aerial building inspection with BRS and defect classification.',
+    to: '/products/foda',
+    status: 'BETA',
+  },
+  {
+    code: 'SODA',
+    name: 'Surveillance Agent',
+    desc: 'Multi-site facility monitoring with pattern recognition and alert routing.',
+    to: '/products/soda',
+    status: 'IN DEVELOPMENT',
+  },
+]
+
+const STATUS_COLOR: Record<string, string> = {
+  'OPERATIONAL':    'text-cyan-400 bg-cyan-400/10',
+  'BETA':           'text-yellow-400 bg-yellow-400/10',
+  'IN DEVELOPMENT': 'text-white/40 bg-white/5',
+}
+
+function Particles() {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {Array.from({ length: 24 }).map((_, i) => (
+        <div
+          key={i}
+          className="absolute rounded-full bg-cyan-400"
+          style={{
+            width:  Math.random() * 2 + 1 + 'px',
+            height: Math.random() * 2 + 1 + 'px',
+            left:   Math.random() * 50 + '%',
+            top:    Math.random() * 100 + '%',
+            opacity: Math.random() * 0.25 + 0.05,
+            animation: `float-up ${Math.random() * 12 + 8}s linear ${Math.random() * 8}s infinite`,
+          }}
+        />
+      ))}
+    </div>
+  )
+}
+
+export function LandingPage() {
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const t = setTimeout(() => setVisible(true), 100)
+    return () => clearTimeout(t)
+  }, [])
+
+  return (
+    <main className="min-h-screen bg-[#050508] text-white overflow-x-hidden">
+
+      <section className="relative min-h-screen flex items-center overflow-hidden">
+
+        <div className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px)`,
+            backgroundSize: '56px 56px',
+          }}
+        />
+
+        <div className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'radial-gradient(ellipse 60% 70% at 20% 50%, rgba(0,102,255,0.09) 0%, transparent 70%)',
+          }}
+        />
+
+        <div className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,212,255,0.012) 2px, rgba(0,212,255,0.012) 4px)',
+          }}
+        />
+
+        <Particles />
+
+        <div
+          className="absolute left-0 right-0 h-px pointer-events-none"
+          style={{
+            background: 'linear-gradient(90deg, rgba(0,212,255,0.5) 0%, transparent 60%)',
+            animation: 'sweep 8s linear infinite',
+          }}
+        />
+
+        <div className="container mx-auto px-6 max-w-7xl relative z-10 pt-28 pb-20">
+          <div className="max-w-3xl">
+
+            <div className="flex items-center gap-3 mb-10">
+              <LiveBadge />
+              <span className="text-xs text-white/35 tracking-[0.2em] font-mono uppercase">
+                NEPA Platform — System Online
+              </span>
+            </div>
+
+            <div
+              className="mb-8 transition-all duration-1000 ease-out"
+              style={{
+                opacity:   visible ? 1 : 0,
+                transform: visible ? 'translateY(0)' : 'translateY(32px)',
+              }}
+            >
+              <h1 className="text-6xl md:text-8xl font-bold tracking-tight leading-[1.0] mb-2">
+                NEPA
+              </h1>
+              <h2
+                className="text-3xl md:text-5xl font-light tracking-tight leading-tight text-white/70 mb-0"
+                style={{
+                  transition: 'opacity 1s ease-out 0.4s, transform 1s ease-out 0.4s',
+                  opacity:   visible ? 1 : 0,
+                  transform: visible ? 'translateY(0)' : 'translateY(24px)',
+                }}
+              >
+                Neuromorphic
+              </h2>
+              <h2
+                className="text-3xl md:text-5xl font-light tracking-tight leading-tight text-white/70 mb-0"
+                style={{
+                  transition: 'opacity 1s ease-out 0.65s, transform 1s ease-out 0.65s',
+                  opacity:   visible ? 1 : 0,
+                  transform: visible ? 'translateY(0)' : 'translateY(24px)',
+                }}
+              >
+                Edge Perception Agent
+              </h2>
+            </div>
+
+            <p
+              className="text-base md:text-lg text-white/45 max-w-xl leading-relaxed mb-10"
+              style={{
+                transition: 'opacity 1s ease-out 0.9s',
+                opacity: visible ? 1 : 0,
+              }}
+            >
+              Edge AI inference for autonomous retail, aerial facade inspection,
+              and robotic delivery. Runs entirely on-device — deterministic,
+              private, and compliant by design.
+            </p>
+
+            <div
+              className="flex flex-wrap items-center gap-4 mb-16"
+              style={{
+                transition: 'opacity 1s ease-out 1.1s',
+                opacity: visible ? 1 : 0,
+              }}
+            >
+              <Link
+                to="/dashboard"
+                className="bg-cyan-500 text-black font-semibold text-sm px-7 py-3 hover:bg-cyan-400 transition-colors"
+              >
+                Launch NEPA Console
+              </Link>
+              <Link
+                to="/about/contact"
+                className="border border-white/20 text-white/70 text-sm px-7 py-3 hover:border-white/40 hover:text-white transition-colors"
+              >
+                View roadmap & trial
+              </Link>
+            </div>
+
+            <div
+              className="flex flex-wrap gap-10 border-t border-white/8 pt-8"
+              style={{
+                transition: 'opacity 1s ease-out 1.3s',
+                opacity: visible ? 1 : 0,
+              }}
+            >
+              {[
+                { label: 'Inference latency',  value: '< 42ms',  note: 'on Jetson Nano' },
+                { label: 'Patent filed',        value: 'Feb 2026', note: 'provisional IP' },
+                { label: 'Pilot target',        value: 'Q2 2026', note: 'NSSIM deployment' },
+                { label: 'Platform uptime',     value: '99.97%',  note: 'dev environment' },
+              ].map((m) => (
+                <div key={m.label}>
+                  <p className="text-white/30 text-xs mb-1">{m.label}</p>
+                  <p className="text-white font-semibold text-lg font-mono">{m.value}</p>
+                  <p className="text-white/25 text-[11px] mt-0.5">{m.note}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-28 border-t border-white/8">
+        <div className="container mx-auto px-6 max-w-6xl">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <div>
+              <p className="text-xs text-cyan-400/60 tracking-widest uppercase font-mono mb-4">
+                What is NEPA
+              </p>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6">
+                Inference at the source.<br />
+                Not the server.
+              </h2>
+              <p className="text-white/50 leading-relaxed mb-6">
+                NEPA is a spike-timing inference engine built in C++ and deployed
+                on commodity edge hardware — NVIDIA Jetson Nano and Intel NUC.
+                It runs YOLOv8 perception models via ONNX and TensorRT, delivering
+                sub-42ms deterministic latency with no cloud dependency.
+              </p>
+              <p className="text-white/50 leading-relaxed mb-8">
+                Every inference event is hash-chained into an immutable audit
+                ledger. Operators get a tamper-evident compliance record of every
+                decision the system made — essential for autonomous retail and
+                regulated inspection environments.
+              </p>
+              <Link
+                to="/about/technology"
+                className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors underline underline-offset-4"
+              >
+                Read the technology overview →
+              </Link>
+            </div>
+
+            <HudPanel className="bg-[#080B12] p-8">
+              <p className="font-mono text-[10px] tracking-[0.24em] text-cyan-400/50 uppercase mb-6">
+                Core specification
+              </p>
+              <div className="space-y-3">
+                {[
+                  { k: 'INFERENCE ENGINE', v: 'C++ spike-timing (STDP)' },
+                  { k: 'MODEL RUNTIME',    v: 'ONNX + TensorRT' },
+                  { k: 'PERCEPTION',       v: 'YOLOv8 fine-tuned' },
+                  { k: 'LATENCY',          v: '< 42ms deterministic' },
+                  { k: 'HARDWARE',         v: 'Jetson Nano · Intel NUC' },
+                  { k: 'AUDIT',            v: 'SHA-256 hash-chained log' },
+                  { k: 'DEPLOYMENT',       v: 'Edge-only — no cloud egress' },
+                  { k: 'PATENT',           v: 'Provisional filed Feb 2026' },
+                ].map((s) => (
+                  <div key={s.k} className="flex items-start gap-4 text-sm border-b border-white/5 pb-3 last:border-0 last:pb-0">
+                    <span className="font-mono text-[11px] text-white/30 w-36 shrink-0 pt-0.5 tracking-wide">
+                      {s.k}
+                    </span>
+                    <span className="text-white/80">{s.v}</span>
+                  </div>
+                ))}
+              </div>
+            </HudPanel>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-28 border-t border-white/8">
+        <div className="container mx-auto px-6 max-w-6xl">
+          <div className="mb-14">
+            <p className="text-xs text-cyan-400/60 tracking-widest uppercase font-mono mb-3">
+              Platform agents
+            </p>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
+              Five agents. One platform.
+            </h2>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {AGENTS.map((a) => (
+              <Link key={a.code} to={a.to} className="group">
+                <HudPanel className="p-6 bg-[#080B12] hover:bg-[#0A0E18] transition-colors h-full flex flex-col">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="font-mono text-xs font-bold text-cyan-400 bg-cyan-400/10 px-2 py-1">
+                      {a.code}
+                    </span>
+                    <span className={`font-mono text-[10px] px-2 py-0.5 ${STATUS_COLOR[a.status]}`}>
+                      {a.status}
+                    </span>
+                  </div>
+                  <p className="text-sm font-semibold text-white mb-2">{a.name}</p>
+                  <p className="text-xs text-white/40 leading-relaxed flex-1">{a.desc}</p>
+                  <p className="text-xs text-cyan-400/60 mt-4 group-hover:text-cyan-400 transition-colors">
+                    Learn more →
+                  </p>
+                </HudPanel>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-28 border-t border-white/8">
+        <div className="container mx-auto px-6 max-w-6xl">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <p className="text-xs text-cyan-400/60 tracking-widest uppercase font-mono mb-4">
+                Early access
+              </p>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6">
+                Run a pilot before you commit.
+              </h2>
+              <p className="text-white/50 leading-relaxed mb-8">
+                We are onboarding a small number of pilot partners in Hong Kong
+                for Q2 2026. Pilots run on your hardware, in your environment,
+                with full access to the NEPA console and audit ledger. No upfront
+                cost. No lock-in.
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <Link
+                  to="/about/contact"
+                  className="bg-cyan-500 text-black font-semibold text-sm px-7 py-3 hover:bg-cyan-400 transition-colors"
+                >
+                  Request pilot access
+                </Link>
+                <Link
+                  to="/about/contact"
+                  className="border border-white/20 text-white/70 text-sm px-7 py-3 hover:border-white/40 hover:text-white transition-colors"
+                >
+                  View roadmap
+                </Link>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {[
+                {
+                  step: '01',
+                  title: 'Submit your interest',
+                  desc: 'Tell us your environment — retail, inspection, or robotics. We review and respond within 2 business days.',
+                },
+                {
+                  step: '02',
+                  title: 'Hardware assessment',
+                  desc: 'We confirm your edge hardware compatibility (Jetson Nano, Intel NUC, or equivalent) and prepare your deployment config.',
+                },
+                {
+                  step: '03',
+                  title: 'Live pilot deployment',
+                  desc: 'NEPA is deployed to your site. You get full console access, live inference feeds, and audit log visibility from day one.',
+                },
+                {
+                  step: '04',
+                  title: 'Review and scale',
+                  desc: 'After the pilot period, we review results together and discuss a commercial arrangement that fits your operation.',
+                },
+              ].map((s) => (
+                <div key={s.step} className="flex gap-5 items-start">
+                  <span className="font-mono text-xs text-cyan-400/40 w-6 shrink-0 pt-1">
+                    {s.step}
+                  </span>
+                  <div>
+                    <p className="text-sm font-semibold text-white mb-1">{s.title}</p>
+                    <p className="text-xs text-white/40 leading-relaxed">{s.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer className="border-t border-white/8 py-10">
+        <div className="container mx-auto px-6 max-w-6xl flex flex-wrap items-center justify-between gap-6">
+          <p className="text-xs text-white/25 font-mono">
+            © 2026 AuraSense Limited · Kowloon, Hong Kong
+          </p>
+          <div className="flex flex-wrap gap-6">
+            {[
+              { label: 'Privacy',  to: '/about/privacy' },
+              { label: 'Terms',    to: '/about/terms' },
+              { label: 'Security', to: '/about/security' },
+              { label: 'Contact',  to: '/about/contact' },
+              { label: 'Status',   to: '/resources/status' },
+            ].map((l) => (
+              <Link
+                key={l.to}
+                to={l.to}
+                className="text-xs text-white/30 hover:text-white/60 transition-colors"
+              >
+                {l.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </footer>
+
+      <style>{`
+        @keyframes sweep {
+          0%   { top: -2px; }
+          100% { top: 100%; }
+        }
+        @keyframes float-up {
+          0%   { transform: translateY(0);     opacity: 0; }
+          10%  { opacity: 1; }
+          90%  { opacity: 0.15; }
+          100% { transform: translateY(-100vh); opacity: 0; }
+        }
+      `}</style>
+
+    </main>
+  )
+}

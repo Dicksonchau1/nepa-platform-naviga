@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from '@/contexts/AuthContext'
 import { AppLayout } from '@/components/AppLayout'
 
 import { HomePage } from '@/routes/HomePage'
+import { LandingPage } from '@/routes/LandingPage'
 import { SignInPage } from '@/routes/SignInPage'
 import { SignUpPage } from '@/routes/SignUpPage'
 import { ForgotPasswordPage } from '@/routes/ForgotPasswordPage'
@@ -65,6 +66,7 @@ function AppRoutes() {
     <Routes>
       <Route element={<AppLayout />}>
         <Route path="/" element={<HomePage />} />
+        <Route path="/landing" element={<LandingPage />} />
         
         <Route path="/signin" element={<SignInPage setPendingEmail={setPendingEmail} />} />
         <Route path="/signup" element={<SignUpPage setPendingEmail={setPendingEmail} />} />
