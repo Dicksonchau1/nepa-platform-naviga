@@ -4,6 +4,7 @@ import { LiveBadge } from '@/components/LiveBadge'
 import { nepaService, type AgentType } from '@/lib/nepaService'
 import { API_CONFIG } from '@/config/api'
 import { toast } from 'sonner'
+import { useKV } from '@github/spark/hooks'
 
 type Role = 'user' | 'agent'
 type AttachmentType = 'video-file' | 'video-url' | 'image'
@@ -25,6 +26,13 @@ type Message = {
   thinking?: boolean
   agentUsed?: string
   streaming?: boolean
+}
+
+type SerializableMessage = Omit<Message, 'timestamp' | 'attachment'> & {
+  timestamp: string
+  attachment?: Omit<Attachment, 'file' | 'preview'> & {
+    preview?: string
+  }
 }
 
 const SUGGESTIONS = [
@@ -91,6 +99,7 @@ function formatContent(text: string) {
 }
 
 export function AgentChat() {
+  const [persistedMessages, setPersistedMessages] = useKV<SerializableMessage[]>('nepa-chat-history', [])
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [videoUrl, setVideoUrl] = useState('')
@@ -102,6 +111,48 @@ export function AgentChat() {
   const fileRef = useRef<HTMLInputElement>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
   const textRef = useRef<HTMLTextAreaElement>(null)
+  const isInitialized = useRef(false)
+
+  useEffect(() => {
+    if (!isInitialized.current && persistedMessages && persistedMessages.length > 0) {
+      const deserializedMessages: Message[] = persistedMessages.map((msg) => ({
+        ...msg,
+        timestamp: new Date(msg.timestamp),
+        streaming: false,
+      }))
+      setMessages(deserializedMessages)
+      
+      const lastAgentMsg = deserializedMessages.filter(m => m.role === 'agent').pop()
+      if (lastAgentMsg?.agentUsed) {
+        setAgent(lastAgentMsg.agentUsed)
+      }
+      isInitialized.current = true
+    } else if (!isInitialized.current) {
+      isInitialized.current = true
+    }
+  }, [persistedMessages])
+
+  useEffect(() => {
+    if (isInitialized.current) {
+      const messagesToPersist: SerializableMessage[] = messages.map((msg) => ({
+        id: msg.id,
+        role: msg.role,
+        content: msg.content,
+        timestamp: msg.timestamp.toISOString(),
+        thinking: msg.thinking,
+        agentUsed: msg.agentUsed,
+        streaming: msg.streaming,
+        attachment: msg.attachment
+          ? {
+              type: msg.attachment.type,
+              name: msg.attachment.name,
+              url: msg.attachment.url,
+            }
+          : undefined,
+      }))
+      setPersistedMessages(messagesToPersist)
+    }
+  }, [messages, setPersistedMessages])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -234,6 +285,7 @@ export function AgentChat() {
   const clearChat = () => {
     setMessages([])
     setAgent(null)
+    setPersistedMessages([])
   }
 
   const isEmpty = messages.length === 0
