@@ -42,6 +42,7 @@ import { TermsPage } from '@/routes/about/TermsPage'
 import { SecurityPage } from '@/routes/about/SecurityPage'
 
 import { PricingPage } from '@/routes/PricingPage'
+import { BusinessPage } from '@/routes/BusinessPage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth()
@@ -83,6 +84,7 @@ function AppRoutes() {
         <Route path="/chat" element={<AgentChat />} />
 
         <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/business" element={<BusinessPage />} />
 
         <Route path="/products/voda" element={<VODAPage />} />
         <Route path="/products/roda" element={<RODAPage />} />
