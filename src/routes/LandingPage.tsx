@@ -136,9 +136,9 @@ export function LandingPage() {
           <div className="max-w-3xl">
 
             <div className="flex items-center gap-3 mb-10">
-              <LiveBadge />
+              <LiveBadge label="· AURASENSE" />
               <span className="text-xs text-white/35 tracking-[0.2em] font-mono uppercase">
-                NEPA Platform — System Online
+                NEPA Platform · Video Agent
               </span>
             </div>
 
@@ -150,22 +150,12 @@ export function LandingPage() {
               }}
             >
               <h1 className="text-6xl md:text-8xl font-bold tracking-tight leading-[1.0] mb-2">
-                NEPA
+                Neuromorphic
               </h1>
               <h2
                 className="text-3xl md:text-5xl font-light tracking-tight leading-tight text-white/70 mb-0"
                 style={{
                   transition: 'opacity 1s ease-out 0.4s, transform 1s ease-out 0.4s',
-                  opacity:   visible ? 1 : 0,
-                  transform: visible ? 'translateY(0)' : 'translateY(24px)',
-                }}
-              >
-                Neuromorphic
-              </h2>
-              <h2
-                className="text-3xl md:text-5xl font-light tracking-tight leading-tight text-white/70 mb-0"
-                style={{
-                  transition: 'opacity 1s ease-out 0.65s, transform 1s ease-out 0.65s',
                   opacity:   visible ? 1 : 0,
                   transform: visible ? 'translateY(0)' : 'translateY(24px)',
                 }}
@@ -181,9 +171,7 @@ export function LandingPage() {
                 opacity: visible ? 1 : 0,
               }}
             >
-              Edge AI inference for autonomous retail, aerial facade inspection,
-              and robotic delivery. Runs entirely on-device — deterministic,
-              private, and compliant by design.
+              Deterministic inference at the edge. No cloud. No dependencies. Domain agnostic.
             </p>
 
             <div
@@ -197,13 +185,13 @@ export function LandingPage() {
                 to="/dashboard"
                 className="bg-cyan-500 text-black font-semibold text-sm px-7 py-3 hover:bg-cyan-400 transition-colors"
               >
-                Launch NEPA Console
+                Launch NEPA Console →
               </Link>
               <Link
                 to="/about/contact"
                 className="border border-white/20 text-white/70 text-sm px-7 py-3 hover:border-white/40 hover:text-white transition-colors"
               >
-                View roadmap & trial
+                Request pilot access →
               </Link>
             </div>
 
@@ -215,10 +203,9 @@ export function LandingPage() {
               }}
             >
               {[
-                { label: 'Inference latency',  value: '< 42ms',  note: 'on Jetson Nano' },
-                { label: 'Patent filed',        value: 'Feb 2026', note: 'provisional IP' },
-                { label: 'Pilot target',        value: 'Q2 2026', note: 'NSSIM deployment' },
-                { label: 'Platform uptime',     value: '99.97%',  note: 'dev environment' },
+                { label: 'Inference Latency',  value: '< 0.8 ms',  note: '' },
+                { label: 'Edge Nodes Active',  value: '12',        note: '' },
+                { label: 'Audit Events Today', value: '3,847',     note: '' },
               ].map((m) => (
                 <div key={m.label}>
                   <p className="text-white/30 text-xs mb-1">{m.label}</p>

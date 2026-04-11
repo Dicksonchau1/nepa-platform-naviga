@@ -9,89 +9,54 @@ export function CompanyPage() {
           <p className="text-xs font-semibold tracking-[0.22em] uppercase text-primary mb-4">
             About AuraSense
           </p>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
-            Built at the edge of what's possible
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-black tracking-tight mb-6">
+            About AuraSense
           </h1>
+          <p className="text-2xl font-semibold text-foreground/80 mb-6 tracking-tight">
+            Built at the edge of what's possible.
+          </p>
           <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
-            AuraSense Limited is a Hong Kong–based deep-tech company developing
-            neuromorphic edge AI systems for autonomous retail, robotic delivery,
-            and aerial inspection operations.
+            AuraSense Limited is a Hong Kong–based deep-tech company building neuromorphic
+            edge AI infrastructure for autonomous operations. We design and deploy perception
+            intelligence that runs directly on the device — in unmanned retail environments,
+            aerial inspection platforms, and robotic delivery systems — across Hong Kong and
+            Asia-Pacific.
           </p>
         </div>
 
         <section className="mb-16 border-l-2 border-primary/40 pl-6">
-          <h2 className="text-xl font-semibold tracking-tight mb-3">Our mission</h2>
+          <h2 className="text-xl font-semibold tracking-tight mb-3">Our Mission</h2>
           <p className="text-muted-foreground leading-relaxed">
-            To deploy perception intelligence directly at the source — on the
-            device, at the edge — so that autonomous systems can operate safely,
-            privately, and reliably without depending on cloud round-trips or
-            centralised infrastructure.
+            To put inference at the source. Autonomous systems should not need a cloud
+            round-trip to make a decision. NEPA — our Neuromorphic Edge Perception Agent —
+            runs deterministic spike-timing inference on commodity edge hardware with sub-42 ms
+            latency, zero cloud dependency, and an immutable audit trail from sensor to action.
           </p>
         </section>
 
         <section className="mb-16">
-          <h2 className="text-2xl font-semibold tracking-tight mb-6">Our story</h2>
+          <h2 className="text-2xl font-semibold tracking-tight mb-6">Our Story</h2>
           <div className="space-y-4 text-muted-foreground leading-relaxed">
             <p>
-              AuraSense was founded in Hong Kong by a team with roots in clinical
-              systems, hardware engineering, and applied AI research. The insight
-              driving the company came from watching autonomous systems fail in
-              the real world — not because the models were wrong, but because
-              inference happened too late, too far away, or at too high a power
-              cost.
+              AuraSense was founded in Hong Kong by a team with roots in clinical systems,
+              hardware engineering, and applied AI research. The founding insight was direct:
+              autonomous systems were failing in production not because the models were wrong,
+              but because inference arrived too late, too far from the sensor, or at an energy
+              cost that made real deployment impractical.
             </p>
             <p>
-              We set out to build NEPA — the Neuromorphic Edge Perception Agent —
-              a spike-timing inference engine that runs on commodity edge hardware
-              (NVIDIA Jetson, Intel NUC) with deterministic latency and minimal
-              wattage. NEPA is not a wrapper around a cloud API. It is a
-              ground-up rethink of how perception should work when the network is
-              unreliable or absent entirely.
+              We built NEPA from the ground up — a C++ inference engine running YOLOv8 and
+              ONNX runtime on NVIDIA Jetson and Intel NUC hardware — designed specifically for
+              environments where the network is unreliable, absent, or where data cannot leave
+              the premises. NEPA is not a wrapper around a cloud API. It is a rethink of where
+              perception should live and how it should behave when the stakes are real.
             </p>
             <p>
-              Since filing our provisional patent in February 2026, AuraSense has
-              been moving toward pilot deployments across unmanned retail,
-              building facade inspection, and autonomous robotic delivery in Hong
-              Kong — with broader Asia-Pacific expansion planned as we scale.
+              In 2026 we filed our patent covering the core neuromorphic STDP inference
+              architecture. Since then we have been moving toward live pilot deployments in
+              unmanned retail, building facade inspection, and autonomous robotic delivery across
+              Hong Kong, with structured Asia-Pacific expansion planned as we scale.
             </p>
-          </div>
-        </section>
-
-        <section className="mb-16">
-          <h2 className="text-2xl font-semibold tracking-tight mb-8">Milestones</h2>
-          <div className="space-y-6">
-            {[
-              {
-                date: 'Feb 2026',
-                title: 'Provisional patent filed',
-                desc: 'Core neuromorphic STDP inference architecture filed with IP registry.',
-              },
-              {
-                date: 'Q1 2026',
-                title: 'NEPA v1 engine complete',
-                desc: 'C++ inference engine with YOLOv8 + ONNX runtime validated on Jetson Nano and Intel NUC.',
-              },
-              {
-                date: 'Q2 2026',
-                title: 'NSSIM pilot deployment',
-                desc: 'First live pilot of NEPA in an unmanned retail environment targeting Q2 2026.',
-              },
-              {
-                date: '2026',
-                title: 'Cyberport & HKPC engagement',
-                desc: 'Active applications for Cyberport funding; HKPC co-licensing collaboration under exploration.',
-              },
-            ].map((m) => (
-              <div key={m.date} className="flex gap-6">
-                <div className="w-24 shrink-0 text-xs font-mono text-primary pt-1">
-                  {m.date}
-                </div>
-                <div>
-                  <p className="font-semibold text-sm mb-1">{m.title}</p>
-                  <p className="text-sm text-muted-foreground">{m.desc}</p>
-                </div>
-              </div>
-            ))}
           </div>
         </section>
 

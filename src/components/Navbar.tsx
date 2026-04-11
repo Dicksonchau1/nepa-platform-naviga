@@ -13,6 +13,7 @@ import logoImage from '@/assets/images/Gemini_Generated_Image_8oxhp28oxhp28oxh.p
 export function Navbar() {
   const [isProductsOpen, setIsProductsOpen] = useState(false)
   const [isResourcesOpen, setIsResourcesOpen] = useState(false)
+  const [isBusinessOpen, setIsBusinessOpen] = useState(false)
   const [isAboutOpen, setIsAboutOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const location = useLocation()
@@ -41,7 +42,7 @@ export function Navbar() {
               <img
                 src={logoImage}
                 alt="AuraSense"
-                className="h-8 w-8 object-contain transition-all group-hover:drop-shadow-[0_0_12px_rgba(0,212,255,0.6)]"
+                className="h-8 w-8 object-contain transition-all group-hover:drop-shadow-[0_0_12px_rgba(0,212,255,0.6)] rounded-sm [mix-blend-mode:lighten]"
               />
             </div>
             <span className="text-[15px] font-semibold text-white group-hover:text-cyan-400 transition-colors">
@@ -184,6 +185,41 @@ export function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
 
+            <DropdownMenu open={isBusinessOpen} onOpenChange={setIsBusinessOpen}>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-1 text-sm font-medium text-white/70 hover:text-white transition-colors">
+                  Business
+                  <CaretDown
+                    size={14}
+                    weight="bold"
+                    className={`transition-transform ${
+                      isBusinessOpen ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="center"
+                className="w-48 bg-[#0A0D14]/98 backdrop-blur-xl border-white/10"
+              >
+                <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
+                  <NavLink to="/business/partnership" onClick={() => setIsBusinessOpen(false)}>
+                    Partnership
+                  </NavLink>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
+                  <NavLink to="/business/case-studies" onClick={() => setIsBusinessOpen(false)}>
+                    Case Studies
+                  </NavLink>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
+                  <NavLink to="/business/plans" onClick={() => setIsBusinessOpen(false)}>
+                    Plans
+                  </NavLink>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <DropdownMenu open={isAboutOpen} onOpenChange={setIsAboutOpen}>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-1 text-sm font-medium text-white/70 hover:text-white transition-colors">
@@ -207,23 +243,23 @@ export function Navbar() {
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
-                  <NavLink to="/about/technology" onClick={() => setIsAboutOpen(false)}>
-                    Technology
-                  </NavLink>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
-                  <NavLink to="/about/careers" onClick={() => setIsAboutOpen(false)}>
-                    Careers
-                  </NavLink>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
-                  <NavLink to="/about/community" onClick={() => setIsAboutOpen(false)}>
-                    Community
-                  </NavLink>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
                   <NavLink to="/about/contact" onClick={() => setIsAboutOpen(false)}>
-                    Contact Us
+                    Contact
+                  </NavLink>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
+                  <NavLink to="/about/privacy" onClick={() => setIsAboutOpen(false)}>
+                    Privacy
+                  </NavLink>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
+                  <NavLink to="/about/terms" onClick={() => setIsAboutOpen(false)}>
+                    Terms
+                  </NavLink>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
+                  <NavLink to="/about/security" onClick={() => setIsAboutOpen(false)}>
+                    Security
                   </NavLink>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -245,7 +281,7 @@ export function Navbar() {
                 className="relative text-sm font-semibold bg-gradient-to-r from-cyan-500 to-blue-500 text-black hover:from-cyan-400 hover:to-blue-400 transition-all shadow-[0_0_20px_rgba(0,212,255,0.3)] hover:shadow-[0_0_30px_rgba(0,212,255,0.5)] border-0"
               >
                 <Link to="/agent">
-                  <span className="relative z-10">Ask NEPA</span>
+                  <span className="relative z-10">NEPA Agent</span>
                 </Link>
               </Button>
 

@@ -13,6 +13,7 @@ import { TwoFactorSetupPage } from '@/routes/TwoFactorSetupPage'
 import { TwoFactorVerifyPage } from '@/routes/TwoFactorVerifyPage'
 import { PlaygroundPage } from '@/routes/PlaygroundPage'
 import { AgentChat } from '@/routes/AgentChat'
+import { NepaAgent } from '@/pages/NepaAgent'
 
 import { LoginPage } from '@/routes/dashboard/LoginPage'
 import { DashboardLayout } from '@/routes/dashboard/DashboardLayout'
@@ -44,6 +45,9 @@ import { SecurityPage } from '@/routes/about/SecurityPage'
 
 import { PricingPage } from '@/routes/PricingPage'
 import { BusinessPage } from '@/routes/BusinessPage'
+import { Partnership } from '@/routes/business/Partnership'
+import { CaseStudies } from '@/routes/business/CaseStudies'
+import { Plans } from '@/routes/business/Plans'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth()
@@ -81,11 +85,14 @@ function AppRoutes() {
         <Route path="/2fa-verify" element={<TwoFactorVerifyPage pendingEmail={pendingEmail || ''} />} />
 
         <Route path="/playground" element={<PlaygroundPage />} />
-        <Route path="/agent" element={<AgentChat />} />
+        <Route path="/agent" element={<NepaAgent />} />
         <Route path="/chat" element={<AgentChat />} />
 
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/business" element={<BusinessPage />} />
+        <Route path="/business/partnership" element={<Partnership />} />
+        <Route path="/business/case-studies" element={<CaseStudies />} />
+        <Route path="/business/plans" element={<Plans />} />
 
         <Route path="/products/voda" element={<VODAPage />} />
         <Route path="/products/roda" element={<RODAPage />} />
