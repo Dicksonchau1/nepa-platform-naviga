@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ArrowRight, Cpu, Eye, Robot, CloudArrowDown, Buildings, Screencast, ShieldCheck, Lightning, Atom } from '@phosphor-icons/react'
+import { AnimatedBackground } from '@/components/AnimatedBackground'
 
 interface HomePageProps {
   onNavigate: (page: string) => void
@@ -12,8 +13,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
     <div className="flex flex-col">
       <section className="min-h-screen flex items-center justify-center relative overflow-hidden py-32">
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-card" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(0.12_0.08_145)_0%,transparent_50%)] opacity-40" />
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
+        <AnimatedBackground />
         
         <div className="container mx-auto px-6 relative z-10">
           <div className="max-w-5xl mx-auto">
