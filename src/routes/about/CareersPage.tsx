@@ -22,7 +22,7 @@ const openRoles = [
     desc: 'Build the NEPA dashboard and operator console. TypeScript, React, and Python FastAPI required.',
   },
   {
-    title: 'Business Development Manager',
+    title: 'Unmanned Store Director',
     type: 'Full-time · Hong Kong / APAC',
     desc: 'Drive pilot partnerships and commercialisation across retail, logistics, and property sectors in APAC.',
   },
