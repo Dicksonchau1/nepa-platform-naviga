@@ -48,12 +48,12 @@ import {
   CheckSquare,
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
-import { RobotTask, CreateTaskRequest } from '@/types/nepa'
 import { KanbanBoard } from '@/components/dashboard/KanbanBoard'
 import { TaskList } from '@/components/dashboard/TaskList'
 import { cn } from '@/lib/utils'
 
 type ViewMode = 'kanban' | 'list'
+type MissionStatus = 'planned' | 'active' | 'paused' | 'completed' | 'aborted' | 'failed'
 
 const taskTypes = [
   { value: 'facade_inspection', label: 'Facade Inspection' },
@@ -78,15 +78,15 @@ export function RobotTasksPage() {
   const [isCreating, setIsCreating] = useState(false)
   const [selectedTaskIds, setSelectedTaskIds] = useState<Set<string>>(new Set())
   const [isBulkActionsDialogOpen, setIsBulkActionsDialogOpen] = useState(false)
-  const [bulkActionStatus, setBulkActionStatus] = useState<RobotTask['status']>('queued')
+  const [bulkActionStatus, setBulkActionStatus] = useState<MissionStatus>('planned')
   const [isBulkOperating, setIsBulkOperating] = useState(false)
   
-  const [newTask, setNewTask] = useState<CreateTaskRequest>({
+  const [newTask, setNewTask] = useState({
     name: '',
     type: 'facade_inspection',
     priority: 2,
     robotId: '',
-    metadata: {},
+    metadata: {} as Record<string, unknown>,
   })
 
   const handleCreateTask = async () => {
@@ -114,7 +114,7 @@ export function RobotTasksPage() {
     }
   }
 
-  const handleUpdateStatus = async (taskId: string, status: RobotTask['status']) => {
+  const handleUpdateStatus = async (taskId: string, status: string) => {
     try {
       await updateTaskStatus(taskId, { status })
       toast.success(`Task ${status}`)
@@ -125,7 +125,7 @@ export function RobotTasksPage() {
 
   const handleCancelTask = async (taskId: string) => {
     try {
-      await updateTaskStatus(taskId, { status: 'cancelled' })
+      await updateTaskStatus(taskId, { status: 'aborted' })
       toast.success('Task cancelled')
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to cancel task')
@@ -134,7 +134,7 @@ export function RobotTasksPage() {
 
   const handleRetryTask = async (taskId: string) => {
     try {
-      await updateTaskStatus(taskId, { status: 'queued' })
+      await updateTaskStatus(taskId, { status: 'planned' })
       toast.success('Task requeued')
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to retry task')
@@ -208,11 +208,11 @@ export function RobotTasksPage() {
   }
 
   const statusCounts = {
-    queued: tasks.filter(t => t.status === 'queued').length,
-    running: tasks.filter(t => t.status === 'running').length,
+    queued: tasks.filter(t => t.status === 'planned').length,
+    running: tasks.filter(t => t.status === 'active').length,
     completed: tasks.filter(t => t.status === 'completed').length,
     failed: tasks.filter(t => t.status === 'failed').length,
-    cancelled: tasks.filter(t => t.status === 'cancelled').length,
+    cancelled: tasks.filter(t => t.status === 'aborted').length,
   }
 
   if (error) {
@@ -375,17 +375,18 @@ export function RobotTasksPage() {
                       <Label htmlFor="bulk-status">New Status</Label>
                       <Select
                         value={bulkActionStatus}
-                        onValueChange={(value) => setBulkActionStatus(value as RobotTask['status'])}
+                        onValueChange={(value) => setBulkActionStatus(value as MissionStatus)}
                       >
                         <SelectTrigger id="bulk-status">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="queued">Queued</SelectItem>
-                          <SelectItem value="running">Running</SelectItem>
+                          <SelectItem value="planned">Planned</SelectItem>
+                          <SelectItem value="active">Active</SelectItem>
+                          <SelectItem value="paused">Paused</SelectItem>
                           <SelectItem value="completed">Completed</SelectItem>
                           <SelectItem value="failed">Failed</SelectItem>
-                          <SelectItem value="cancelled">Cancelled</SelectItem>
+                          <SelectItem value="aborted">Aborted</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -466,7 +467,7 @@ export function RobotTasksPage() {
         </div>
       ) : viewMode === 'kanban' ? (
         <KanbanBoard
-          tasks={tasks}
+          tasks={tasks as any}
           onUpdateStatus={handleUpdateStatus}
           onCancel={handleCancelTask}
           onRetry={handleRetryTask}
@@ -475,7 +476,7 @@ export function RobotTasksPage() {
         />
       ) : (
         <TaskList
-          tasks={tasks}
+          tasks={tasks as any}
           onUpdateStatus={handleUpdateStatus}
           onCancel={handleCancelTask}
           onRetry={handleRetryTask}

@@ -1,11 +1,18 @@
-import { useState, useEffect, useCallback } from 'react'
-import { useAuth } from '@/contexts/AuthContext'
-import { API_CONFIG, getAuthHeaders } from '@/config/api'
-import {
-  FacadeFinding,
-  FacadeFindingsResponse,
-  FacadeFindingFilters,
-} from '@/types/nepa'
+/**
+ * useFacadeFindings — rewritten to use Supabase directly.
+ * Reads from inspection_findings + buildings tables.
+ * Replaces old REST call to /facade/findings.
+ */
+import { useState, useCallback, useEffect } from 'react'
+import { supabase, InspectionFinding } from '@/lib/supabaseClient'
+
+interface FacadeFindingFilters {
+  buildingId?: string
+  severity?: string
+  status?: string
+  startDate?: string
+  endDate?: string
+}
 
 interface UseFacadeFindingsOptions {
   filters?: FacadeFindingFilters
@@ -14,9 +21,8 @@ interface UseFacadeFindingsOptions {
 
 export function useFacadeFindings(options: UseFacadeFindingsOptions = {}) {
   const { filters = {}, autoFetch = true } = options
-  const { accessToken, logout, refresh } = useAuth()
-  
-  const [findings, setFindings] = useState<FacadeFinding[]>([])
+
+  const [findings, setFindings] = useState<InspectionFinding[]>([])
   const [total, setTotal] = useState(0)
   const [summary, setSummary] = useState({
     totalBuildings: 0,
@@ -27,60 +33,56 @@ export function useFacadeFindings(options: UseFacadeFindingsOptions = {}) {
   const [error, setError] = useState<string | null>(null)
 
   const fetchFindings = useCallback(async () => {
-    if (!accessToken) {
-      setError('No access token available')
-      return
-    }
-
     setIsLoading(true)
     setError(null)
 
     try {
-      const params = new URLSearchParams(
-        Object.entries(filters).reduce((acc, [key, value]) => {
-          if (value) acc[key] = value
-          return acc
-        }, {} as Record<string, string>)
-      )
+      // Query findings with building join
+      let q = supabase
+        .from('inspection_findings')
+        .select('*, buildings(name)', { count: 'exact' })
+        .order('created_at', { ascending: false })
 
-      const response = await fetch(
-        `${API_CONFIG.baseUrl}${API_CONFIG.endpoints.facade.findings}?${params}`,
-        {
-          headers: getAuthHeaders(accessToken),
-        }
-      )
+      if (filters.buildingId) q = q.eq('building_id', filters.buildingId)
+      if (filters.severity) q = q.eq('severity', filters.severity as any)
+      if (filters.status) q = q.eq('status', filters.status as any)
+      if (filters.startDate) q = q.gte('created_at', filters.startDate)
+      if (filters.endDate) q = q.lte('created_at', filters.endDate)
 
-      if (response.status === 401) {
-        try {
-          await refresh()
-          return fetchFindings()
-        } catch {
-          logout()
-          throw new Error('Authentication failed')
-        }
-      }
+      const { data, count, error: queryError } = await q
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch facade findings')
-      }
+      if (queryError) throw new Error(queryError.message)
 
-      const data: FacadeFindingsResponse = await response.json()
-      setFindings(data.findings)
-      setTotal(data.total)
-      setSummary(data.summary)
+      setFindings(data ?? [])
+      setTotal(count ?? 0)
+
+      // Get building count
+      const { count: buildingCount } = await supabase
+        .from('buildings')
+        .select('id', { count: 'exact', head: true })
+
+      // Compute summary
+      const open = (data ?? []).filter((f) => f.status === 'open').length
+      const critical = (data ?? []).filter((f) => f.severity === 'critical').length
+
+      setSummary({
+        totalBuildings: buildingCount ?? 0,
+        openDefects: open,
+        criticalCount: critical,
+      })
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to fetch facade findings'
       setError(message)
     } finally {
       setIsLoading(false)
     }
-  }, [accessToken, filters, logout, refresh])
+  }, [filters.buildingId, filters.severity, filters.status, filters.startDate, filters.endDate])
 
   useEffect(() => {
-    if (autoFetch && accessToken) {
+    if (autoFetch) {
       fetchFindings()
     }
-  }, [autoFetch, accessToken, fetchFindings])
+  }, [autoFetch, fetchFindings])
 
   return {
     findings,

@@ -7,12 +7,9 @@ import { ArrowRight, Eye, EyeSlash } from '@phosphor-icons/react'
 import { CinematicBackground } from '@/components/CinematicBackground'
 import { toast } from 'sonner'
 import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '@/contexts/AuthContext'
 
-interface SignUpPageProps {
-  setPendingEmail: (email: string) => void
-}
-
-export function SignUpPage({ setPendingEmail }: SignUpPageProps) {
+export function SignUpPage() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [company, setCompany] = useState('')
@@ -21,6 +18,7 @@ export function SignUpPage({ setPendingEmail }: SignUpPageProps) {
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
+  const { signUp } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -32,12 +30,16 @@ export function SignUpPage({ setPendingEmail }: SignUpPageProps) {
 
     setIsLoading(true)
 
-    setTimeout(() => {
+    try {
+      await signUp(email, password, name)
+      toast.success('Account created! Check your email to confirm.')
+      navigate('/signin')
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Sign up failed'
+      toast.error(message)
+    } finally {
       setIsLoading(false)
-      toast.success('Account created successfully')
-      setPendingEmail(email)
-      navigate('/2fa-setup')
-    }, 1500)
+    }
   }
 
   return (

@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
-import { useKV } from '@github/spark/hooks'
 import { AuthProvider, useAuth } from '@/contexts/AuthContext'
 import { AppLayout } from '@/components/AppLayout'
 
@@ -49,6 +48,11 @@ import { Partnership } from '@/routes/business/Partnership'
 import { CaseStudies } from '@/routes/business/CaseStudies'
 import { Plans } from '@/routes/business/Plans'
 
+/* Portal dashboard pages */
+import { FacilityWatchPortal } from '@/routes/dashboard/portals/FacilityWatchPortal'
+import { RoboticOpsPortal } from '@/routes/dashboard/portals/RoboticOpsPortal'
+import { DroneInspectPortal } from '@/routes/dashboard/portals/DroneInspectPortal'
+
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth()
   const location = useLocation()
@@ -62,27 +66,25 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   }
 
   if (!user) {
-    return <Navigate to="/login" state={{ from: location }} replace />
+    return <Navigate to="/signin" state={{ from: location }} replace />
   }
 
   return <>{children}</>
 }
 
 function AppRoutes() {
-  const [pendingEmail, setPendingEmail] = useKV<string>('aura-pending-email', '')
-
   return (
     <Routes>
       <Route element={<AppLayout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/landing" element={<LandingPage />} />
         
-        <Route path="/signin" element={<SignInPage setPendingEmail={setPendingEmail} />} />
-        <Route path="/signup" element={<SignUpPage setPendingEmail={setPendingEmail} />} />
+        <Route path="/signin" element={<SignInPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route path="/2fa-setup" element={<TwoFactorSetupPage pendingEmail={pendingEmail || ''} />} />
-        <Route path="/2fa-verify" element={<TwoFactorVerifyPage pendingEmail={pendingEmail || ''} />} />
+        <Route path="/2fa-setup" element={<TwoFactorSetupPage pendingEmail="" />} />
+        <Route path="/2fa-verify" element={<TwoFactorVerifyPage pendingEmail="" />} />
 
         <Route path="/playground" element={<PlaygroundPage />} />
         <Route path="/agent" element={<NepaAgent />} />
@@ -122,8 +124,10 @@ function AppRoutes() {
         <Route path="/business/case-studies/robotic-delivery-logistics" element={<Navigate to="/business#case-studies" replace />} />
       </Route>
 
-      <Route path="/login" element={<LoginPage />} />
+      {/* Legacy login redirect */}
+      <Route path="/login" element={<Navigate to="/signin" replace />} />
 
+      {/* Protected Dashboard with portal sub-routes */}
       <Route
         path="/dashboard"
         element={
@@ -133,9 +137,13 @@ function AppRoutes() {
         }
       >
         <Route index element={<DashboardPage />} />
-        <Route path="facade" element={<DashboardPage />} />
+        <Route path="facility-watch" element={<FacilityWatchPortal />} />
+        <Route path="robotic-ops" element={<RoboticOpsPortal />} />
+        <Route path="drone-inspect" element={<DroneInspectPortal />} />
         <Route path="tasks" element={<RobotTasksPage />} />
         <Route path="contacts" element={<ContactSubmissionsPage />} />
+        {/* Legacy routes redirect to portals */}
+        <Route path="facade" element={<Navigate to="/dashboard/drone-inspect" replace />} />
         <Route path="audit" element={<DashboardPage />} />
         <Route path="live" element={<DashboardPage />} />
       </Route>

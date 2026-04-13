@@ -12,7 +12,7 @@ import { toast } from 'sonner'
 export function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { login, isLoading, error } = useAuth()
+  const { signIn, isLoading, error } = useAuth()
   
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -26,7 +26,7 @@ export function LoginPage() {
     }
 
     try {
-      await login({ email, password })
+      await signIn(email, password)
       toast.success('Login successful')
       
       const from = location.state?.from?.pathname || '/dashboard'

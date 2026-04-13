@@ -1,35 +1,37 @@
-import { useState } from 'react'
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import {
   Terminal,
   House,
+  VideoCamera,
+  Robot,
+  Drone,
   FileText,
   Gauge,
-  Robot,
-  Buildings,
+  Envelope,
   SignOut
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
 const navItems = [
-  { path: '/dashboard', label: 'Overview', icon: House },
-  { path: '/dashboard/facade', label: 'Portfolio', icon: Buildings },
-  { path: '/dashboard/tasks', label: 'Robot Tasks', icon: Robot },
-  { path: '/dashboard/audit', label: 'Audit Ledger', icon: FileText },
-  { path: '/dashboard/live', label: 'Live Intelligence', icon: Gauge },
+  { path: '/dashboard', label: 'Overview', icon: House, exact: true },
+  { path: '/dashboard/facility-watch', label: 'FacilityWatch', icon: VideoCamera },
+  { path: '/dashboard/robotic-ops', label: 'RoboticOps', icon: Robot },
+  { path: '/dashboard/drone-inspect', label: 'DroneInspect', icon: Drone },
+  { path: '/dashboard/tasks', label: 'Missions', icon: FileText },
+  { path: '/dashboard/contacts', label: 'Contacts', icon: Envelope },
 ]
 
 export function DashboardLayout() {
-  const { user, logout } = useAuth()
+  const { user, profile, signOut } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
 
-  const handleLogout = () => {
-    logout()
-    toast.success('Logged out successfully')
-    navigate('/login')
+  const handleLogout = async () => {
+    await signOut()
+    toast.success('Signed out successfully')
+    navigate('/signin')
   }
 
   return (
@@ -55,7 +57,9 @@ export function DashboardLayout() {
           <nav className="p-4 space-y-2">
             {navItems.map((item) => {
               const Icon = item.icon
-              const isActive = location.pathname === item.path
+              const isActive = item.exact
+                ? location.pathname === item.path
+                : location.pathname.startsWith(item.path)
               return (
                 <Link
                   key={item.path}
@@ -76,7 +80,12 @@ export function DashboardLayout() {
           <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border/30">
             <div className="mb-3 px-2">
               <p className="text-xs font-medium">{user?.email}</p>
-              <p className="text-xs text-muted-foreground capitalize">{user?.role}</p>
+              <p className="text-xs text-muted-foreground capitalize">{profile?.role ?? 'viewer'}</p>
+              {profile?.portal_access && profile.portal_access.length > 0 && (
+                <p className="text-xs text-muted-foreground mono mt-1">
+                  {profile.portal_access.join(', ')}
+                </p>
+              )}
             </div>
             <Button
               onClick={handleLogout}

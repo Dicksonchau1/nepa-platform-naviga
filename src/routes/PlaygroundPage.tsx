@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useKV } from '@github/spark/hooks'
+import { useKV } from '@/hooks/useKV'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Card } from '@/components/ui/card'
@@ -80,7 +80,15 @@ Generate a realistic technical response that includes:
 
 Format the response as a JSON-like structured output that looks like an API response. Make it technical but readable.`
 
-      const result = await window.spark.llm(promptText)
+      // Placeholder: previously used @github/spark LLM
+      // TODO: Replace with Supabase edge function or direct API call
+      const result = JSON.stringify({
+        understanding: `Processing query: ${query}`,
+        context: context,
+        confidence: 0.85,
+        status: 'playground_mode',
+        note: 'Connect to NEPA inference backend for live results',
+      }, null, 2)
       setResponse(result)
     } catch (error) {
       toast.error('Failed to process query')

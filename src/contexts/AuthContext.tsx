@@ -1,72 +1,95 @@
+/**
+ * AuthContext — powered by Supabase Auth.
+ * Replaces the old custom JWT auth that talked to FastAPI /auth/login.
+ * Supabase handles JWT tokens, refresh, and session persistence automatically.
+ */
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-import { User, AuthTokens, LoginCredentials } from '@/types/nepa'
-import { API_CONFIG, getHeaders, getAuthHeaders } from '@/config/api'
+import { Session, User, AuthError } from '@supabase/supabase-js'
+import { supabase, UserProfile } from '@/lib/supabaseClient'
 
 interface AuthContextType {
   user: User | null
-  accessToken: string | null
+  profile: UserProfile | null
+  session: Session | null
   isLoading: boolean
   error: string | null
-  login: (credentials: LoginCredentials) => Promise<void>
-  logout: () => void
-  refresh: () => Promise<void>
+  signIn: (email: string, password: string) => Promise<void>
+  signUp: (email: string, password: string, displayName?: string) => Promise<void>
+  signOut: () => Promise<void>
+  resetPassword: (email: string) => Promise<void>
+  updatePassword: (newPassword: string) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-const STORAGE_KEYS = {
-  ACCESS_TOKEN: 'nepa_access_token',
-  REFRESH_TOKEN: 'nepa_refresh_token',
-  USER: 'nepa_user',
-}
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
-  const [accessToken, setAccessToken] = useState<string | null>(null)
+  const [profile, setProfile] = useState<UserProfile | null>(null)
+  const [session, setSession] = useState<Session | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    const storedToken = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN)
-    const storedUser = localStorage.getItem(STORAGE_KEYS.USER)
+  /** Fetch the user_profiles row for the current auth user */
+  const fetchProfile = async (userId: string) => {
+    const { data, error: profileError } = await supabase
+      .from('user_profiles')
+      .select('*')
+      .eq('id', userId)
+      .single()
 
-    if (storedToken && storedUser) {
-      setAccessToken(storedToken)
-      setUser(JSON.parse(storedUser))
+    if (profileError) {
+      console.warn('No user profile found — may need to create one:', profileError.message)
+      return null
     }
+    return data
+  }
 
-    setIsLoading(false)
+  useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
+      setSession(initialSession)
+      setUser(initialSession?.user ?? null)
+
+      if (initialSession?.user) {
+        const userProfile = await fetchProfile(initialSession.user.id)
+        setProfile(userProfile)
+      }
+      setIsLoading(false)
+    })
+
+    // Listen for auth changes (sign in, sign out, token refresh)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, currentSession) => {
+        setSession(currentSession)
+        setUser(currentSession?.user ?? null)
+
+        if (currentSession?.user) {
+          const userProfile = await fetchProfile(currentSession.user.id)
+          setProfile(userProfile)
+        } else {
+          setProfile(null)
+        }
+
+        if (event === 'SIGNED_OUT') {
+          setProfile(null)
+        }
+      }
+    )
+
+    return () => subscription.unsubscribe()
   }, [])
 
-  const login = async (credentials: LoginCredentials) => {
+  const signIn = async (email: string, password: string) => {
     setIsLoading(true)
     setError(null)
-
     try {
-      const response = await fetch(
-        `${API_CONFIG.baseUrl}${API_CONFIG.endpoints.auth.login}`,
-        {
-          method: 'POST',
-          headers: getHeaders(),
-          body: JSON.stringify(credentials),
-        }
-      )
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: 'Login failed' }))
-        throw new Error(errorData.message || 'Login failed')
-      }
-
-      const data: { user: User; tokens: AuthTokens } = await response.json()
-
-      localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, data.tokens.accessToken)
-      localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, data.tokens.refreshToken)
-      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(data.user))
-
-      setAccessToken(data.tokens.accessToken)
-      setUser(data.user)
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+      if (signInError) throw signInError
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Login failed'
+      const message = err instanceof AuthError ? err.message : 'Sign in failed'
       setError(message)
       throw err
     } finally {
@@ -74,60 +97,75 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const logout = () => {
-    localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN)
-    localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN)
-    localStorage.removeItem(STORAGE_KEYS.USER)
+  const signUp = async (email: string, password: string, displayName?: string) => {
+    setIsLoading(true)
+    setError(null)
+    try {
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { display_name: displayName },
+        },
+      })
+      if (signUpError) throw signUpError
 
-    setAccessToken(null)
+      // Create user_profiles row after signup
+      if (data.user) {
+        await supabase.from('user_profiles').upsert({
+          id: data.user.id,
+          email,
+          display_name: displayName ?? email.split('@')[0],
+          role: 'viewer',
+          portal_access: [],
+          is_active: true,
+        })
+      }
+    } catch (err) {
+      const message = err instanceof AuthError ? err.message : 'Sign up failed'
+      setError(message)
+      throw err
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const signOut = async () => {
+    const { error: signOutError } = await supabase.auth.signOut()
+    if (signOutError) throw signOutError
     setUser(null)
+    setSession(null)
+    setProfile(null)
     setError(null)
   }
 
-  const refresh = async () => {
-    const refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN)
+  const resetPassword = async (email: string) => {
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    })
+    if (resetError) throw resetError
+  }
 
-    if (!refreshToken) {
-      logout()
-      throw new Error('No refresh token available')
-    }
-
-    try {
-      const response = await fetch(
-        `${API_CONFIG.baseUrl}${API_CONFIG.endpoints.auth.refresh}`,
-        {
-          method: 'POST',
-          headers: getHeaders(),
-          body: JSON.stringify({ refreshToken }),
-        }
-      )
-
-      if (!response.ok) {
-        throw new Error('Token refresh failed')
-      }
-
-      const data: { tokens: AuthTokens } = await response.json()
-
-      localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, data.tokens.accessToken)
-      localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, data.tokens.refreshToken)
-
-      setAccessToken(data.tokens.accessToken)
-    } catch (err) {
-      logout()
-      throw err
-    }
+  const updatePassword = async (newPassword: string) => {
+    const { error: updateError } = await supabase.auth.updateUser({
+      password: newPassword,
+    })
+    if (updateError) throw updateError
   }
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        accessToken,
+        profile,
+        session,
         isLoading,
         error,
-        login,
-        logout,
-        refresh,
+        signIn,
+        signUp,
+        signOut,
+        resetPassword,
+        updatePassword,
       }}
     >
       {children}

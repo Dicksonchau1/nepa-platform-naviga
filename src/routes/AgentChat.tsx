@@ -4,7 +4,7 @@ import { LiveBadge } from '@/components/LiveBadge'
 import { nepaService, type AgentType } from '@/lib/nepaService'
 import { API_CONFIG } from '@/config/api'
 import { toast } from 'sonner'
-import { useKV } from '@github/spark/hooks'
+import { useKV } from '@/hooks/useKV'
 
 type Role = 'user' | 'agent'
 type AttachmentType = 'video-file' | 'video-url' | 'image'

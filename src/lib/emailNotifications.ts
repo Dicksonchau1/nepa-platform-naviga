@@ -115,8 +115,14 @@ Return ONLY valid JSON in this exact format:
   "deliveryStatus": "queued"
 }`
 
-    const result = await window.spark.llm(promptText, 'gpt-4o-mini', true)
-    const parsed = JSON.parse(result)
+    // Simulate email send (previously powered by @github/spark LLM)
+    const parsed = {
+      sent: true,
+      subject: emailSubject,
+      recipients,
+      timestamp,
+      deliveryStatus: 'queued' as const,
+    }
     
     if (parsed.sent) {
       console.log('📧 Email notification sent:', {
@@ -170,8 +176,13 @@ Return ONLY valid JSON in this exact format:
   "timestamp": "${new Date().toISOString()}"
 }`
 
-    const result = await window.spark.llm(promptText, 'gpt-4o-mini', true)
-    const parsed = JSON.parse(result)
+    // Simulate confirmation email (previously powered by @github/spark LLM)
+    const parsed = {
+      sent: true,
+      recipient: userEmail,
+      subject: 'Thank you for contacting AuraSense',
+      timestamp: new Date().toISOString(),
+    }
     
     if (parsed.sent) {
       console.log('✉️ Confirmation email sent to:', userEmail)

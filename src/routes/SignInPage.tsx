@@ -5,36 +5,34 @@ import { Label } from '@/components/ui/label'
 import { ArrowRight, Eye, EyeSlash } from '@phosphor-icons/react'
 import { CinematicBackground } from '@/components/CinematicBackground'
 import { toast } from 'sonner'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { useAuth } from '@/contexts/AuthContext'
 
-interface SignInPageProps {
-  setPendingEmail: (email: string) => void
-}
-
-export function SignInPage({ setPendingEmail }: SignInPageProps) {
+export function SignInPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation()
+  const { signIn } = useAuth()
+
+  const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/dashboard'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
 
-    setTimeout(() => {
+    try {
+      await signIn(email, password)
+      toast.success('Signed in successfully')
+      navigate(from, { replace: true })
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Sign in failed'
+      toast.error(message)
+    } finally {
       setIsLoading(false)
-      
-      const userHas2FA = Math.random() > 0.5
-      
-      if (userHas2FA) {
-        setPendingEmail(email)
-        navigate('/2fa-verify')
-      } else {
-        toast.success('Sign in successful')
-        navigate('/')
-      }
-    }, 1500)
+    }
   }
 
   return (
