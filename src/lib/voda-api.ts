@@ -12,22 +12,18 @@ import type {
 } from '@/types/voda'
 
 const VODA_BASE_URL = import.meta.env.VITE_VODA_API_URL || 'http://localhost:8001'
-const API_KEY_STORAGE = 'voda_api_key'
 const UPGRADE_EVENT = 'voda:upgrade'
 
-export const getStoredVodaApiKey = () => {
-  if (typeof window === 'undefined') return null
-  return window.localStorage.getItem(API_KEY_STORAGE)
-}
+let inMemoryApiKey: string | null = null
+
+export const getStoredVodaApiKey = () => inMemoryApiKey
 
 export const setStoredVodaApiKey = (key: string) => {
-  if (typeof window === 'undefined') return
-  window.localStorage.setItem(API_KEY_STORAGE, key)
+  inMemoryApiKey = key
 }
 
 export const clearStoredVodaApiKey = () => {
-  if (typeof window === 'undefined') return
-  window.localStorage.removeItem(API_KEY_STORAGE)
+  inMemoryApiKey = null
 }
 
 type RequestOptions = RequestInit & {
