@@ -6,7 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { ArrowRight, Eye, EyeSlash } from '@phosphor-icons/react'
 import { CinematicBackground } from '@/components/CinematicBackground'
 import { toast } from 'sonner'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 
 export function SignUpPage() {
@@ -18,7 +18,9 @@ export function SignUpPage() {
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation()
   const { signUp } = useAuth()
+  const redirectTo = new URLSearchParams(location.search).get('redirect')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,7 +35,11 @@ export function SignUpPage() {
     try {
       await signUp(email, password, name)
       toast.success('Account created! Check your email to confirm.')
-      navigate('/signin')
+      if (redirectTo) {
+        navigate('/signin', { state: { from: { pathname: redirectTo } } })
+      } else {
+        navigate('/signin')
+      }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Sign up failed'
       toast.error(message)
