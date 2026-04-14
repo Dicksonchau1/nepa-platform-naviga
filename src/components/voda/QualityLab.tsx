@@ -285,7 +285,7 @@ export function QualityLab({ initialMode = 'diagnose', onModeChange }: QualityLa
             ) : (
               <div className="space-y-3">
                 {diagnosis.recommendations.map((rec, index) => (
-                  <div key={`${rec.message}-${index}`} className="flex items-start gap-3">
+                  <div key={`rec-${index}`} className="flex items-start gap-3">
                     <Badge className={`text-[10px] ${getRecommendationColor(rec.severity)}`}>
                       {rec.severity.toUpperCase()}
                     </Badge>
@@ -378,7 +378,7 @@ export function QualityLab({ initialMode = 'diagnose', onModeChange }: QualityLa
                   <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">Relations</p>
                   <ul className="space-y-2">
                     {reconstruct.scene_graph.edges.map((edge, index) => (
-                      <li key={`${edge.source}-${edge.target}-${index}`} className="text-muted-foreground">
+                      <li key={`edge-${index}`} className="text-muted-foreground">
                         {edge.source} → {edge.target} ({edge.relation})
                       </li>
                     ))}
