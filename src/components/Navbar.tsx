@@ -293,8 +293,8 @@ export function Navbar() {
                   <div className="font-mono text-[10px] tracking-[0.3em] text-gray-600 uppercase mt-5 mb-3">Products</div>
                   <MobileNavLink to="/products/soda" label="SODA — Unmanned Store" onClick={() => setMobileOpen(false)} />
                   <MobileNavLink to="/products/roda" label="RODA — Robotic Execution" onClick={() => setMobileOpen(false)} />
-                  <MobileNavLink to="/products/voda" label="VODA / CODA — Video Intelligence" onClick={() => setMobileOpen(false)} />
-                  <MobileNavLink to="/products/eoda" label="EODA — Edge Agent" onClick={() => setMobileOpen(false)} />
+                  <MobileNavLink to="/products/voda-coda" label="VODA / CODA — Video Intelligence" onClick={() => setMobileOpen(false)} />
+                  <MobileNavLink to="/products/hri" label="HRI — HR Intelligence" onClick={() => setMobileOpen(false)} />
                   <MobileNavLink to="/products/foda" label="FODA — Inspection" onClick={() => setMobileOpen(false)} />
 
                   <div className="font-mono text-[10px] tracking-[0.3em] text-gray-600 uppercase mt-5 mb-3">Resources</div>
