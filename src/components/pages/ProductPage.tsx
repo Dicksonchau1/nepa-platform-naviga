@@ -4,6 +4,7 @@ import { ArrowRight } from '@phosphor-icons/react'
 import { ReactNode } from 'react'
 import { CinematicBackground, ScanlineOverlay } from '@/components/CinematicBackground'
 import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 interface FeatureCard {
   icon?: ReactNode
@@ -31,6 +32,9 @@ interface ProductPageProps {
   architectureDescription: string
   architectureDiagram?: ReactNode
   pricingAnchor?: PricingAnchor
+  features: FeatureCard[]
+  integrationTitle: string
+  integrationDescription: string
 }
 
 export function ProductPage({
@@ -47,7 +51,12 @@ export function ProductPage({
   architectureDescription,
   architectureDiagram,
   pricingAnchor,
+  features,
+  integrationTitle,
+  integrationDescription,
 }: ProductPageProps) {
+  const navigate = useNavigate()
+
   return (
     <div className="flex flex-col relative">
       <CinematicBackground />
@@ -96,6 +105,35 @@ export function ProductPage({
                   </Button>
                 )}
               </div>
+          <div className="max-w-4xl mx-auto text-center">
+            <Badge className="mb-8 bg-primary/5 text-primary border border-primary/20 mono text-xs px-4 py-2 uppercase tracking-wider">
+              {eyebrow}
+            </Badge>
+            
+            <h1 className="hero-h1-cinematic mb-8">
+              {title}
+            </h1>
+            
+            <p className="text-base text-muted-foreground mb-12 leading-relaxed max-w-2xl mx-auto">
+              {subtitle}
+            </p>
+            
+            <div className="flex items-center justify-center gap-4">
+              <Button 
+                size="lg" 
+                className="bg-primary/90 text-primary-foreground hover:bg-primary shadow-lg shadow-primary/10 px-8 h-12 rounded-lg mono text-sm border border-primary/20"
+                onClick={() => navigate('/about/contact')}
+              >
+                REQUEST BRIEFING
+                <ArrowRight className="ml-2" weight="bold" size={16} />
+              </Button>
+              <Button 
+                size="lg" 
+                variant="outline"
+                className="border-border hover:border-primary/40 backdrop-blur-sm bg-background/20 h-12 px-8 rounded-lg mono text-sm"
+              >
+                API DOCS
+              </Button>
             </div>
 
             {heroVariant === 'split' && architectureDiagram && (
@@ -160,6 +198,24 @@ export function ProductPage({
                 </Link>
               </Button>
             </div>
+      <section className="py-32 border-t border-border/20 relative z-10 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(0.72_0.19_195_/_0.05)_0%,transparent_60%)]" />
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Powered by NEPA
+            </h2>
+            <p className="text-lg text-muted-foreground mb-10">
+              Deterministic. Traceable. Accountable.
+            </p>
+            <Button 
+              size="lg"
+              className="bg-primary/90 text-primary-foreground hover:bg-primary shadow-lg shadow-primary/10 px-10 h-14 rounded-lg mono text-sm border border-primary/20"
+              onClick={() => navigate('/about/contact')}
+            >
+              REQUEST BRIEFING
+              <ArrowRight className="ml-2" weight="bold" />
+            </Button>
           </div>
         </section>
       )}

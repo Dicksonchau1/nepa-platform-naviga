@@ -19,6 +19,28 @@ export function useScrollGradient() {
 
       document.documentElement.style.setProperty('--gradient-x', `${x}%`)
       document.documentElement.style.setProperty('--gradient-y', `${y}%`)
+    let ticking = false
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const windowHeight = window.innerHeight
+          const documentHeight = document.documentElement.scrollHeight - windowHeight
+          const scrolled = window.scrollY
+          const progress = Math.min(scrolled / documentHeight, 1)
+
+          setScrollProgress(progress)
+
+          const x = 50 + Math.sin(progress * Math.PI * 2) * 20
+          const y = 50 + Math.cos(progress * Math.PI * 2) * 20
+
+          setGradientPosition({ x, y })
+
+          document.documentElement.style.setProperty('--gradient-x', `${x}%`)
+          document.documentElement.style.setProperty('--gradient-y', `${y}%`)
+          ticking = false
+        })
+        ticking = true
+      }
     }
 
     const handleScroll = () => {

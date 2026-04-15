@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { MagnifyingGlass, X, FileText, Code, Book, Clock, ListChecks, Funnel, Tag, Cube } from '@phosphor-icons/react'
+import { MagnifyingGlass, X, FileText, Code, Book, Clock, Lightbulb, Funnel } from '@phosphor-icons/react'
 import { Input } from '@/components/ui/input'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
@@ -18,25 +19,28 @@ export interface SearchableContent {
   url: string
   keywords?: string[]
 }
+import { searchContent, type SearchEntry } from '@/data/searchContent'
 
 const categoryIcons = {
-  docs: FileText,
+  product: FileText,
   api: Code,
-  guides: Book,
+  guide: Book,
   changelog: Clock,
   status: ListChecks,
   products: Cube,
   pricing: Tag,
+  concept: Lightbulb,
 }
 
 const categoryLabels = {
-  docs: 'Documentation',
+  product: 'Product',
   api: 'API Reference',
-  guides: 'Guides',
+  guide: 'Guide',
   changelog: 'Changelog',
   status: 'Status',
   products: 'Products',
   pricing: 'Pricing',
+  concept: 'Concept',
 }
 
 interface DocsSearchProps {
@@ -46,8 +50,8 @@ interface DocsSearchProps {
 
 export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
   const [query, setQuery] = useState('')
-  const [selectedCategories, setSelectedCategories] = useState<Set<SearchableContent['category']>>(new Set())
-  const [selectedSections, setSelectedSections] = useState<Set<string>>(new Set())
+  const [selectedCategories, setSelectedCategories] = useState<Set<SearchEntry['category']>>(new Set())
+  const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set())
   const [showFilters, setShowFilters] = useState(false)
   const navigate = useNavigate()
 
@@ -55,11 +59,15 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
     const sections = new Set<string>()
     searchContent.forEach(item => {
       if (item.section) sections.add(item.section)
+  const availableTags = useMemo(() => {
+    const tags = new Set<string>()
+    searchContent.forEach(item => {
+      item.tags.forEach(tag => tags.add(tag))
     })
-    return Array.from(sections).sort()
+    return Array.from(tags).sort()
   }, [])
 
-  const toggleCategory = (category: SearchableContent['category']) => {
+  const toggleCategory = (category: SearchEntry['category']) => {
     setSelectedCategories(prev => {
       const next = new Set(prev)
       if (next.has(category)) {
@@ -71,13 +79,13 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
     })
   }
 
-  const toggleSection = (section: string) => {
-    setSelectedSections(prev => {
+  const toggleTag = (tag: string) => {
+    setSelectedTags(prev => {
       const next = new Set(prev)
-      if (next.has(section)) {
-        next.delete(section)
+      if (next.has(tag)) {
+        next.delete(tag)
       } else {
-        next.add(section)
+        next.add(tag)
       }
       return next
     })
@@ -85,10 +93,10 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
 
   const clearFilters = () => {
     setSelectedCategories(new Set())
-    setSelectedSections(new Set())
+    setSelectedTags(new Set())
   }
 
-  const hasActiveFilters = selectedCategories.size > 0 || selectedSections.size > 0
+  const hasActiveFilters = selectedCategories.size > 0 || selectedTags.size > 0
 
   const searchResults = useMemo(() => {
     if (!query.trim()) return []
@@ -101,7 +109,7 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
         if (selectedCategories.size > 0 && !selectedCategories.has(item.category)) {
           return false
         }
-        if (selectedSections.size > 0 && (!item.section || !selectedSections.has(item.section))) {
+        if (selectedTags.size > 0 && !item.tags.some(tag => selectedTags.has(tag))) {
           return false
         }
         return true
@@ -110,16 +118,11 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
         let score = 0
         const lowerTitle = item.title.toLowerCase()
         const lowerContent = item.content.toLowerCase()
-        const lowerSection = (item.section || '').toLowerCase()
-        const keywords = item.keywords || []
+        const lowerTags = item.tags.map(tag => tag.toLowerCase())
 
         if (lowerTitle.includes(lowerQuery)) score += 100
         if (lowerContent.includes(lowerQuery)) score += 50
-        if (lowerSection.includes(lowerQuery)) score += 30
-
-        keywords.forEach(keyword => {
-          if (keyword.includes(lowerQuery)) score += 40
-        })
+        if (lowerTags.some(tag => tag.includes(lowerQuery))) score += 40
 
         terms.forEach(term => {
           if (lowerTitle.includes(term)) score += 20
@@ -128,6 +131,7 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
             keywords.forEach(keyword => {
               if (keyword.includes(term)) score += 8
             })
+          if (lowerTags.some(tag => tag.includes(term))) score += 8
         })
 
         return { ...item, score }
@@ -135,13 +139,24 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
       .filter(item => item.score > 0)
       .sort((a, b) => b.score - a.score)
       .slice(0, 15)
-  }, [query, selectedCategories, selectedSections])
+  }, [query, selectedCategories, selectedTags])
 
-  const handleSelect = (result: SearchableContent) => {
-    navigate(result.url)
+  const handleSelect = (result: SearchEntry) => {
+    navigate(result.href)
     onOpenChange(false)
     setQuery('')
   }
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault()
+        onOpenChange(true)
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [onOpenChange])
 
   useEffect(() => {
     if (!open) {
@@ -186,7 +201,7 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
                 Filters
                 {hasActiveFilters && (
                   <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
-                    {selectedCategories.size + selectedSections.size}
+                    {selectedCategories.size + selectedTags.size}
                   </Badge>
                 )}
               </Button>
@@ -208,7 +223,7 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
                 <div>
                   <h4 className="text-sm font-semibold mb-2">Category</h4>
                   <div className="flex flex-wrap gap-2">
-                    {(Object.keys(categoryLabels) as Array<SearchableContent['category']>).map(category => {
+                    {(Object.keys(categoryLabels) as Array<SearchEntry['category']>).map(category => {
                       const Icon = categoryIcons[category]
                       const isSelected = selectedCategories.has(category)
                       return (
@@ -231,14 +246,14 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
                 </div>
 
                 <div>
-                  <h4 className="text-sm font-semibold mb-2">Section</h4>
+                  <h4 className="text-sm font-semibold mb-2">Tags</h4>
                   <div className="flex flex-wrap gap-2">
-                    {availableSections.map(section => {
-                      const isSelected = selectedSections.has(section)
+                    {availableTags.map(tag => {
+                      const isSelected = selectedTags.has(tag)
                       return (
                         <button
-                          key={section}
-                          onClick={() => toggleSection(section)}
+                          key={tag}
+                          onClick={() => toggleTag(tag)}
                           className={cn(
                             "px-3 py-1.5 rounded-md text-xs font-medium border transition-all",
                             isSelected
@@ -246,7 +261,7 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
                               : "bg-background border-border hover:border-accent/50 hover:bg-accent/30"
                           )}
                         >
-                          {section}
+                          {tag}
                         </button>
                       )
                     })}
@@ -265,7 +280,7 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
                 <p className="text-sm">Start typing to search across all documentation</p>
                 {hasActiveFilters && (
                   <p className="text-xs mt-2">
-                    {selectedCategories.size + selectedSections.size} filter(s) active
+                    {selectedCategories.size + selectedTags.size} filter(s) active
                   </p>
                 )}
               </div>
@@ -294,9 +309,9 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
                         {categoryLabels[cat]}
                       </Badge>
                     ))}
-                    {Array.from(selectedSections).map(sec => (
-                      <Badge key={sec} variant="outline" className="text-xs">
-                        {sec}
+                    {Array.from(selectedTags).map(tag => (
+                      <Badge key={tag} variant="outline" className="text-xs">
+                        {tag}
                       </Badge>
                     ))}
                   </div>
@@ -320,11 +335,6 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
                               {categoryLabels[result.category]}
                             </Badge>
                           </div>
-                          {result.section && (
-                            <p className="text-xs text-muted-foreground mb-2 mono">
-                              {result.section}
-                            </p>
-                          )}
                           <p className="text-sm text-muted-foreground line-clamp-2">
                             {result.content}
                           </p>
