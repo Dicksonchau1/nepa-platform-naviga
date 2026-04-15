@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -9,11 +10,10 @@ import { CinematicBackground } from '@/components/CinematicBackground'
 import { toast } from 'sonner'
 
 interface SignUpPageProps {
-  onNavigate: (page: string) => void
   onSignUpSuccess?: (email: string) => void
 }
 
-export function SignUpPage({ onNavigate, onSignUpSuccess }: SignUpPageProps) {
+export function SignUpPage({ onSignUpSuccess }: SignUpPageProps) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -24,6 +24,11 @@ export function SignUpPage({ onNavigate, onSignUpSuccess }: SignUpPageProps) {
   const [showPassword, setShowPassword] = useState(false)
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
+
+  const handleNavigate = (path: string) => {
+    navigate(`/${path}`)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -42,7 +47,7 @@ export function SignUpPage({ onNavigate, onSignUpSuccess }: SignUpPageProps) {
       if (onSignUpSuccess) {
         onSignUpSuccess(formData.email)
       } else {
-        onNavigate('home')
+        handleNavigate('home')
       }
     }, 1500)
   }
@@ -188,7 +193,7 @@ export function SignUpPage({ onNavigate, onSignUpSuccess }: SignUpPageProps) {
                     I agree to the{' '}
                     <button
                       type="button"
-                      onClick={() => onNavigate('terms')}
+                      onClick={() => handleNavigate('terms')}
                       className="text-primary hover:text-primary/80 transition-colors"
                     >
                       Terms
@@ -196,7 +201,7 @@ export function SignUpPage({ onNavigate, onSignUpSuccess }: SignUpPageProps) {
                     {' '}and{' '}
                     <button
                       type="button"
-                      onClick={() => onNavigate('privacy')}
+                      onClick={() => handleNavigate('privacy')}
                       className="text-primary hover:text-primary/80 transition-colors"
                     >
                       Privacy Policy
@@ -217,7 +222,7 @@ export function SignUpPage({ onNavigate, onSignUpSuccess }: SignUpPageProps) {
               <div className="mt-8 text-center text-sm">
                 <span className="text-muted-foreground">Already have an account? </span>
                 <button
-                  onClick={() => onNavigate('signin')}
+                  onClick={() => handleNavigate('signin')}
                   className="text-primary hover:text-primary/80 transition-colors font-medium"
                 >
                   Sign in

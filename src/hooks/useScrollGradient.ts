@@ -5,7 +5,8 @@ export function useScrollGradient() {
   const [gradientPosition, setGradientPosition] = useState({ x: 50, y: 50 })
 
   useEffect(() => {
-    const handleScroll = () => {
+    let ticking = false
+    const updateScroll = () => {
       const windowHeight = window.innerHeight
       const documentHeight = document.documentElement.scrollHeight - windowHeight
       const scrolled = window.scrollY
@@ -20,6 +21,16 @@ export function useScrollGradient() {
       
       document.documentElement.style.setProperty('--gradient-x', `${x}%`)
       document.documentElement.style.setProperty('--gradient-y', `${y}%`)
+    }
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          updateScroll()
+          ticking = false
+        })
+        ticking = true
+      }
     }
 
     handleScroll()

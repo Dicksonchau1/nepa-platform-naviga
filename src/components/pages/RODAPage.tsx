@@ -1,11 +1,7 @@
 import { ProductPage } from './ProductPage'
 import { Path, GitBranch, UserCircleGear } from '@phosphor-icons/react'
 
-interface RODAPageProps {
-  onNavigate: (page: string) => void
-}
-
-export function RODAPage({ onNavigate }: RODAPageProps) {
+export function RODAPage() {
   return (
     <ProductPage
       eyebrow="NEPA PLATFORM · ROBOTIC AGENT"
@@ -33,7 +29,6 @@ export function RODAPage({ onNavigate }: RODAPageProps) {
       ]}
       integrationTitle="How RODA Connects to NEPA Core"
       integrationDescription="RODA leverages the NEPA spike-timing inference core for real-time path adaptation and mission control. Deploy on embedded robotic platforms or command-and-control stations. Full ROS2 compatibility for sensor fusion and actuator control."
-      onNavigate={onNavigate}
     />
   )
 }

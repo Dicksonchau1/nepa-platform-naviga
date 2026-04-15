@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -8,15 +9,19 @@ import { CinematicBackground } from '@/components/CinematicBackground'
 import { toast } from 'sonner'
 
 interface SignInPageProps {
-  onNavigate: (page: string) => void
   onRequire2FA?: (email: string) => void
 }
 
-export function SignInPage({ onNavigate, onRequire2FA }: SignInPageProps) {
+export function SignInPage({ onRequire2FA }: SignInPageProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
+
+  const handleNavigate = (path: string) => {
+    navigate(`/${path}`)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -31,7 +36,7 @@ export function SignInPage({ onNavigate, onRequire2FA }: SignInPageProps) {
         onRequire2FA(email)
       } else {
         toast.success('Sign in successful')
-        onNavigate('home')
+        handleNavigate('home')
       }
     }, 1500)
   }
@@ -101,7 +106,7 @@ export function SignInPage({ onNavigate, onRequire2FA }: SignInPageProps) {
                 <div className="flex items-center justify-between text-sm">
                   <button
                     type="button"
-                    onClick={() => onNavigate('forgot-password')}
+                    onClick={() => handleNavigate('forgot-password')}
                     className="text-primary hover:text-primary/80 transition-colors"
                   >
                     Forgot password?
@@ -137,7 +142,7 @@ export function SignInPage({ onNavigate, onRequire2FA }: SignInPageProps) {
               <div className="mt-8 text-center text-sm">
                 <span className="text-muted-foreground">Don't have an account? </span>
                 <button
-                  onClick={() => onNavigate('signup')}
+                  onClick={() => handleNavigate('signup')}
                   className="text-primary hover:text-primary/80 transition-colors font-medium"
                 >
                   Get started

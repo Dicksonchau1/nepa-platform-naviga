@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useKV } from '@/hooks/useKV'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -8,16 +9,20 @@ import { CinematicBackground } from '@/components/CinematicBackground'
 import { toast } from 'sonner'
 
 interface TwoFactorSetupPageProps {
-  onNavigate: (page: string) => void
   userEmail?: string
 }
 
-export function TwoFactorSetupPage({ onNavigate, userEmail }: TwoFactorSetupPageProps) {
+export function TwoFactorSetupPage({ userEmail }: TwoFactorSetupPageProps) {
   const [, setUser2FAEnabled] = useKV<boolean>('aura-2fa-enabled', false)
   const [, setUser2FASecret] = useKV<string>('aura-2fa-secret', '')
   const [verificationCode, setVerificationCode] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [copied, setCopied] = useState(false)
+  const navigate = useNavigate()
+
+  const handleNavigate = (path: string) => {
+    navigate(`/${path}`)
+  }
 
   const secretKey = `NEPA${Math.random().toString(36).substring(2, 15).toUpperCase()}`
   const qrCodeUrl = `otpauth://totp/AuraSense NEPA:${userEmail || 'user@example.com'}?secret=${secretKey}&issuer=AuraSense%20NEPA`
@@ -44,12 +49,12 @@ export function TwoFactorSetupPage({ onNavigate, userEmail }: TwoFactorSetupPage
       setUser2FASecret(secretKey)
       setIsLoading(false)
       toast.success('Two-factor authentication enabled successfully')
-      onNavigate('home')
+      handleNavigate('home')
     }, 1500)
   }
 
   const handleSkip = () => {
-    onNavigate('home')
+    handleNavigate('home')
   }
 
   return (

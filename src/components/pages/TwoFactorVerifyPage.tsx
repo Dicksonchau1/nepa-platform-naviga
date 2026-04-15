@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -7,14 +8,18 @@ import { CinematicBackground } from '@/components/CinematicBackground'
 import { toast } from 'sonner'
 
 interface TwoFactorVerifyPageProps {
-  onNavigate: (page: string) => void
   onVerified: () => void
   userEmail?: string
 }
 
-export function TwoFactorVerifyPage({ onNavigate, onVerified, userEmail }: TwoFactorVerifyPageProps) {
+export function TwoFactorVerifyPage({ onVerified, userEmail }: TwoFactorVerifyPageProps) {
   const [verificationCode, setVerificationCode] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
+
+  const handleNavigate = (path: string) => {
+    navigate(`/${path}`)
+  }
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -49,7 +54,7 @@ export function TwoFactorVerifyPage({ onNavigate, onVerified, userEmail }: TwoFa
             
             <div className="relative z-10">
               <button
-                onClick={() => onNavigate('signin')}
+                onClick={() => handleNavigate('signin')}
                 className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
               >
                 <ArrowLeft size={16} weight="regular" />

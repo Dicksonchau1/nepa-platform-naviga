@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ArrowRight } from '@phosphor-icons/react'
 import { ReactNode } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { CinematicBackground, ScanlineOverlay } from '@/components/CinematicBackground'
 
 interface FeatureCard {
@@ -17,7 +18,6 @@ interface ProductPageProps {
   features: FeatureCard[]
   integrationTitle: string
   integrationDescription: string
-  onNavigate: (page: string) => void
 }
 
 export function ProductPage({
@@ -27,8 +27,9 @@ export function ProductPage({
   features,
   integrationTitle,
   integrationDescription,
-  onNavigate,
 }: ProductPageProps) {
+  const navigate = useNavigate()
+
   return (
     <div className="flex flex-col relative">
       <CinematicBackground />
@@ -54,7 +55,7 @@ export function ProductPage({
               <Button 
                 size="lg" 
                 className="bg-primary/90 text-primary-foreground hover:bg-primary shadow-lg shadow-primary/10 px-8 h-12 rounded-lg mono text-sm border border-primary/20"
-                onClick={() => onNavigate('contact')}
+                onClick={() => navigate('/contact')}
               >
                 REQUEST BRIEFING
                 <ArrowRight className="ml-2" weight="bold" size={16} />
@@ -129,7 +130,7 @@ export function ProductPage({
             <Button 
               size="lg"
               className="bg-primary/90 text-primary-foreground hover:bg-primary shadow-lg shadow-primary/10 px-10 h-14 rounded-lg mono text-sm border border-primary/20"
-              onClick={() => onNavigate('contact')}
+              onClick={() => navigate('/contact')}
             >
               REQUEST BRIEFING
               <ArrowRight className="ml-2" weight="bold" />

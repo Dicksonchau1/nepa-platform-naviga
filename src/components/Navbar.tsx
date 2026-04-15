@@ -11,10 +11,7 @@ import { CaretDown } from '@phosphor-icons/react'
 import logoImage from '@/assets/images/Gemini_Generated_Image_8oxhp28oxhp28oxh.png'
 
 export function Navbar() {
-  const [isProductsOpen, setIsProductsOpen] = useState(false)
-  const [isResourcesOpen, setIsResourcesOpen] = useState(false)
-  const [isBusinessOpen, setIsBusinessOpen] = useState(false)
-  const [isAboutOpen, setIsAboutOpen] = useState(false)
+  const [openMenu, setOpenMenu] = useState<'products' | 'resources' | 'business' | 'about' | null>(null)
   const [isScrolled, setIsScrolled] = useState(false)
   const location = useLocation()
 
@@ -51,15 +48,18 @@ export function Navbar() {
           </Link>
 
           <div className="flex items-center gap-8">
-            <DropdownMenu open={isProductsOpen} onOpenChange={setIsProductsOpen}>
-              <DropdownMenuTrigger asChild>
+            <DropdownMenu
+              open={openMenu === 'products'}
+              onOpenChange={(open) => setOpenMenu(open ? 'products' : null)}
+            >
+              <DropdownMenuTrigger aria-label="Open Products menu" asChild>
                 <button className="flex items-center gap-1 text-sm font-medium text-white/70 hover:text-white transition-colors">
                   Products
                   <CaretDown
                     size={14}
                     weight="bold"
                     className={`transition-transform ${
-                      isProductsOpen ? 'rotate-180' : ''
+                      openMenu === 'products' ? 'rotate-180' : ''
                     }`}
                   />
                 </button>
@@ -69,7 +69,7 @@ export function Navbar() {
                 className="w-72 bg-[#0A0D14]/98 backdrop-blur-xl border-white/10"
               >
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10">
-                  <NavLink to="/products/voda" onClick={() => setIsProductsOpen(false)}>
+                  <NavLink to="/products/voda" onClick={() => setOpenMenu(null)}>
                     <div className="flex flex-col gap-1 py-1.5">
                       <span className="font-semibold text-sm text-white">
                         VODA — Video Agent
@@ -81,7 +81,7 @@ export function Navbar() {
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10">
-                  <NavLink to="/products/roda" onClick={() => setIsProductsOpen(false)}>
+                  <NavLink to="/products/roda" onClick={() => setOpenMenu(null)}>
                     <div className="flex flex-col gap-1 py-1.5">
                       <span className="font-semibold text-sm text-white">
                         RODA — Robotic Agent
@@ -93,7 +93,7 @@ export function Navbar() {
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10">
-                  <NavLink to="/products/eoda" onClick={() => setIsProductsOpen(false)}>
+                  <NavLink to="/products/eoda" onClick={() => setOpenMenu(null)}>
                     <div className="flex flex-col gap-1 py-1.5">
                       <span className="font-semibold text-sm text-white">
                         EODA — Edge Agent
@@ -105,7 +105,7 @@ export function Navbar() {
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10">
-                  <NavLink to="/products/foda" onClick={() => setIsProductsOpen(false)}>
+                  <NavLink to="/products/foda" onClick={() => setOpenMenu(null)}>
                     <div className="flex flex-col gap-1 py-1.5">
                       <span className="font-semibold text-sm text-white">
                         FODA — Facade Agent
@@ -117,7 +117,7 @@ export function Navbar() {
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10">
-                  <NavLink to="/products/soda" onClick={() => setIsProductsOpen(false)}>
+                  <NavLink to="/products/soda" onClick={() => setOpenMenu(null)}>
                     <div className="flex flex-col gap-1 py-1.5">
                       <span className="font-semibold text-sm text-white">
                         SODA — Surveillance Agent
@@ -131,15 +131,18 @@ export function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <DropdownMenu open={isResourcesOpen} onOpenChange={setIsResourcesOpen}>
-              <DropdownMenuTrigger asChild>
+            <DropdownMenu
+              open={openMenu === 'resources'}
+              onOpenChange={(open) => setOpenMenu(open ? 'resources' : null)}
+            >
+              <DropdownMenuTrigger aria-label="Open Resources menu" asChild>
                 <button className="flex items-center gap-1 text-sm font-medium text-white/70 hover:text-white transition-colors">
                   Resources
                   <CaretDown
                     size={14}
                     weight="bold"
                     className={`transition-transform ${
-                      isResourcesOpen ? 'rotate-180' : ''
+                      openMenu === 'resources' ? 'rotate-180' : ''
                     }`}
                   />
                 </button>
@@ -149,19 +152,19 @@ export function Navbar() {
                 className="w-48 bg-[#0A0D14]/98 backdrop-blur-xl border-white/10"
               >
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
-                  <NavLink to="/resources/docs" onClick={() => setIsResourcesOpen(false)}>
+                  <NavLink to="/resources/docs" onClick={() => setOpenMenu(null)}>
                     Documentation
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
-                  <NavLink to="/resources/api" onClick={() => setIsResourcesOpen(false)}>
+                  <NavLink to="/resources/api" onClick={() => setOpenMenu(null)}>
                     API Reference
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
                   <NavLink
                     to="/resources/guides"
-                    onClick={() => setIsResourcesOpen(false)}
+                    onClick={() => setOpenMenu(null)}
                   >
                     Guides & Tutorials
                   </NavLink>
@@ -169,7 +172,7 @@ export function Navbar() {
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
                   <NavLink
                     to="/resources/changelog"
-                    onClick={() => setIsResourcesOpen(false)}
+                    onClick={() => setOpenMenu(null)}
                   >
                     Changelog
                   </NavLink>
@@ -177,7 +180,7 @@ export function Navbar() {
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
                   <NavLink
                     to="/resources/status"
-                    onClick={() => setIsResourcesOpen(false)}
+                    onClick={() => setOpenMenu(null)}
                   >
                     Status
                   </NavLink>
@@ -185,15 +188,18 @@ export function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <DropdownMenu open={isBusinessOpen} onOpenChange={setIsBusinessOpen}>
-              <DropdownMenuTrigger asChild>
+            <DropdownMenu
+              open={openMenu === 'business'}
+              onOpenChange={(open) => setOpenMenu(open ? 'business' : null)}
+            >
+              <DropdownMenuTrigger aria-label="Open Business menu" asChild>
                 <button className="flex items-center gap-1 text-sm font-medium text-white/70 hover:text-white transition-colors">
                   Business
                   <CaretDown
                     size={14}
                     weight="bold"
                     className={`transition-transform ${
-                      isBusinessOpen ? 'rotate-180' : ''
+                      openMenu === 'business' ? 'rotate-180' : ''
                     }`}
                   />
                 </button>
@@ -203,32 +209,35 @@ export function Navbar() {
                 className="w-48 bg-[#0A0D14]/98 backdrop-blur-xl border-white/10"
               >
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
-                  <NavLink to="/business/partnership" onClick={() => setIsBusinessOpen(false)}>
+                  <NavLink to="/business/partnership" onClick={() => setOpenMenu(null)}>
                     Partnership
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
-                  <NavLink to="/business/case-studies" onClick={() => setIsBusinessOpen(false)}>
+                  <NavLink to="/business/case-studies" onClick={() => setOpenMenu(null)}>
                     Case Studies
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
-                  <NavLink to="/business/plans" onClick={() => setIsBusinessOpen(false)}>
+                  <NavLink to="/business/plans" onClick={() => setOpenMenu(null)}>
                     Plans
                   </NavLink>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <DropdownMenu open={isAboutOpen} onOpenChange={setIsAboutOpen}>
-              <DropdownMenuTrigger asChild>
+            <DropdownMenu
+              open={openMenu === 'about'}
+              onOpenChange={(open) => setOpenMenu(open ? 'about' : null)}
+            >
+              <DropdownMenuTrigger aria-label="Open About menu" asChild>
                 <button className="flex items-center gap-1 text-sm font-medium text-white/70 hover:text-white transition-colors">
                   About
                   <CaretDown
                     size={14}
                     weight="bold"
                     className={`transition-transform ${
-                      isAboutOpen ? 'rotate-180' : ''
+                      openMenu === 'about' ? 'rotate-180' : ''
                     }`}
                   />
                 </button>
@@ -238,27 +247,27 @@ export function Navbar() {
                 className="w-48 bg-[#0A0D14]/98 backdrop-blur-xl border-white/10"
               >
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
-                  <NavLink to="/about/company" onClick={() => setIsAboutOpen(false)}>
+                  <NavLink to="/about/company" onClick={() => setOpenMenu(null)}>
                     Company
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
-                  <NavLink to="/about/contact" onClick={() => setIsAboutOpen(false)}>
+                  <NavLink to="/about/contact" onClick={() => setOpenMenu(null)}>
                     Contact
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
-                  <NavLink to="/about/privacy" onClick={() => setIsAboutOpen(false)}>
+                  <NavLink to="/about/privacy" onClick={() => setOpenMenu(null)}>
                     Privacy
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
-                  <NavLink to="/about/terms" onClick={() => setIsAboutOpen(false)}>
+                  <NavLink to="/about/terms" onClick={() => setOpenMenu(null)}>
                     Terms
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
-                  <NavLink to="/about/security" onClick={() => setIsAboutOpen(false)}>
+                  <NavLink to="/about/security" onClick={() => setOpenMenu(null)}>
                     Security
                   </NavLink>
                 </DropdownMenuItem>

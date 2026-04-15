@@ -1,37 +1,49 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ArrowRight, ArrowLeft, EnvelopeSimple, CheckCircle } from '@phosphor-icons/react'
 import { CinematicBackground } from '@/components/CinematicBackground'
 import { toast } from 'sonner'
+import { supabase } from '@/lib/supabase'
 
-interface ForgotPasswordPageProps {
-  onNavigate: (page: string) => void
-}
-
-export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
+export function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
+  const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+    setErrorMsg('')
 
-    setTimeout(() => {
-      setIsLoading(false)
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset-password`
+    })
+    setIsLoading(false)
+    if (!error) {
       setEmailSent(true)
       toast.success('Password reset link sent to your email')
-    }, 1500)
+    } else {
+      setErrorMsg(error.message)
+    }
   }
 
-  const handleResend = () => {
+  const handleResend = async () => {
     setIsLoading(true)
-    setTimeout(() => {
-      setIsLoading(false)
-      toast.success('Email resent successfully')
-    }, 1000)
+    setErrorMsg('')
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset-password`
+    })
+    setIsLoading(false)
+    if (error) {
+      setErrorMsg(error.message)
+      return
+    }
+    toast.success('Email resent successfully')
   }
 
   if (emailSent) {
@@ -82,7 +94,7 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
                 </div>
 
                 <Button
-                  onClick={() => onNavigate('signin')}
+                  onClick={() => navigate('/auth?mode=signin')}
                   variant="outline"
                   className="w-full h-11 border-border/70 hover:border-primary/40 backdrop-blur-sm bg-background/20 rounded-xl"
                 >
@@ -130,6 +142,9 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
                     className="h-11 bg-background/50 border-border/70 focus:border-primary/50 backdrop-blur-sm"
                   />
                 </div>
+                {errorMsg && (
+                  <p className="text-sm text-destructive">{errorMsg}</p>
+                )}
 
                 <Button
                   type="submit"
@@ -143,7 +158,7 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
 
               <div className="mt-8 text-center">
                 <button
-                  onClick={() => onNavigate('signin')}
+                  onClick={() => navigate('/auth?mode=signin')}
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-2"
                 >
                   <ArrowLeft size={14} weight="bold" />
