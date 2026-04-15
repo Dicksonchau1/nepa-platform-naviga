@@ -19,6 +19,7 @@ const navItems = [
   { path: '/dashboard/facility-watch', label: 'FacilityWatch', icon: VideoCamera },
   { path: '/dashboard/robotic-ops', label: 'RoboticOps', icon: Robot },
   { path: '/dashboard/drone-inspect', label: 'DroneInspect', icon: Drone },
+  { path: '/dashboard/voda', label: 'VODA', icon: Gauge },
   { path: '/dashboard/tasks', label: 'Missions', icon: FileText },
   { path: '/dashboard/contacts', label: 'Contacts', icon: Envelope },
 ]
@@ -31,7 +32,7 @@ export function DashboardLayout() {
   const handleLogout = async () => {
     await signOut()
     toast.success('Signed out successfully')
-    navigate('/signin')
+    navigate('/auth/sign-in')
   }
 
   return (

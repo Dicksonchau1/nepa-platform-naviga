@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { MagnifyingGlass, X, FileText, Code, Book, Clock, ListChecks, Funnel } from '@phosphor-icons/react'
+import { MagnifyingGlass, X, FileText, Code, Book, Clock, ListChecks, Funnel, Tag, Cube } from '@phosphor-icons/react'
 import { Input } from '@/components/ui/input'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
@@ -14,7 +14,9 @@ const categoryIcons = {
   api: Code,
   guides: Book,
   changelog: Clock,
-  status: ListChecks
+  status: ListChecks,
+  products: Cube,
+  pricing: Tag,
 }
 
 const categoryLabels = {
@@ -22,7 +24,9 @@ const categoryLabels = {
   api: 'API Reference',
   guides: 'Guides',
   changelog: 'Changelog',
-  status: 'Status'
+  status: 'Status',
+  products: 'Products',
+  pricing: 'Pricing',
 }
 
 interface DocsSearchProps {
@@ -164,7 +168,7 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
             <div className="relative">
               <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input
-                placeholder="Search docs, API reference, guides..."
+                placeholder="Search docs, products, pricing..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 className="pl-10 pr-10 h-12 text-base"
@@ -325,11 +329,6 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
                               {categoryLabels[result.category]}
                             </Badge>
                           </div>
-                          {result.section && (
-                            <p className="text-xs text-muted-foreground mb-2 mono">
-                              {result.section}
-                            </p>
-                          )}
                           <p className="text-sm text-muted-foreground line-clamp-2">
                             {result.content}
                           </p>
@@ -363,6 +362,10 @@ interface SearchTriggerProps {
 }
 
 export function SearchTrigger({ onOpen }: SearchTriggerProps) {
+  const isMac =
+    typeof navigator !== 'undefined' &&
+    /Mac|iPhone|iPad/.test(navigator.platform)
+
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
@@ -382,7 +385,7 @@ export function SearchTrigger({ onOpen }: SearchTriggerProps) {
       <MagnifyingGlass className="w-4 h-4" />
       <span>Search docs...</span>
       <kbd className="ml-auto mono text-xs px-2 py-0.5 rounded bg-muted border border-border group-hover:border-primary/30">
-        ⌘K
+        {isMac ? '⌘K' : 'Ctrl+K'}
       </kbd>
     </button>
   )

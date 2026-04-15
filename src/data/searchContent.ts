@@ -2,7 +2,7 @@ export interface SearchEntry {
   id: string
   title: string
   content: string
-  category: 'docs' | 'api' | 'guides' | 'changelog' | 'status'
+  category: 'docs' | 'api' | 'guides' | 'changelog' | 'status' | 'products' | 'pricing'
   section?: string
   url: string
   keywords?: string[]
@@ -215,6 +215,78 @@ export const allSearchableContent: SearchEntry[] = [
     section: 'Best Practices',
     url: '/resources/guides',
     keywords: ['security', 'compliance', 'gdpr', 'encryption', 'audit']
+  },
+  {
+    id: 'product-soda',
+    title: 'SODA — Unmanned Store OS',
+    content: 'Autonomous store operations with perception, alerting, and robotic handoff.',
+    category: 'products',
+    section: 'Products',
+    url: '/products/soda',
+    keywords: ['soda', 'store', 'unmanned', 'operations']
+  },
+  {
+    id: 'product-roda',
+    title: 'RODA — Robotic Execution',
+    content: 'Physical restocking and task execution triggered by NEPA dispatch.',
+    category: 'products',
+    section: 'Products',
+    url: '/products/roda',
+    keywords: ['roda', 'robotics', 'dispatch', 'restock']
+  },
+  {
+    id: 'product-voda',
+    title: 'VODA / CODA — Video Intelligence',
+    content: 'Video-to-evidence SaaS pipeline with anomaly escalation.',
+    category: 'products',
+    section: 'Products',
+    url: '/products/voda-coda',
+    keywords: ['voda', 'coda', 'video', 'evidence']
+  },
+  {
+    id: 'product-hri',
+    title: 'HRI — HR Intelligence API',
+    content: 'Interview analytics and scorecards delivered via API.',
+    category: 'products',
+    section: 'Products',
+    url: '/products/hri',
+    keywords: ['hri', 'hr', 'interview', 'analytics']
+  },
+  {
+    id: 'product-nepa',
+    title: 'NEPA — World Model Engine',
+    content: 'Live operational world model powering AuraSense products.',
+    category: 'products',
+    section: 'Platform',
+    url: '/nepa',
+    keywords: ['nepa', 'world model', 'signaturemap']
+  },
+  {
+    id: 'pricing-soda',
+    title: 'SODA Pricing Plans',
+    content: 'Pilot, Store, and Fleet plans for unmanned retail deployments.',
+    category: 'pricing',
+    section: 'Pricing',
+    url: '/pricing',
+    keywords: ['pricing', 'soda', 'plans', 'pilot']
+  },
+  {
+    id: 'pricing-voda',
+    title: 'VODA/CODA Usage Pricing',
+    content: 'Usage-based pricing for processed minutes and reports rendered.',
+    category: 'pricing',
+    section: 'Pricing',
+    url: '/pricing',
+    keywords: ['pricing', 'voda', 'usage', 'minutes']
+  },
+  {
+    id: 'pricing-hri',
+    title: 'HRI API Packages',
+    content: 'API call packages with quotas, overage rates, and retention.',
+    category: 'pricing',
+    section: 'Pricing',
+    url: '/pricing',
+    keywords: ['pricing', 'hri', 'api', 'packages']
   },
   {
     id: 'docs-nepa-overview',

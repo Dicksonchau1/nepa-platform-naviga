@@ -394,7 +394,7 @@ export function NepaAgent() {
                 Structured responses, audit-linked actions, and deterministic outputs by design.
               </p>
               <Link
-                to="/resources/api"
+                to="/docs/api"
                 className="inline-flex items-center justify-center border border-white/20 text-white/70 font-semibold text-sm px-7 py-3 hover:border-white/40 hover:text-white transition-colors w-fit"
               >
                 Read API Docs →

@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AuthProvider, useAuth } from '@/contexts/AuthContext'
 import { AppLayout } from '@/components/AppLayout'
+import AuthPage from '@/components/pages/AuthPage'
+import AuthCallbackPage from '@/components/pages/AuthCallbackPage'
 
 import { HomePage } from '@/routes/HomePage'
 import { LandingPage } from '@/routes/LandingPage'
@@ -66,7 +68,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   }
 
   if (!user) {
-    return <Navigate to="/signin" state={{ from: location }} replace />
+    return <Navigate to="/auth?mode=signin" state={{ from: location }} replace />
   }
 
   return <>{children}</>
@@ -124,8 +126,16 @@ function AppRoutes() {
         <Route path="/business/case-studies/robotic-delivery-logistics" element={<Navigate to="/business#case-studies" replace />} />
       </Route>
 
+      <Route path="/auth" element={<AuthPage />} />
+      <Route path="/auth/callback" element={<AuthCallbackPage />} />
+      <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
+      <Route path="/auth/sign-in" element={<Navigate to="/auth?mode=signin" replace />} />
+      <Route path="/auth/sign-up" element={<Navigate to="/auth?mode=signup" replace />} />
+      <Route path="/auth/forgot-password" element={<Navigate to="/auth?mode=forgot" replace />} />
+      <Route path="/auth/forgot" element={<Navigate to="/auth?mode=forgot" replace />} />
+
       {/* Legacy login redirect */}
-      <Route path="/login" element={<Navigate to="/signin" replace />} />
+      <Route path="/login" element={<Navigate to="/auth?mode=signin" replace />} />
 
       {/* Protected Dashboard with portal sub-routes */}
       <Route
@@ -142,7 +152,7 @@ function AppRoutes() {
         <Route path="drone-inspect" element={<DroneInspectPortal />} />
         <Route path="tasks" element={<RobotTasksPage />} />
         <Route path="contacts" element={<ContactSubmissionsPage />} />
-        {/* Legacy routes redirect to portals */}
+        <Route path="login" element={<LoginPage />} />
         <Route path="facade" element={<Navigate to="/dashboard/drone-inspect" replace />} />
         <Route path="audit" element={<DashboardPage />} />
         <Route path="live" element={<DashboardPage />} />
