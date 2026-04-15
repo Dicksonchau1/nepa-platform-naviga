@@ -185,54 +185,35 @@ export function Navbar() {
                     className="cursor-pointer focus:bg-cyan-500/10"
                   >
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10">
-                  <NavLink to="/products/voda" onClick={() => setOpenMenu(null)}>
-                    <div className="flex flex-col gap-1 py-1.5">
-                      <span className="font-semibold text-sm text-white">
-                        VODA — Video Agent
-                      </span>
-                      <span className="text-xs text-white/50">
-                        Real-time video operations & detection
-                      </span>
-                    </div>
-                  </NavLink>
+                  <Link to="/products/soda" className="flex flex-col gap-0.5 px-3 py-2.5" onClick={() => setOpenMenu(null)}>
+                    <span className="text-sm font-medium text-white">SODA</span>
+                    <span className="text-xs text-gray-500 font-mono">Unmanned store operating system</span>
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10">
-                  <NavLink to="/products/roda" onClick={() => setOpenMenu(null)}>
-                    <div className="flex flex-col gap-1 py-1.5">
-                      <span className="font-semibold text-sm text-white">
-                        RODA — Robotic Agent
-                      </span>
-                      <span className="text-xs text-white/50">
-                        Autonomous navigation & mission control
-                      </span>
-                    </div>
-                  </NavLink>
+                  <Link to="/products/roda" className="flex flex-col gap-0.5 px-3 py-2.5" onClick={() => setOpenMenu(null)}>
+                    <span className="text-sm font-medium text-white">RODA</span>
+                    <span className="text-xs text-gray-500 font-mono">Robotic execution via NERMN dispatch</span>
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10">
-                  <NavLink to="/products/eoda" onClick={() => setOpenMenu(null)}>
-                    <div className="flex flex-col gap-1 py-1.5">
-                      <span className="font-semibold text-sm text-white">
-                        EODA — Edge Agent
-                      </span>
-                      <span className="text-xs text-white/50">
-                        Hardware-agnostic edge inference
-                      </span>
-                    </div>
-                  </NavLink>
+                  <Link to="/products/voda-coda" className="flex flex-col gap-0.5 px-3 py-2.5" onClick={() => setOpenMenu(null)}>
+                    <span className="text-sm font-medium text-white">VODA / CODA</span>
+                    <span className="text-xs text-gray-500 font-mono">Video intelligence → evidence pipeline</span>
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10">
-                  <NavLink to="/products/foda" onClick={() => setOpenMenu(null)}>
-                    <div className="flex flex-col gap-1 py-1.5">
-                      <span className="font-semibold text-sm text-white">
-                        FODA — Facade Agent
-                      </span>
-                      <span className="text-xs text-white/50">
-                        Aerial structural inspection
-                      </span>
-                    </div>
-                  </NavLink>
+                  <Link to="/products/hri" className="flex flex-col gap-0.5 px-3 py-2.5" onClick={() => setOpenMenu(null)}>
+                    <span className="text-sm font-medium text-white">HRI</span>
+                    <span className="text-xs text-gray-500 font-mono">HR intelligence API for interviews</span>
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10">
+                  <Link to="/products/foda" className="flex flex-col gap-0.5 px-3 py-2.5" onClick={() => setOpenMenu(null)}>
+                    <span className="text-sm font-medium text-white">FODA</span>
+                    <span className="text-xs text-gray-500 font-mono">Drone inspection · audit-grade evidence</span>
+                  </Link>
+                </DropdownMenuItem>
                   <NavLink to="/products/soda" onClick={() => setOpenMenu(null)}>
                     <div className="flex flex-col gap-1 py-1.5">
                       <span className="font-semibold text-sm text-white">{item.title}</span>
@@ -711,8 +692,8 @@ export function Navbar() {
                   <div className="font-mono text-[10px] tracking-[0.3em] text-gray-600 uppercase mt-5 mb-3">Products</div>
                   <MobileNavLink to="/products/soda" label="SODA — Unmanned Store" onClick={() => setMobileOpen(false)} />
                   <MobileNavLink to="/products/roda" label="RODA — Robotic Execution" onClick={() => setMobileOpen(false)} />
-                  <MobileNavLink to="/products/voda" label="VODA / CODA — Video Intelligence" onClick={() => setMobileOpen(false)} />
-                  <MobileNavLink to="/products/eoda" label="EODA — Edge Agent" onClick={() => setMobileOpen(false)} />
+                  <MobileNavLink to="/products/voda-coda" label="VODA / CODA — Video Intelligence" onClick={() => setMobileOpen(false)} />
+                  <MobileNavLink to="/products/hri" label="HRI — HR Intelligence" onClick={() => setMobileOpen(false)} />
                   <MobileNavLink to="/products/foda" label="FODA — Inspection" onClick={() => setMobileOpen(false)} />
 
                   <div className="font-mono text-[10px] tracking-[0.3em] text-gray-600 uppercase mt-5 mb-3">Resources</div>

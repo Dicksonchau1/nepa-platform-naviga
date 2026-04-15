@@ -1,3 +1,7 @@
+import SODAPageComponent from '@/components/pages/SODAPage'
+
+export function SODAPage() {
+  return <SODAPageComponent />
 import { ProductPage } from '@/components/pages/ProductPage'
 import { Eye, Camera, ShieldCheck, SquaresFour, Bell, Layout } from '@phosphor-icons/react'
 

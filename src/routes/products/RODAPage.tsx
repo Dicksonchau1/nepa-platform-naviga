@@ -1,3 +1,4 @@
+import RODAPageComponent from '@/components/pages/RODAPage'
 import { ProductPage } from '@/components/pages/ProductPage'
 import { Robot, Path, Lightning, Queue, ShieldCheck, Cube } from '@phosphor-icons/react'
 
@@ -99,5 +100,5 @@ export function RODAPage() {
 import { RODAPage as OriginalRODAPage } from '@/components/pages/RODAPage'
 
 export function RODAPage() {
-  return <OriginalRODAPage />
+  return <RODAPageComponent />
 }

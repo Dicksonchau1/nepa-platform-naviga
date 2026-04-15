@@ -1,3 +1,4 @@
+import FODAPageComponent from '@/components/pages/FODAPage'
 import { ProductPage } from '@/components/pages/ProductPage'
 import { Drone, ShieldCheck, Camera, MapPin, ChartLine, FileText } from '@phosphor-icons/react'
 
@@ -57,5 +58,5 @@ export function FODAPage() {
 import { FODAPage as OriginalFODAPage } from '@/components/pages/FODAPage'
 
 export function FODAPage() {
-  return <OriginalFODAPage />
+  return <FODAPageComponent />
 }

@@ -188,10 +188,14 @@ function AppRoutes() {
         <Route path="/business/case-studies" element={<CaseStudies />} />
         <Route path="/business/plans" element={<Plans />} />
 
+        <Route path="/products/voda" element={<VODAPage />} />
+        <Route path="/products/voda-coda" element={<VODAPage />} />
         <Route path="/products/voda-coda" element={<VODAPage />} />
         <Route path="/products/voda" element={<Navigate to="/products/voda-coda" replace />} />
         <Route path="/products/roda" element={<RODAPage />} />
         <Route path="/products/foda" element={<FODAPage />} />
+        <Route path="/products/hri" element={<HRIPage />} />
+        <Route path="/products/nepa-agent" element={<NepaAgentPage />} />
         <Route path="/products/nepa" element={<NepaAgentPage />} />
         <Route path="/products/soda" element={<SODAPage />} />
         <Route path="/products/hri" element={<HRIPage />} />

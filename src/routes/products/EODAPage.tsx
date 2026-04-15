@@ -1,3 +1,4 @@
+import EODAPageComponent from '@/components/pages/EODAPage'
 import { ProductPage } from '@/components/pages/ProductPage'
 import { Circuitry, CloudArrowUp, ShieldCheck } from '@phosphor-icons/react'
 
@@ -42,5 +43,5 @@ export function EODAPage() {
 import { EODAPage as OriginalEODAPage } from '@/components/pages/EODAPage'
 
 export function EODAPage() {
-  return <OriginalEODAPage />
+  return <EODAPageComponent />
 }

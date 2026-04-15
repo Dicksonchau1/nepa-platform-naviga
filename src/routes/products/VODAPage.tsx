@@ -1,3 +1,7 @@
+import VODACODAPageComponent from '@/components/pages/VODACODAPage'
+
+export function VODAPage() {
+  return <VODACODAPageComponent />
 import { ProductPage } from '@/components/pages/ProductPage'
 import { VideoCamera, Sparkle, ShieldCheck, FlowArrow, FileText, ChartLine } from '@phosphor-icons/react'
 

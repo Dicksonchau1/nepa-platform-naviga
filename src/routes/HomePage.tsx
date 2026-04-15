@@ -270,6 +270,77 @@ export function HomePage() {
         </div>
       </section>
 
+          <p
+            className="font-mono text-[10px] tracking-[0.28em] text-cyan-400/60 uppercase mb-4"
+            style={{ opacity: heroVisible ? 1 : 0 }}
+          >
+            One intelligence platform. Multiple execution domains.
+          </p>
+
+          <div
+            className="flex items-center gap-1 flex-wrap mt-8 mb-6"
+            style={{ opacity: heroVisible ? 1 : 0 }}
+          >
+            {[
+              { label: 'PERCEIVE', sublabel: 'NEPA engine', color: 'cyan' },
+              { label: 'REASON', sublabel: 'SignatureMap', color: 'violet' },
+              { label: 'PREDICT', sublabel: 'DopamineModulator', color: 'amber' },
+              { label: 'DISPATCH', sublabel: 'ACT layer', color: 'orange' },
+              { label: 'REPORT', sublabel: 'CODA output', color: 'emerald' },
+            ].map((step, i, arr) => (
+              <div key={step.label} className="flex items-center gap-1">
+                <div className="flex flex-col items-center px-4 py-2 rounded-lg bg-white/5 border border-white/10 hover:border-cyan-500/30 transition-all group">
+                  <span className="font-mono text-xs tracking-[0.2em] text-white group-hover:text-cyan-300 transition-colors">
+                    {step.label}
+                  </span>
+                  <span className="font-mono text-[10px] text-gray-600 mt-0.5">{step.sublabel}</span>
+                </div>
+                {i < arr.length - 1 && (
+                  <span className="text-gray-700 font-mono text-xs mx-0.5">→</span>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div
+            className="flex items-center gap-3 flex-wrap mt-4"
+            style={{ opacity: heroVisible ? 1 : 0 }}
+          >
+            {[
+              { label: 'SODA', sublabel: 'Unmanned Store', href: '/products/soda' },
+              { label: 'RODA', sublabel: 'Robotic Execution', href: '/products/roda' },
+              { label: 'VODA/CODA', sublabel: 'Video Intelligence', href: '/products/voda-coda' },
+              { label: 'HRI', sublabel: 'HR Intelligence', href: '/products/hri' },
+              { label: 'FODA', sublabel: 'Infrastructure Inspection', href: '/products/foda' },
+            ].map((domain) => (
+              <Link
+                key={domain.label}
+                to={domain.href}
+                className="flex flex-col items-center px-3 py-1.5 rounded-full border border-cyan-500/20 bg-cyan-500/5 hover:bg-cyan-500/15 hover:border-cyan-500/40 transition-all group"
+              >
+                <span className="font-mono text-xs text-cyan-400 group-hover:text-cyan-300">{domain.label}</span>
+                <span className="font-mono text-[10px] text-gray-600">{domain.sublabel}</span>
+              </Link>
+            ))}
+          </div>
+
+          <div
+            className="flex items-center gap-4 flex-wrap mb-16 transition-opacity duration-1000 ease-out delay-1000"
+            style={{ opacity: heroVisible ? 1 : 0 }}
+          >
+            <Button
+              asChild
+              size="lg"
+              className="border border-cyan-500/40 text-black bg-cyan-500 hover:bg-cyan-400 font-mono text-[11px] tracking-[0.18em] uppercase px-8 py-6 shadow-lg shadow-cyan-500/30"
+              style={{
+                textShadow: 'none',
+              }}
+            >
+              <Link to="/dashboard">
+                <Terminal size={20} weight="duotone" className="mr-2" />
+                Launch NEPA Console
+              </Link>
+            </Button>
       <section className="py-24 bg-black/40">
         <div className="container mx-auto px-6">
           <h2 className="text-3xl md:text-4xl font-semibold mb-10">Why AuraSense</h2>

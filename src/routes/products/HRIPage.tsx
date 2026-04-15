@@ -1,3 +1,7 @@
+import HRIPageComponent from '@/components/pages/HRIPage'
+
+export function HRIPage() {
+  return <HRIPageComponent />
 import { ProductPage } from '@/components/pages/ProductPage'
 import { User, FileText, ChartLine, Key, Bell, Lightning } from '@phosphor-icons/react'
 

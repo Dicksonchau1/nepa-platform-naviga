@@ -1,8 +1,7 @@
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { ArrowRight, VideoCamera, Robot, Cube, ShoppingCart, Drone, Package } from '@phosphor-icons/react'
 import { CinematicBackground, FloatingNodes, ScopeLines, ScrollHUD, ScanlineOverlay } from '@/components/CinematicBackground'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 export function HomePage() {
   const navigate = useNavigate()
@@ -18,18 +17,6 @@ export function HomePage() {
         
         <div className="container mx-auto px-6 relative z-10 pt-24">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="flex items-center justify-center gap-4 mb-8 flex-wrap">
-              <Badge className="bg-primary/10 text-primary border border-primary/30 text-xs px-3 py-1.5">
-                Edge-native
-              </Badge>
-              <Badge className="bg-primary/10 text-primary border border-primary/30 text-xs px-3 py-1.5">
-                LLM-agnostic
-              </Badge>
-              <Badge className="bg-primary/10 text-primary border border-primary/30 text-xs px-3 py-1.5">
-                Real-time VODEC agent
-              </Badge>
-            </div>
-            
             <h1 className="hero-h1-cinematic">
               Turn any camera feed into a{' '}
               <span className="accent-word">reliable</span> autonomous agent
@@ -39,6 +26,51 @@ export function HomePage() {
               NEPA is a neuromorphic edge perception platform that provides a live, LLM-ready world model 
               for unmanned retail, inspection, and robotics.
             </p>
+
+            <p className="font-mono text-xs tracking-[0.28em] text-cyan-400/60 uppercase mb-4">
+              One intelligence platform. Multiple execution domains.
+            </p>
+
+            <div className="flex items-center gap-1 flex-wrap justify-center mt-8 mb-6">
+              {[
+                { label: 'PERCEIVE', sublabel: 'NEPA engine', color: 'cyan' },
+                { label: 'REASON', sublabel: 'SignatureMap', color: 'violet' },
+                { label: 'PREDICT', sublabel: 'DopamineModulator', color: 'amber' },
+                { label: 'DISPATCH', sublabel: 'ACT layer', color: 'orange' },
+                { label: 'REPORT', sublabel: 'CODA output', color: 'emerald' },
+              ].map((step, i, arr) => (
+                <div key={step.label} className="flex items-center gap-1">
+                  <div className="flex flex-col items-center px-4 py-2 rounded-lg bg-white/5 border border-white/10 hover:border-cyan-500/30 transition-all group">
+                    <span className="font-mono text-xs tracking-[0.2em] text-white group-hover:text-cyan-300 transition-colors">
+                      {step.label}
+                    </span>
+                    <span className="font-mono text-[10px] text-gray-600 mt-0.5">{step.sublabel}</span>
+                  </div>
+                  {i < arr.length - 1 && (
+                    <span className="text-gray-700 font-mono text-xs mx-0.5">→</span>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-3 flex-wrap justify-center mt-4">
+              {[
+                { label: 'SODA', sublabel: 'Unmanned Store', href: '/products/soda' },
+                { label: 'RODA', sublabel: 'Robotic Execution', href: '/products/roda' },
+                { label: 'VODA/CODA', sublabel: 'Video Intelligence', href: '/products/voda-coda' },
+                { label: 'HRI', sublabel: 'HR Intelligence', href: '/products/hri' },
+                { label: 'FODA', sublabel: 'Infrastructure Inspection', href: '/products/foda' },
+              ].map((domain) => (
+                <Link
+                  key={domain.label}
+                  to={domain.href}
+                  className="flex flex-col items-center px-3 py-1.5 rounded-full border border-cyan-500/20 bg-cyan-500/5 hover:bg-cyan-500/15 hover:border-cyan-500/40 transition-all group"
+                >
+                  <span className="font-mono text-xs text-cyan-400 group-hover:text-cyan-300">{domain.label}</span>
+                  <span className="font-mono text-[10px] text-gray-600">{domain.sublabel}</span>
+                </Link>
+              ))}
+            </div>
             
             <div className="flex items-center justify-center gap-4">
               <Button 

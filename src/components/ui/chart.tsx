@@ -102,6 +102,41 @@ ${colorConfig
 
 const ChartTooltip = RechartsPrimitive.Tooltip
 
+type ChartPayloadItem = {
+  name?: string | number
+  dataKey?: string | number
+  value?: string | number
+  color?: string
+  payload?: { fill?: string } & Record<string, unknown>
+}
+
+type ChartTooltipFormatter = (
+  value: string | number | undefined,
+  name: string | number | undefined,
+  item: ChartPayloadItem,
+  index: number,
+  payload: ChartPayloadItem["payload"]
+) => ReactNode
+
+type ChartLabelFormatter = (
+  label: ReactNode,
+  payload: ChartPayloadItem[]
+) => ReactNode
+
+type ChartTooltipContentProps = ComponentProps<"div"> & {
+  active?: boolean
+  payload?: ChartPayloadItem[]
+  indicator?: "line" | "dot" | "dashed"
+  hideLabel?: boolean
+  hideIndicator?: boolean
+  label?: string | number
+  labelFormatter?: ChartLabelFormatter
+  labelClassName?: string
+  formatter?: ChartTooltipFormatter
+  color?: string
+  nameKey?: string
+  labelKey?: string
+}
 type TooltipValue = number | string | ReadonlyArray<number | string>
 type TooltipName = number | string
 
@@ -131,6 +166,7 @@ function ChartTooltipContent({
   color,
   nameKey,
   labelKey,
+}: ChartTooltipContentProps) {
 }: TooltipContentProps) {
   const { config } = useChart()
 
@@ -188,7 +224,7 @@ function ChartTooltipContent({
         {payload.map((item, index) => {
           const key = `${nameKey || item.name || item.dataKey || "value"}`
           const itemConfig = getPayloadConfigFromPayload(config, item, key)
-          const indicatorColor = color || item.payload.fill || item.color
+          const indicatorColor = color || item.payload?.fill || item.color
 
           return (
             <div
@@ -256,6 +292,10 @@ function ChartTooltipContent({
 
 const ChartLegend = RechartsPrimitive.Legend
 
+type ChartLegendContentProps = ComponentProps<"div"> & {
+  hideIcon?: boolean
+  payload?: ChartPayloadItem[]
+  verticalAlign?: "top" | "bottom"
 type LegendContentProps = ComponentProps<"div"> & {
   payload?: RechartsPrimitive.LegendPayload[]
   verticalAlign?: "top" | "bottom" | "middle"
@@ -269,6 +309,7 @@ function ChartLegendContent({
   payload,
   verticalAlign = "bottom",
   nameKey,
+}: ChartLegendContentProps) {
 }: LegendContentProps) {
   const { config } = useChart()
 
