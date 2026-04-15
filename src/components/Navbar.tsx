@@ -12,6 +12,7 @@ import { CaretDown, List } from '@phosphor-icons/react'
 import logoImage from '@/assets/images/Gemini_Generated_Image_8oxhp28oxhp28oxh.png'
 
 export function Navbar() {
+  const scrollThreshold = 20
   const [openMenu, setOpenMenu] = useState<string | null>(null)
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
@@ -25,7 +26,7 @@ export function Navbar() {
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          setIsScrolled(window.scrollY > 20)
+          setIsScrolled(window.scrollY > scrollThreshold)
           ticking = false
         })
         ticking = true
