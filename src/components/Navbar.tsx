@@ -317,30 +317,30 @@ export function Navbar() {
                 <nav className="flex-1 overflow-y-auto px-6 py-4 space-y-1">
                   <div className="font-mono text-[10px] tracking-[0.3em] text-gray-600 uppercase mb-3">Platform</div>
                   <MobileNavLink to="/" label="Home" onClick={() => setMobileOpen(false)} />
-                  <MobileNavLink to="/nepa" label="NEPA Engine" onClick={() => setMobileOpen(false)} />
+                  <MobileNavLink to="/agent" label="NEPA Engine" onClick={() => setMobileOpen(false)} />
                   <MobileNavLink to="/pricing" label="Pricing" onClick={() => setMobileOpen(false)} />
 
                   <div className="font-mono text-[10px] tracking-[0.3em] text-gray-600 uppercase mt-5 mb-3">Products</div>
                   <MobileNavLink to="/products/soda" label="SODA — Unmanned Store" onClick={() => setMobileOpen(false)} />
                   <MobileNavLink to="/products/roda" label="RODA — Robotic Execution" onClick={() => setMobileOpen(false)} />
-                  <MobileNavLink to="/products/voda-coda" label="VODA / CODA — Video Intelligence" onClick={() => setMobileOpen(false)} />
-                  <MobileNavLink to="/products/hri" label="HRI — HR Intelligence" onClick={() => setMobileOpen(false)} />
+                  <MobileNavLink to="/products/voda" label="VODA / CODA — Video Intelligence" onClick={() => setMobileOpen(false)} />
+                  <MobileNavLink to="/products/eoda" label="EODA — Edge Agent" onClick={() => setMobileOpen(false)} />
                   <MobileNavLink to="/products/foda" label="FODA — Inspection" onClick={() => setMobileOpen(false)} />
 
                   <div className="font-mono text-[10px] tracking-[0.3em] text-gray-600 uppercase mt-5 mb-3">Resources</div>
-                  <MobileNavLink to="/docs" label="Documentation" onClick={() => setMobileOpen(false)} />
-                  <MobileNavLink to="/docs/api" label="API Reference" onClick={() => setMobileOpen(false)} />
-                  <MobileNavLink to="/about" label="About AuraSense" onClick={() => setMobileOpen(false)} />
-                  <MobileNavLink to="/contact" label="Contact" onClick={() => setMobileOpen(false)} />
+                  <MobileNavLink to="/resources/docs" label="Documentation" onClick={() => setMobileOpen(false)} />
+                  <MobileNavLink to="/resources/api" label="API Reference" onClick={() => setMobileOpen(false)} />
+                  <MobileNavLink to="/about/company" label="About AuraSense" onClick={() => setMobileOpen(false)} />
+                  <MobileNavLink to="/about/contact" label="Contact" onClick={() => setMobileOpen(false)} />
                 </nav>
 
                 <div className="px-6 py-4 border-t border-white/5 space-y-2">
-                  <Link to="/auth?mode=signin" onClick={() => setMobileOpen(false)}
+                  <Link to="/signin" onClick={() => setMobileOpen(false)}
                     className="block w-full text-center py-2.5 px-4 rounded-lg border border-cyan-500/30 text-cyan-400 font-mono text-sm hover:bg-cyan-500/10 transition-all"
                   >
                     Sign in
                   </Link>
-                  <Link to="/auth?mode=signup" onClick={() => setMobileOpen(false)}
+                  <Link to="/signup" onClick={() => setMobileOpen(false)}
                     className="block w-full text-center py-2.5 px-4 rounded-lg bg-cyan-500 text-black font-mono text-sm font-semibold hover:bg-cyan-400 transition-all"
                   >
                     Start Pilot
