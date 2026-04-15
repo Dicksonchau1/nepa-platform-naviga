@@ -1,11 +1,7 @@
 import { ProductPage } from './ProductPage'
 import { Cpu, Lightning, CloudSlash } from '@phosphor-icons/react'
 
-interface EODAPageProps {
-  onNavigate: (page: string) => void
-}
-
-export function EODAPage({ onNavigate }: EODAPageProps) {
+export function EODAPage() {
   return (
     <ProductPage
       eyebrow="NEPA PLATFORM · EDGE AGENT"
@@ -33,7 +29,6 @@ export function EODAPage({ onNavigate }: EODAPageProps) {
       ]}
       integrationTitle="How EODA Connects to NEPA Core"
       integrationDescription="EODA is a thin-client deployment of the NEPA inference engine optimized for edge hardware. Minimal footprint, maximum performance. Deploy as a binary, container, or embedded library. Full offline operation with optional cloud sync."
-      onNavigate={onNavigate}
     />
   )
 }

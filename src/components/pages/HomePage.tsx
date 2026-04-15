@@ -2,12 +2,10 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ArrowRight, VideoCamera, Robot, Cube, ShoppingCart, Drone, Package } from '@phosphor-icons/react'
 import { CinematicBackground, FloatingNodes, ScopeLines, ScrollHUD, ScanlineOverlay } from '@/components/CinematicBackground'
+import { useNavigate } from 'react-router-dom'
 
-interface HomePageProps {
-  onNavigate: (page: string) => void
-}
-
-export function HomePage({ onNavigate }: HomePageProps) {
+export function HomePage() {
+  const navigate = useNavigate()
   return (
     <div className="flex flex-col relative">
       <CinematicBackground />
@@ -46,7 +44,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
               <Button 
                 size="lg" 
                 className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 px-8 h-12 rounded-full text-sm"
-                onClick={() => onNavigate('signup')}
+                onClick={() => navigate('/signup')}
               >
                 Get started
                 <ArrowRight className="ml-2" weight="bold" size={16} />
@@ -55,7 +53,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
                 size="lg" 
                 variant="outline"
                 className="border-border hover:border-primary/40 backdrop-blur-sm bg-background/20 h-12 px-8 rounded-full text-sm"
-                onClick={() => onNavigate('contact')}
+                onClick={() => navigate('/about/contact')}
               >
                 Talk to us
               </Button>
@@ -169,7 +167,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
             <div 
               className="backdrop-blur-xl bg-card/60 border border-border/50 rounded-2xl p-8 hover:border-primary/50 cursor-pointer transition-all duration-300 group relative overflow-hidden"
-              onClick={() => onNavigate('solutions-retail')}
+              onClick={() => navigate('/business/case-studies/unmanned-retail-hk')}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative z-10">
@@ -182,7 +180,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
 
             <div 
               className="backdrop-blur-xl bg-card/60 border border-border/50 rounded-2xl p-8 hover:border-primary/50 cursor-pointer transition-all duration-300 group relative overflow-hidden"
-              onClick={() => onNavigate('solutions-retail')}
+              onClick={() => navigate('/business/case-studies/unmanned-retail-hk')}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative z-10">
@@ -195,7 +193,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
 
             <div 
               className="backdrop-blur-xl bg-card/60 border border-border/50 rounded-2xl p-8 hover:border-primary/50 cursor-pointer transition-all duration-300 group relative overflow-hidden"
-              onClick={() => onNavigate('solutions-inspection')}
+              onClick={() => navigate('/business/case-studies/drone-inspection-facade')}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative z-10">
@@ -208,7 +206,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
 
             <div 
               className="backdrop-blur-xl bg-card/60 border border-border/50 rounded-2xl p-8 hover:border-primary/50 cursor-pointer transition-all duration-300 group relative overflow-hidden"
-              onClick={() => onNavigate('solutions-robotics')}
+              onClick={() => navigate('/business/case-studies/robotic-delivery-logistics')}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative z-10">
@@ -224,7 +222,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
             <Button
               variant="outline"
               className="border-border hover:border-primary/40 backdrop-blur-sm bg-background/20"
-              onClick={() => onNavigate('solutions-retail')}
+              onClick={() => navigate('/business/case-studies/unmanned-retail-hk')}
             >
               View use cases
               <ArrowRight className="ml-2" size={16} weight="bold" />
@@ -255,7 +253,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
                   <Button 
                     size="lg"
                     className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 px-10 h-14 rounded-full text-base"
-                    onClick={() => onNavigate('signup')}
+                    onClick={() => navigate('/signup')}
                   >
                     Get started
                     <ArrowRight className="ml-2" weight="bold" />
@@ -264,7 +262,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
                     size="lg"
                     variant="outline"
                     className="border-border hover:border-primary/40 backdrop-blur-sm bg-background/20 h-14 px-10 rounded-full text-base"
-                    onClick={() => onNavigate('contact')}
+                    onClick={() => navigate('/about/contact')}
                   >
                     Talk to us
                   </Button>

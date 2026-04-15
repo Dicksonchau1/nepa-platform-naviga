@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,6 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { CaretDown, List } from '@phosphor-icons/react'
+import { CaretDown, List, X } from '@phosphor-icons/react'
 import logoImage from '@/assets/images/Gemini_Generated_Image_8oxhp28oxhp28oxh.png'
 
 const SCROLL_THRESHOLD = 20
@@ -64,6 +66,7 @@ export function Navbar() {
               open={openMenu === 'products'}
               onOpenChange={(open) => setOpenMenu(open ? 'products' : null)}
             >
+            <DropdownMenu open={openMenu === 'products'} onOpenChange={(open) => setOpenMenu(open ? 'products' : null)}>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-1 text-sm font-medium text-white/70 hover:text-white transition-colors">
                   Products
@@ -147,6 +150,7 @@ export function Navbar() {
               open={openMenu === 'resources'}
               onOpenChange={(open) => setOpenMenu(open ? 'resources' : null)}
             >
+            <DropdownMenu open={openMenu === 'resources'} onOpenChange={(open) => setOpenMenu(open ? 'resources' : null)}>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-1 text-sm font-medium text-white/70 hover:text-white transition-colors">
                   Resources
@@ -204,6 +208,7 @@ export function Navbar() {
               open={openMenu === 'business'}
               onOpenChange={(open) => setOpenMenu(open ? 'business' : null)}
             >
+            <DropdownMenu open={openMenu === 'business'} onOpenChange={(open) => setOpenMenu(open ? 'business' : null)}>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-1 text-sm font-medium text-white/70 hover:text-white transition-colors">
                   Business
@@ -242,6 +247,7 @@ export function Navbar() {
               open={openMenu === 'about'}
               onOpenChange={(open) => setOpenMenu(open ? 'about' : null)}
             >
+            <DropdownMenu open={openMenu === 'about'} onOpenChange={(open) => setOpenMenu(open ? 'about' : null)}>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-1 text-sm font-medium text-white/70 hover:text-white transition-colors">
                   About
@@ -416,8 +422,90 @@ export function Navbar() {
               </SheetContent>
             </Sheet>
           </div>
+          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+            <SheetTrigger asChild>
+              <button
+                className="lg:hidden p-2 text-gray-400 hover:text-cyan-400 transition-colors"
+                aria-label="Open navigation menu"
+              >
+                <List size={22} weight="bold" />
+              </button>
+            </SheetTrigger>
+            <SheetContent
+              side="right"
+              className="w-80 bg-[#060b14] border-l border-cyan-500/20 p-0"
+            >
+              <div className="flex flex-col h-full">
+                <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
+                  <span className="font-mono text-cyan-400 text-sm tracking-[0.3em] uppercase">AuraSense</span>
+                  <button onClick={() => setMobileOpen(false)} aria-label="Close navigation menu">
+                    <X size={18} className="text-gray-400" />
+                  </button>
+                </div>
+
+                <nav className="flex-1 overflow-y-auto px-6 py-4 space-y-1">
+                  <div className="font-mono text-[10px] tracking-[0.3em] text-gray-600 uppercase mb-3">Platform</div>
+                  <MobileNavLink to="/" label="Home" onClick={() => setMobileOpen(false)} />
+                  <MobileNavLink to="/agent" label="NEPA Engine" onClick={() => setMobileOpen(false)} />
+                  <MobileNavLink to="/pricing" label="Pricing" onClick={() => setMobileOpen(false)} />
+
+                  <div className="font-mono text-[10px] tracking-[0.3em] text-gray-600 uppercase mt-5 mb-3">Products</div>
+                  <MobileNavLink to="/products/soda" label="SODA — Unmanned Store" onClick={() => setMobileOpen(false)} />
+                  <MobileNavLink to="/products/roda" label="RODA — Robotic Execution" onClick={() => setMobileOpen(false)} />
+                  <MobileNavLink to="/products/voda" label="VODA / CODA — Video Intelligence" onClick={() => setMobileOpen(false)} />
+                  <MobileNavLink to="/products/eoda" label="EODA — Edge Agent" onClick={() => setMobileOpen(false)} />
+                  <MobileNavLink to="/products/foda" label="FODA — Inspection" onClick={() => setMobileOpen(false)} />
+
+                  <div className="font-mono text-[10px] tracking-[0.3em] text-gray-600 uppercase mt-5 mb-3">Resources</div>
+                  <MobileNavLink to="/resources/docs" label="Documentation" onClick={() => setMobileOpen(false)} />
+                  <MobileNavLink to="/resources/api" label="API Reference" onClick={() => setMobileOpen(false)} />
+                  <MobileNavLink to="/about/company" label="About AuraSense" onClick={() => setMobileOpen(false)} />
+                  <MobileNavLink to="/about/contact" label="Contact" onClick={() => setMobileOpen(false)} />
+                </nav>
+
+                <div className="px-6 py-4 border-t border-white/5 space-y-2">
+                  <Link to="/signin" onClick={() => setMobileOpen(false)}
+                    className="block w-full text-center py-2.5 px-4 rounded-lg border border-cyan-500/30 text-cyan-400 font-mono text-sm hover:bg-cyan-500/10 transition-all"
+                  >
+                    Sign in
+                  </Link>
+                  <Link to="/signup" onClick={() => setMobileOpen(false)}
+                    className="block w-full text-center py-2.5 px-4 rounded-lg bg-cyan-500 text-black font-mono text-sm font-semibold hover:bg-cyan-400 transition-all"
+                  >
+                    Start Pilot
+                  </Link>
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </nav>
+  )
+}
+
+function MobileNavLink({
+  to,
+  label,
+  onClick,
+}: {
+  to: string
+  label: string
+  onClick: () => void
+}) {
+  const { pathname } = useLocation()
+  const isActive = pathname === to || pathname.startsWith(to + '/')
+  return (
+    <Link
+      to={to}
+      onClick={onClick}
+      className={`block px-3 py-2 rounded-lg font-mono text-sm transition-all ${
+        isActive
+          ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'
+          : 'text-gray-400 hover:text-white hover:bg-white/5'
+      }`}
+    >
+      {label}
+    </Link>
   )
 }

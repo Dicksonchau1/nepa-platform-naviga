@@ -1,14 +1,16 @@
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from '@phosphor-icons/react'
 import { CinematicBackground } from '@/components/CinematicBackground'
+import { useNavigate } from 'react-router-dom'
 
 interface PlaceholderPageProps {
   title: string
   subtitle: string
-  onNavigate: (page: string) => void
 }
 
-export function PlaceholderPage({ title, subtitle, onNavigate }: PlaceholderPageProps) {
+export function PlaceholderPage({ title, subtitle }: PlaceholderPageProps) {
+  const navigate = useNavigate()
+
   return (
     <div className="relative min-h-screen flex items-center justify-center">
       <CinematicBackground />
@@ -20,7 +22,7 @@ export function PlaceholderPage({ title, subtitle, onNavigate }: PlaceholderPage
           This section is currently under construction. Check back soon for updates.
         </p>
         <Button
-          onClick={() => onNavigate('home')}
+          onClick={() => navigate('/')}
           variant="outline"
           className="border-border hover:border-primary/40 backdrop-blur-sm bg-background/20"
         >

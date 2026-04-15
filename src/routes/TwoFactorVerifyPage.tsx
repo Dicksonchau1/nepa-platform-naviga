@@ -10,7 +10,6 @@ export function TwoFactorVerifyPage({ pendingEmail }: TwoFactorVerifyPageProps) 
   return (
     <OriginalTwoFactorVerifyPage
       userEmail={pendingEmail}
-      onNavigate={(path) => navigate(`/${path}`)}
       onVerified={() => navigate('/')}
     />
   )
