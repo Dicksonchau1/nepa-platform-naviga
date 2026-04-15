@@ -16,7 +16,7 @@ const links = [
 
 function NavLinkItem({ href, label, onClick }: { href: string; label: string; onClick?: () => void }) {
   const location = useLocation()
-  const active = location.pathname === href || location.pathname.StartsWith(`${href}/`)
+  const active = location.pathname === href || location.pathname.startsWith(`${href}/`)
 
   return (
     <Link
