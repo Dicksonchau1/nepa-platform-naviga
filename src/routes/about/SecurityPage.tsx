@@ -339,8 +339,8 @@ export function SecurityPage() {
                 </p>
                 <ul className="list-disc list-inside space-y-2 ml-4 mt-4">
                   <li><strong>Security feed:</strong> security-advisories@aurasensehk.com (subscribe for notifications)</li>
-                  <li><strong>Changelog:</strong> Security updates documented at <span className="mono text-sm">/resources/changelog</span></li>
-                  <li><strong>Status page:</strong> Real-time incident updates at <span className="mono text-sm">/resources/status</span></li>
+                  <li><strong>Changelog:</strong> Security updates documented at <span className="mono text-sm">/docs/changelog</span></li>
+                  <li><strong>Status page:</strong> Real-time incident updates at <span className="mono text-sm">/docs/status</span></li>
                 </ul>
               </CardContent>
             </Card>

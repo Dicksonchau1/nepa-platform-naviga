@@ -74,12 +74,12 @@ export function CommunityPage() {
               {
                 title: 'NEPA SDK Documentation',
                 desc: 'Complete API reference, integration guides, and deployment examples.',
-                link: '/resources/docs',
+                link: '/docs',
               },
               {
                 title: 'Sample Projects',
                 desc: 'Pre-built agent templates for retail, robotics, facade inspection, and surveillance.',
-                link: '/resources/guides',
+                link: '/docs/guides',
               },
               {
                 title: 'Community Forum',

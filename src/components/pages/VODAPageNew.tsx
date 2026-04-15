@@ -195,7 +195,7 @@ export function VODAPage({ onNavigate }: VODAPageProps) {
               }}
             >
               <Link
-                to="/signup?plan=trial"
+                to="/auth/sign-up?plan=trial"
                 className="bg-cyan-500 text-black font-semibold text-sm px-7 py-3 hover:bg-cyan-400 transition-colors"
               >
                 Start free trial
@@ -430,7 +430,7 @@ export function VODAPage({ onNavigate }: VODAPageProps) {
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Link
-              to="/signup?plan=trial"
+              to="/auth/sign-up?plan=trial"
               className="bg-cyan-500 text-black font-semibold text-sm px-7 py-3 hover:bg-cyan-400 transition-colors"
             >
               Start free trial

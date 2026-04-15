@@ -1,461 +1,215 @@
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Check, Minus } from '@phosphor-icons/react'
+import { Check } from '@phosphor-icons/react'
 
-type Product = 'VODA' | 'SODA' | 'RODA'
-type BillingPeriod = 'monthly' | 'annual'
-
-const PRODUCT_COLORS = {
-  VODA: '#00C8F0',
-  SODA: '#6366F1',
-  RODA: '#F59E0B',
-}
-
-const PRODUCT_DESCRIPTORS = {
-  VODA: 'Video Operations & Detection Agent',
-  SODA: 'Surveillance Operations & Detection Agent',
-  RODA: 'Robotic Operations & Decision Agent',
-}
-
-const VODA_TIERS = [
+const sodaPlans = [
   {
     name: 'Pilot',
-    price: 20000,
-    period: 'one-time',
-    descriptor: '30-day pilot programme',
-    features: [
-      'On-site hardware assessment & installation',
-      'Full VODA agent deployment (up to 8 streams)',
-      'NEPA console — full access',
-      'Full audit ledger (30-day retention)',
-      'Dedicated AuraSense engineer on-site setup',
-      'Team backup throughout pilot period',
-      'Joint review session at pilot close',
-    ],
-    recommended: false,
-    currency: 'HK$',
+    description: 'Best for 1 test site with limited cameras.',
+    features: ['NEPA core', 'Basic SODA dashboard', 'Anomaly alerts', 'CODA incident summaries', 'Email support'],
+    cta: 'Start pilot',
+    href: '/contact',
   },
   {
-    name: 'Monthly Support',
-    price: 9000,
-    period: 'month',
-    descriptor: 'Included from day one',
-    features: [
-      'Full AuraSense team backup',
-      'Remote monitoring & incident response',
-      'Model updates and inference tuning',
-      'Alert threshold reconfiguration',
-      'Console and dashboard updates',
-      'Monthly operational review report',
-      'Priority support — response within 4 hours',
-      'Ongoing audit ledger access & export',
-    ],
-    recommended: true,
-    currency: 'HK$',
+    name: 'Store',
+    description: 'Best for 1 production unmanned store.',
+    features: ['Full SODA stack', 'More camera lanes', 'Low-stock intelligence', 'RODA-ready dispatch', 'Priority support'],
+    cta: 'Deploy store',
+    href: '/contact',
   },
   {
-    name: 'Production',
-    price: null,
-    period: 'custom',
-    descriptor: 'Multi-site commercial rollout',
-    features: [
-      'Up to 16 camera streams per node',
-      'Multi-site deployment',
-      'Custom model fine-tuning',
-      'Unlimited audit log retention',
-      'API + webhook integrations',
-      'SLA-backed uptime guarantee',
-      'Dedicated account manager',
-    ],
-    recommended: false,
-    currency: 'HK$',
+    name: 'Fleet',
+    description: 'Best for multi-store operations.',
+    features: ['Multi-site management', 'Fleet reporting', 'SSO', 'Custom SLA', 'Deployment engineering'],
+    cta: 'Talk to sales',
+    href: '/contact',
   },
 ]
 
-const RODA_TIERS = [
+const rodaPlans = [
   {
-    name: 'Development',
-    price: 5000,
-    period: 'month',
-    descriptor: 'Get your first robots integrated.',
-    features: [
-      'Up to 3 registered devices (robots or drones)',
-      'Basic fleet telemetry and status dashboard',
-      'Basic task assignment and routing',
-      'Single operator seat',
-      'Mission queue with status tracking',
-      'Standard response logging',
-      'Email support',
-    ],
-    recommended: false,
-    currency: 'HK$',
+    name: 'RODA Ready',
+    description: 'Entry robotic integration package.',
+    features: ['Dispatch contract', 'Task queue', 'Single robot integration'],
   },
   {
-    name: 'Operations',
-    price: 15000,
-    period: 'month',
-    descriptor: 'Coordinate your fleet across zones.',
-    features: [
-      'Up to 10 registered devices',
-      'Automated task routing and re-routing',
-      'Full fleet management dashboard',
-      'Mission planning and replay',
-      '3 operator seats',
-      'Cross-zone coordination',
-      'Incident escalation and audit trail',
-      'Priority support — response within 4 hours',
-    ],
-    recommended: true,
-    currency: 'HK$',
+    name: 'RODA Integrated',
+    description: 'Operational robotics for stores.',
+    features: ['Multi-robot orchestration', 'Priority tasking', 'NISSM sync'],
+  },
+  {
+    name: 'RODA Enterprise Robotics',
+    description: 'Custom robotics deployments.',
+    features: ['Fleet-scale automation', 'Custom SLAs', 'Deployment engineering'],
+  },
+]
+
+const vodaPlans = [
+  {
+    name: 'Starter',
+    description: 'Monthly processed minutes for small teams.',
+    metrics: ['Video minutes processed', 'Report renders', 'Consultation calls'],
+  },
+  {
+    name: 'Growth',
+    description: 'Higher volumes with exports + webhooks.',
+    metrics: ['Higher minute volume', 'Live stream hours', 'Report exports'],
   },
   {
     name: 'Enterprise',
-    price: null,
-    period: 'custom',
-    descriptor: 'Operate at fleet scale.',
-    features: [
-      'Unlimited registered devices',
-      'AI-assisted autonomous dispatch decisions',
-      'Multi-site fleet visibility and orchestration',
-      'Custom operator seat count',
-      'Custom mission workflows',
-      'Full integration with VODA and SODA data layers',
-      'SLA-backed operations',
-      'Dedicated fleet operations engineer',
-    ],
-    recommended: false,
-    currency: 'HK$',
+    description: 'Custom volume + SLA + private deployment.',
+    metrics: ['Custom retention', 'Private tenancy', 'Dedicated support'],
   },
 ]
 
-const VODA_COMPARISON = [
-  { feature: 'Camera streams', starter: 'Up to 8', pro: 'Up to 8', enterprise: 'Up to 16' },
-  { feature: 'On-site installation', starter: true, pro: false, enterprise: true },
-  { feature: 'Hardware assessment', starter: true, pro: false, enterprise: true },
-  { feature: 'Audit ledger retention', starter: '30 days', pro: 'Ongoing', enterprise: 'Unlimited' },
-  { feature: 'Console access', starter: 'Full', pro: 'Full', enterprise: 'Full' },
-  { feature: 'Remote monitoring', starter: false, pro: true, enterprise: true },
-  { feature: 'Model updates', starter: false, pro: true, enterprise: true },
-  { feature: 'Support response time', starter: '48 hours', pro: '4 hours', enterprise: 'Custom SLA' },
-  { feature: 'Monthly review reports', starter: false, pro: true, enterprise: true },
-  { feature: 'Multi-site deployment', starter: false, pro: false, enterprise: true },
-  { feature: 'API access', starter: false, pro: false, enterprise: true },
-  { feature: 'Custom fine-tuning', starter: false, pro: false, enterprise: true },
-]
-
-const RODA_COMPARISON = [
-  { feature: 'Registered devices', starter: '3', pro: '10', enterprise: 'Unlimited' },
-  { feature: 'Fleet telemetry', starter: 'Basic', pro: 'Full', enterprise: 'Advanced' },
-  { feature: 'Task routing', starter: 'Basic', pro: 'Automated', enterprise: 'AI-assisted' },
-  { feature: 'Operator seats', starter: '1', pro: '3', enterprise: 'Custom' },
-  { feature: 'Mission planning', starter: false, pro: true, enterprise: true },
-  { feature: 'Cross-zone coordination', starter: false, pro: true, enterprise: true },
-  { feature: 'Multi-site orchestration', starter: false, pro: false, enterprise: true },
-  { feature: 'Incident escalation', starter: false, pro: true, enterprise: true },
-  { feature: 'Audit trail', starter: 'Basic', pro: true, enterprise: true },
-  { feature: 'VODA/SODA integration', starter: false, pro: false, enterprise: true },
-  { feature: 'Support response time', starter: '48 hours', pro: '4 hours', enterprise: 'Custom SLA' },
-  { feature: 'Dedicated engineer', starter: false, pro: false, enterprise: true },
+const hriPlans = [
+  {
+    name: 'Launch',
+    description: 'Small monthly API quota.',
+    metrics: ['Interview sessions', 'Transcript minutes', 'Scorecards'],
+  },
+  {
+    name: 'Growth',
+    description: 'Larger quota + richer insights.',
+    metrics: ['API calls', 'Webhook deliveries', 'Batch jobs'],
+  },
+  {
+    name: 'Scale',
+    description: 'High volume + concurrency boosts.',
+    metrics: ['Concurrency limit', 'Data retention', 'Audit export'],
+  },
+  {
+    name: 'Enterprise',
+    description: 'Private deployment + custom tenancy.',
+    metrics: ['VPC deployment', 'Custom SLA', 'Security review'],
+  },
 ]
 
 export function PricingPage() {
-  const [activeProduct, setActiveProduct] = useState<Product>('VODA')
-  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('monthly')
-
-  const accentColor = PRODUCT_COLORS[activeProduct]
-  const currentTiers = activeProduct === 'VODA' ? VODA_TIERS : activeProduct === 'RODA' ? RODA_TIERS : []
-  const currentComparison = activeProduct === 'VODA' ? VODA_COMPARISON : activeProduct === 'RODA' ? RODA_COMPARISON : []
-
-  const getDiscountedPrice = (price: number | null) => {
-    if (!price) return null
-    return billingPeriod === 'annual' ? Math.round(price * 0.8) : price
-  }
-
   return (
-    <div className="min-h-screen bg-[#050508] text-white pt-20">
-      
-      {/* Sticky Product Navigation */}
-      <div className="sticky top-16 z-40 border-b border-white/8 bg-[#050508]/95 backdrop-blur-xl">
-        <div className="container mx-auto px-6 max-w-7xl">
-          <div className="flex items-center justify-between py-4">
-            <div className="flex items-center gap-2">
-              {(['VODA', 'SODA', 'RODA'] as Product[]).map((product) => (
-                <button
-                  key={product}
-                  onClick={() => setActiveProduct(product)}
-                  className={`flex flex-col items-center gap-1 px-6 py-3 rounded-lg transition-all ${
-                    activeProduct === product
-                      ? 'bg-opacity-10'
-                      : 'hover:bg-white/5'
-                  }`}
-                  style={{
-                    backgroundColor: activeProduct === product ? PRODUCT_COLORS[product] + '20' : 'transparent',
-                    borderWidth: '1px',
-                    borderStyle: 'solid',
-                    borderColor: activeProduct === product ? PRODUCT_COLORS[product] + '60' : 'transparent',
-                  }}
-                >
-                  <span
-                    className="font-mono text-sm font-bold tracking-widest"
-                    style={{ color: activeProduct === product ? PRODUCT_COLORS[product] : 'rgba(255,255,255,0.4)' }}
-                  >
-                    {product}
-                  </span>
-                  <span className="text-xs text-white/30 font-mono">
-                    {PRODUCT_DESCRIPTORS[product]}
-                  </span>
-                </button>
-              ))}
-            </div>
-
-            {activeProduct !== 'SODA' && (
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setBillingPeriod('monthly')}
-                  className={`font-mono text-xs px-4 py-2 rounded transition-colors ${
-                    billingPeriod === 'monthly'
-                      ? 'bg-white/10 text-white'
-                      : 'text-white/40 hover:text-white/60'
-                  }`}
-                >
-                  Monthly
-                </button>
-                <button
-                  onClick={() => setBillingPeriod('annual')}
-                  className={`font-mono text-xs px-4 py-2 rounded transition-colors ${
-                    billingPeriod === 'annual'
-                      ? 'bg-white/10 text-white'
-                      : 'text-white/40 hover:text-white/60'
-                  }`}
-                >
-                  Annual
-                  {billingPeriod === 'annual' && (
-                    <span className="ml-2 text-green-400 text-[10px]">Save 20%</span>
-                  )}
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="container mx-auto px-6 max-w-7xl py-16">
-        
-        {/* SODA Enterprise Card */}
-        {activeProduct === 'SODA' && (
-          <div className="max-w-4xl mx-auto">
-            <div
-              className="border rounded-xl p-12 bg-white/[0.02] backdrop-blur-sm"
-              style={{ borderColor: PRODUCT_COLORS.SODA + '40' }}
-            >
-              <div className="text-center mb-12">
-                <h2 className="text-4xl font-bold mb-4" style={{ color: PRODUCT_COLORS.SODA }}>
-                  Surveillance intelligence built for your environment.
-                </h2>
-                <p className="text-white/50 max-w-2xl mx-auto leading-relaxed">
-                  SODA is configured per facility, per fleet, and per jurisdictional requirement.
-                  Pricing is scoped to your site count, zone complexity, and compliance obligations.
-                </p>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-4 mb-12">
-                {[
-                  'Multi-site facility surveillance intelligence',
-                  'Loitering, dwell, and scene anomaly detection',
-                  'Cross-zone and cross-site event correlation',
-                  'Severity-classified alert orchestration',
-                  'Tamper-evident audit trail and evidence retention',
-                  'Operator console with role-based access',
-                  'Full integration with VODA and RODA data layers',
-                  'SLA-backed uptime and dedicated operations engineer',
-                  'Custom escalation and compliance workflows',
-                ].map((feature, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <Check size={18} weight="bold" style={{ color: PRODUCT_COLORS.SODA, flexShrink: 0, marginTop: 2 }} />
-                    <span className="text-sm text-white/70">{feature}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="text-center">
-                <Link
-                  to="/about/contact"
-                  className="inline-block font-semibold px-8 py-4 rounded-lg transition-all text-black"
-                  style={{ backgroundColor: PRODUCT_COLORS.SODA }}
-                >
-                  Talk to the sales team
-                </Link>
-                <p className="text-xs text-white/30 mt-6 font-mono">
-                  SODA is available to enterprise and institutional clients only. No self-serve plan is available.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* VODA & RODA Tier Cards */}
-        {activeProduct !== 'SODA' && (
-          <>
-            <div className="grid md:grid-cols-3 gap-6 mb-20">
-              {currentTiers.map((tier) => {
-                const discountedPrice = getDiscountedPrice(tier.price)
-                const originalPrice = tier.price
-
-                return (
-                  <div
-                    key={tier.name}
-                    className={`border rounded-xl p-8 bg-white/[0.02] backdrop-blur-sm transition-all ${
-                      tier.recommended ? 'ring-2' : ''
-                    }`}
-                    style={{
-                      borderColor: tier.recommended ? accentColor + '60' : 'rgba(255,255,255,0.1)',
-                      boxShadow: tier.recommended ? `0 0 40px ${accentColor}20, 0 0 0 2px ${accentColor}40` : 'none',
-                    }}
-                  >
-                    {tier.recommended && (
-                      <div
-                        className="inline-block px-3 py-1 rounded-full text-xs font-bold mb-4"
-                        style={{ backgroundColor: accentColor + '20', color: accentColor }}
-                      >
-                        RECOMMENDED
-                      </div>
-                    )}
-
-                    <h3 className="text-2xl font-bold mb-2">{tier.name}</h3>
-                    <p className="text-sm text-white/40 mb-6">{tier.descriptor}</p>
-
-                    <div className="mb-8">
-                      {tier.price ? (
-                        <>
-                          {billingPeriod === 'annual' && tier.period === 'month' && (
-                            <div className="text-white/30 line-through text-lg mb-1">
-                              {tier.currency || '$'}{originalPrice?.toLocaleString()}
-                            </div>
-                          )}
-                          <div className="flex items-baseline gap-1">
-                            <span
-                              className="text-5xl font-bold"
-                              style={{ color: billingPeriod === 'annual' && tier.period === 'month' ? accentColor : 'white' }}
-                            >
-                              {tier.currency || '$'}{discountedPrice?.toLocaleString()}
-                            </span>
-                            <span className="text-white/40">
-                              {tier.period === 'month' ? '/month' : tier.period === 'one-time' ? ' (one-time)' : ''}
-                            </span>
-                          </div>
-                        </>
-                      ) : (
-                        <div className="text-4xl font-bold text-white/70">Custom</div>
-                      )}
-                    </div>
-
-                    <div className="space-y-3 mb-8">
-                      {tier.features.map((feature, i) => (
-                        <div key={i} className="flex items-start gap-2">
-                          <Check size={16} weight="bold" style={{ color: accentColor, flexShrink: 0, marginTop: 2 }} />
-                          <span className="text-sm text-white/60">{feature}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <Link
-                      to={tier.price ? '/signup' : '/about/contact'}
-                      className={`block w-full text-center py-3 rounded-lg font-semibold transition-all ${
-                        tier.recommended
-                          ? 'text-black'
-                          : 'border text-white/70'
-                      }`}
-                      style={{
-                        backgroundColor: tier.recommended ? accentColor : 'transparent',
-                        borderColor: tier.recommended ? 'transparent' : 'rgba(255,255,255,0.15)',
-                      }}
-                    >
-                      {tier.price ? 'Get started' : 'Contact us'}
-                    </Link>
-                  </div>
-                )
-              })}
-            </div>
-
-            {/* Feature Comparison Table */}
-            <div className="border border-white/8 rounded-xl overflow-hidden bg-[#080B12]">
-              <div className="p-6 border-b border-white/8">
-                <h3 className="text-xl font-bold">Feature comparison</h3>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-white/8">
-                      <th className="text-left p-4 font-mono text-xs text-white/40 uppercase tracking-wider">
-                        Feature
-                      </th>
-                      <th className="text-center p-4 font-mono text-xs text-white/40 uppercase tracking-wider">
-                        Starter
-                      </th>
-                      <th className="text-center p-4 font-mono text-xs text-white/40 uppercase tracking-wider">
-                        Team / Pro
-                      </th>
-                      <th className="text-center p-4 font-mono text-xs text-white/40 uppercase tracking-wider">
-                        Enterprise
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {currentComparison.map((row, i) => (
-                      <tr key={i} className="border-b border-white/5 last:border-0">
-                        <td className="p-4 text-sm text-white/60">{row.feature}</td>
-                        <td className="p-4 text-center">
-                          {typeof row.starter === 'boolean' ? (
-                            row.starter ? (
-                              <Check size={18} weight="bold" style={{ color: accentColor, margin: '0 auto' }} />
-                            ) : (
-                              <Minus size={18} className="text-white/20 mx-auto" />
-                            )
-                          ) : (
-                            <span className="font-mono text-xs text-white/60">{row.starter}</span>
-                          )}
-                        </td>
-                        <td className="p-4 text-center">
-                          {typeof row.pro === 'boolean' ? (
-                            row.pro ? (
-                              <Check size={18} weight="bold" style={{ color: accentColor, margin: '0 auto' }} />
-                            ) : (
-                              <Minus size={18} className="text-white/20 mx-auto" />
-                            )
-                          ) : (
-                            <span className="font-mono text-xs text-white/60">{row.pro}</span>
-                          )}
-                        </td>
-                        <td className="p-4 text-center">
-                          {typeof row.enterprise === 'boolean' ? (
-                            row.enterprise ? (
-                              <Check size={18} weight="bold" style={{ color: accentColor, margin: '0 auto' }} />
-                            ) : (
-                              <Minus size={18} className="text-white/20 mx-auto" />
-                            )
-                          ) : (
-                            <span className="font-mono text-xs text-white/60">{row.enterprise}</span>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </>
-        )}
-
-        {/* Footer Note */}
-        <div className="mt-16 text-center border-t border-white/8 pt-12">
-          <p className="text-white/40 text-sm leading-relaxed max-w-3xl mx-auto">
-            All plans include the NEPA edge inference engine.
-            <br />
-            No video, sensor, or operational data leaves your device.
+    <div className="min-h-screen bg-[#050508] text-white pt-24 pb-24">
+      <div className="container mx-auto px-6 max-w-6xl space-y-20">
+        <section>
+          <h1 className="text-4xl md:text-5xl font-semibold mb-4">Pricing</h1>
+          <p className="text-white/60 max-w-2xl">
+            All plans include NEPA engine access, VODA API, and PDPO-aligned compliance tooling.
+            Scale from a single pilot store to fleet-grade autonomous operations.
           </p>
-        </div>
+        </section>
+
+        <section>
+          <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
+            <h2 className="text-2xl font-semibold">SODA plans</h2>
+            <Link to="/contact" className="text-sm text-cyan-300 hover:text-cyan-200">
+              Book a pilot →
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {sodaPlans.map((plan) => (
+              <div key={plan.name} className="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <h3 className="text-xl font-semibold mb-2">{plan.name}</h3>
+                <p className="text-sm text-white/60 mb-4">{plan.description}</p>
+                <ul className="space-y-2 text-sm text-white/70">
+                  {plan.features.map((feature) => (
+                    <li key={feature} className="flex items-start gap-2">
+                      <Check size={16} className="text-cyan-300 mt-1" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  to={plan.href}
+                  className="mt-6 inline-flex items-center justify-center w-full rounded-lg bg-cyan-500 text-black py-2 text-sm font-semibold"
+                >
+                  {plan.cta}
+                </Link>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-semibold mb-8">RODA add-on packages</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {rodaPlans.map((plan) => (
+              <div key={plan.name} className="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <h3 className="text-xl font-semibold mb-2">{plan.name}</h3>
+                <p className="text-sm text-white/60 mb-4">{plan.description}</p>
+                <ul className="space-y-2 text-sm text-white/70">
+                  {plan.features.map((feature) => (
+                    <li key={feature} className="flex items-start gap-2">
+                      <Check size={16} className="text-cyan-300 mt-1" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  to="/contact"
+                  className="mt-6 inline-flex items-center justify-center w-full rounded-lg border border-white/20 py-2 text-sm text-white/80"
+                >
+                  Contact sales
+                </Link>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-semibold mb-8">VODA / CODA SaaS pricing</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {vodaPlans.map((plan) => (
+              <div key={plan.name} className="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <h3 className="text-xl font-semibold mb-2">{plan.name}</h3>
+                <p className="text-sm text-white/60 mb-4">{plan.description}</p>
+                <ul className="space-y-2 text-sm text-white/70">
+                  {plan.metrics.map((metric) => (
+                    <li key={metric} className="flex items-start gap-2">
+                      <Check size={16} className="text-cyan-300 mt-1" />
+                      {metric}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  to="/contact"
+                  className="mt-6 inline-flex items-center justify-center w-full rounded-lg border border-white/20 py-2 text-sm text-white/80"
+                >
+                  Request pricing
+                </Link>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-semibold mb-8">HRI API packages</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {hriPlans.map((plan) => (
+              <div key={plan.name} className="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <h3 className="text-lg font-semibold mb-2">{plan.name}</h3>
+                <p className="text-sm text-white/60 mb-4">{plan.description}</p>
+                <ul className="space-y-2 text-sm text-white/70">
+                  {plan.metrics.map((metric) => (
+                    <li key={metric} className="flex items-start gap-2">
+                      <Check size={16} className="text-cyan-300 mt-1" />
+                      {metric}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  to="/auth/sign-up"
+                  className="mt-6 inline-flex items-center justify-center w-full rounded-lg bg-white/10 py-2 text-sm text-white"
+                >
+                  Start with {plan.name}
+                </Link>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="border-t border-white/10 pt-10 text-sm text-white/50">
+          <p>
+            Need a custom deployment? Contact us for multi-site SLAs, dedicated infrastructure, and on-premise support.
+          </p>
+        </section>
       </div>
     </div>
   )
