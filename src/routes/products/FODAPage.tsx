@@ -1,7 +1,5 @@
-import { FODAPage as OriginalFODAPage } from '@/components/pages/FODAPage'
-import { useNavigate } from 'react-router-dom'
+import FODAPageComponent from '@/components/pages/FODAPage'
 
 export function FODAPage() {
-  const navigate = useNavigate()
-  return <OriginalFODAPage onNavigate={(path) => navigate(`/${path}`)} />
+  return <FODAPageComponent />
 }

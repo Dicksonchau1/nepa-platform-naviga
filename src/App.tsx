@@ -26,6 +26,7 @@ import { EODAPage } from '@/routes/products/EODAPage'
 import { FODAPage } from '@/routes/products/FODAPage'
 import { NepaAgentPage } from '@/routes/products/NepaAgentPage'
 import { SODAPage } from '@/routes/products/SODAPage'
+import { HRIPage } from '@/routes/products/HRIPage'
 
 import { DocsPage } from '@/routes/resources/DocsPage'
 import { ApiReferencePage } from '@/routes/resources/ApiReferencePage'
@@ -97,9 +98,11 @@ function AppRoutes() {
         <Route path="/business/plans" element={<Plans />} />
 
         <Route path="/products/voda" element={<VODAPage />} />
+        <Route path="/products/voda-coda" element={<VODAPage />} />
         <Route path="/products/roda" element={<RODAPage />} />
         <Route path="/products/eoda" element={<EODAPage />} />
         <Route path="/products/foda" element={<FODAPage />} />
+        <Route path="/products/hri" element={<HRIPage />} />
         <Route path="/products/nepa-agent" element={<NepaAgentPage />} />
         <Route path="/products/soda" element={<SODAPage />} />
         <Route path="/products" element={<Navigate to="/landing" replace />} />

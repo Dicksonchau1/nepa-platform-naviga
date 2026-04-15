@@ -1,7 +1,5 @@
-import { RODAPage as OriginalRODAPage } from '@/components/pages/RODAPage'
-import { useNavigate } from 'react-router-dom'
+import RODAPageComponent from '@/components/pages/RODAPage'
 
 export function RODAPage() {
-  const navigate = useNavigate()
-  return <OriginalRODAPage onNavigate={(path) => navigate(`/${path}`)} />
+  return <RODAPageComponent />
 }

@@ -173,6 +173,42 @@ export function PricingPage() {
 
   return (
     <div className="min-h-screen bg-[#050508] text-white pt-20">
+
+      <div className="container mx-auto px-6 max-w-6xl py-12">
+        <div className="text-center max-w-4xl mx-auto">
+          <p className="font-mono text-xs tracking-[0.28em] text-cyan-400/60 uppercase mb-4">
+            One intelligence platform · Multiple execution domains
+          </p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-5">
+            NEPA platform pricing
+          </h1>
+          <p className="text-white/50 leading-relaxed mb-8">
+            NEPA perceives → reasons → predicts → dispatches → reports. Choose the execution domain that matches your deployment.
+          </p>
+
+          <div className="flex items-center gap-1 flex-wrap justify-center">
+            {[
+              { label: 'PERCEIVE', sublabel: 'NEPA engine' },
+              { label: 'REASON', sublabel: 'SignatureMap' },
+              { label: 'PREDICT', sublabel: 'DopamineModulator' },
+              { label: 'DISPATCH', sublabel: 'ACT layer' },
+              { label: 'REPORT', sublabel: 'CODA output' },
+            ].map((step, i, arr) => (
+              <div key={step.label} className="flex items-center gap-1">
+                <div className="flex flex-col items-center px-4 py-2 rounded-lg bg-white/5 border border-white/10 hover:border-cyan-500/30 transition-all group">
+                  <span className="font-mono text-xs tracking-[0.2em] text-white group-hover:text-cyan-300 transition-colors">
+                    {step.label}
+                  </span>
+                  <span className="font-mono text-[10px] text-gray-600 mt-0.5">{step.sublabel}</span>
+                </div>
+                {i < arr.length - 1 && (
+                  <span className="text-gray-700 font-mono text-xs mx-0.5">→</span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
       
       {/* Sticky Product Navigation */}
       <div className="sticky top-16 z-40 border-b border-white/8 bg-[#050508]/95 backdrop-blur-xl">

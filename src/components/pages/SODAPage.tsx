@@ -1,39 +1,63 @@
-import { ProductPage } from './ProductPage'
-import { MonitorPlay, BellRinging, IdentificationBadge } from '@phosphor-icons/react'
+import ProductPage from './ProductPage'
+import { ShieldCheck, Eye, Brain, Robot } from '@phosphor-icons/react'
 
-interface SODAPageProps {
-  onNavigate: (page: string) => void
-}
-
-export function SODAPage({ onNavigate }: SODAPageProps) {
+export default function SODAPage() {
   return (
     <ProductPage
-      eyebrow="NEPA PLATFORM · SURVEILLANCE AGENT"
-      title="SODA — Surveillance Operations Decision Agent"
-      subtitle="Multi-camera facility intelligence. Deterministic alert escalation. Operator-authenticated chain of custody."
+      name="SODA"
+      fullName="Store Operating Decision Agent"
+      tagline="A fully autonomous unmanned store intelligence system. SODA turns any convenience store into a 24/7 self-operating unit — no staff required, zero blind spots, real-time behavioral intelligence."
+      nepaLayer="dispatch"
+      nepaLayerLabel="NEPA DISPATCH layer — perception drives store decisions"
+      pipelineSteps={[
+        { step: 'perceive', label: 'NEPA Perceives', active: true },
+        { step: 'map', label: 'SignatureMap Updates', active: true },
+        { step: 'decide', label: 'ACT Dispatcher', active: true },
+        { step: 'ops', label: 'Store Operations', active: true },
+        { step: 'report', label: 'CODA Report', active: false },
+      ]}
+      ctaLabel="Book a pilot store demo"
+      ctaHref="/auth?mode=signup"
+      ctaSecondaryLabel="Read SODA documentation"
+      ctaSecondaryHref="/docs/soda"
+      integrationNote="Requires NEPA engine v0.8+"
+      deployTarget="Jetson Orin NX (docker-compose up)"
       features={[
         {
-          icon: <MonitorPlay size={40} />,
-          title: 'Multi-Lane Camera Processing',
+          icon: Eye,
+          title: 'Layer 1 — Real-Time Perception',
           description:
-            'Independent neuromorphic inference lanes per camera. No shared mutable state. Each stream processed in isolation with deterministic spike-timing decisions and per-lane audit trails.',
+            'YOLO detection feeds STDP-learning SignatureMaps on-device. Multilane perception engine builds a behavioral world model of every customer, product zone, and anomaly — without cloud dependency.',
         },
         {
-          icon: <BellRinging size={40} />,
-          title: 'Alert Escalation Engine',
+          icon: Brain,
+          title: 'Layer 2 — Agentic Decision Engine',
           description:
-            'Rule-based escalation from detection to operator notification. Every alert includes full inference provenance: which frames triggered which rules, with cryptographic proof.',
+            'ACT dispatcher translates perceptions into store actions — door locks, alerts, restocking triggers, CODA report generation — all sandboxed and memory-augmented.',
         },
         {
-          icon: <IdentificationBadge size={40} />,
-          title: 'Audit Trail Per Session',
+          icon: ShieldCheck,
+          title: 'Layer 3 — World Model API',
           description:
-            'Operator authentication logged for every session. All actions timestamped and sealed. Complete chain of custody from camera feed to operator response for compliance and legal proceedings.',
+            'REST API giving operators real-time access to the store\'s learned behavioral model — zone stats, anomaly scores, spatial updates, and consultation triggers.',
+        },
+        {
+          icon: Robot,
+          title: 'Layer 4 — Operations & Fulfillment',
+          description:
+            'NISSM (unmanned shop operations system) handles inventory sync, supplier reorder triggers, RODA dispatch for restocking, and operational reporting via CODA.',
         },
       ]}
-      integrationTitle="How SODA Connects to NEPA Core"
-      integrationDescription="SODA runs the NEPA inference core across distributed camera nodes. Central control plane for rule management and alert aggregation. Supports ONVIF cameras and custom RTSP streams. Full GDPR and HIPAA compliance mode available."
-      onNavigate={onNavigate}
+      terminalLines={[
+        '> SODA v1.0 — STORE: HK-KLN-01',
+        '> LANES: 08 ACTIVE — LATENCY: 1.9ms',
+        '> SIGNATUREMAP: 847 behavioral vectors loaded',
+        '> ANOMALY SCORE: 0.12 — STORE: NORMAL',
+        '> ZONE_3: customer_dwell_time=47s → ACT: price_check_nudge',
+        '> RODA: restocking queue EMPTY',
+        '> CODA: 0 reports queued',
+        '> WATCHDOG: all lanes GREEN',
+      ]}
     />
   )
 }

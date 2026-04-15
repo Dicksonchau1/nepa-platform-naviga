@@ -1,7 +1,5 @@
-import { EODAPage as OriginalEODAPage } from '@/components/pages/EODAPage'
-import { useNavigate } from 'react-router-dom'
+import EODAPageComponent from '@/components/pages/EODAPage'
 
 export function EODAPage() {
-  const navigate = useNavigate()
-  return <OriginalEODAPage onNavigate={(path) => navigate(`/${path}`)} />
+  return <EODAPageComponent />
 }
