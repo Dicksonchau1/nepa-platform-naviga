@@ -83,6 +83,7 @@ import { Plans } from '@/routes/business/Plans'
 import { FacilityWatchPortal } from '@/routes/dashboard/portals/FacilityWatchPortal'
 import { RoboticOpsPortal } from '@/routes/dashboard/portals/RoboticOpsPortal'
 import { DroneInspectPortal } from '@/routes/dashboard/portals/DroneInspectPortal'
+import { VodaPortal } from '@/routes/dashboard/portals/VodaPortal'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth()
@@ -255,6 +256,7 @@ function AppRoutes() {
         <Route path="facility-watch" element={<FacilityWatchPortal />} />
         <Route path="robotic-ops" element={<RoboticOpsPortal />} />
         <Route path="drone-inspect" element={<DroneInspectPortal />} />
+        <Route path="voda" element={<VodaPortal />} />
         <Route path="tasks" element={<RobotTasksPage />} />
         <Route path="contacts" element={<ContactSubmissionsPage />} />
         {/* Legacy routes redirect to portals */}

@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ArrowRight, Eye, EyeSlash } from '@phosphor-icons/react'
 import { CinematicBackground } from '@/components/CinematicBackground'
 import { toast } from 'sonner'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 
 export function SignUpPage() {
@@ -21,7 +21,9 @@ export function SignUpPage() {
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation()
   const { signUp } = useAuth()
+  const redirectTo = new URLSearchParams(location.search).get('redirect')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -57,6 +59,11 @@ export function SignUpPage() {
         useCase,
       })
       toast.success('Account created! Check your email to confirm.')
+      if (redirectTo) {
+        navigate('/signin', { state: { from: { pathname: redirectTo } } })
+      } else {
+        navigate('/signin')
+      }
       navigate('/auth/sign-in')
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Sign up failed'
