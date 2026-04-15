@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -6,11 +7,8 @@ import { ArrowRight, Eye, EyeSlash, CheckCircle, LockKey } from '@phosphor-icons
 import { CinematicBackground } from '@/components/CinematicBackground'
 import { toast } from 'sonner'
 
-interface ResetPasswordPageProps {
-  onNavigate: (page: string) => void
-}
-
-export function ResetPasswordPage({ onNavigate }: ResetPasswordPageProps) {
+export function ResetPasswordPage() {
+  const navigate = useNavigate()
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -66,7 +64,7 @@ export function ResetPasswordPage({ onNavigate }: ResetPasswordPageProps) {
                 </div>
 
                 <Button
-                  onClick={() => onNavigate('signin')}
+                  onClick={() => navigate('/signin')}
                   className="w-full h-11 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 rounded-xl"
                 >
                   Continue to sign in

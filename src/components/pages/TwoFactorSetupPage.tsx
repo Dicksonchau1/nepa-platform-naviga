@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useKV } from '@/hooks/useKV'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -8,11 +9,11 @@ import { CinematicBackground } from '@/components/CinematicBackground'
 import { toast } from 'sonner'
 
 interface TwoFactorSetupPageProps {
-  onNavigate: (page: string) => void
   userEmail?: string
 }
 
-export function TwoFactorSetupPage({ onNavigate, userEmail }: TwoFactorSetupPageProps) {
+export function TwoFactorSetupPage({ userEmail }: TwoFactorSetupPageProps) {
+  const navigate = useNavigate()
   const [, setUser2FAEnabled] = useKV<boolean>('aura-2fa-enabled', false)
   const [, setUser2FASecret] = useKV<string>('aura-2fa-secret', '')
   const [verificationCode, setVerificationCode] = useState('')
@@ -44,12 +45,12 @@ export function TwoFactorSetupPage({ onNavigate, userEmail }: TwoFactorSetupPage
       setUser2FASecret(secretKey)
       setIsLoading(false)
       toast.success('Two-factor authentication enabled successfully')
-      onNavigate('home')
+      navigate('/')
     }, 1500)
   }
 
   const handleSkip = () => {
-    onNavigate('home')
+    navigate('/')
   }
 
   return (

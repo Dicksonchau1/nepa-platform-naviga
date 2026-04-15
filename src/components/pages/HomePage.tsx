@@ -199,7 +199,7 @@ export function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
             <div 
               className="backdrop-blur-xl bg-card/60 border border-border/50 rounded-2xl p-8 hover:border-primary/50 cursor-pointer transition-all duration-300 group relative overflow-hidden"
-              onClick={() => navigate('/solutions-retail')}
+              onClick={() => navigate('/business/case-studies/unmanned-retail-hk')}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative z-10">
@@ -212,7 +212,7 @@ export function HomePage() {
 
             <div 
               className="backdrop-blur-xl bg-card/60 border border-border/50 rounded-2xl p-8 hover:border-primary/50 cursor-pointer transition-all duration-300 group relative overflow-hidden"
-              onClick={() => navigate('/solutions-retail')}
+              onClick={() => navigate('/business/case-studies/unmanned-retail-hk')}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative z-10">
@@ -225,7 +225,7 @@ export function HomePage() {
 
             <div 
               className="backdrop-blur-xl bg-card/60 border border-border/50 rounded-2xl p-8 hover:border-primary/50 cursor-pointer transition-all duration-300 group relative overflow-hidden"
-              onClick={() => navigate('/solutions-inspection')}
+              onClick={() => navigate('/business/case-studies/drone-inspection-facade')}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative z-10">
@@ -238,7 +238,7 @@ export function HomePage() {
 
             <div 
               className="backdrop-blur-xl bg-card/60 border border-border/50 rounded-2xl p-8 hover:border-primary/50 cursor-pointer transition-all duration-300 group relative overflow-hidden"
-              onClick={() => navigate('/solutions-robotics')}
+              onClick={() => navigate('/business/case-studies/robotic-delivery-logistics')}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative z-10">
@@ -254,7 +254,7 @@ export function HomePage() {
             <Button
               variant="outline"
               className="border-border hover:border-primary/40 backdrop-blur-sm bg-background/20"
-              onClick={() => navigate('/solutions-retail')}
+              onClick={() => navigate('/business/case-studies/unmanned-retail-hk')}
             >
               View use cases
               <ArrowRight className="ml-2" size={16} weight="bold" />
