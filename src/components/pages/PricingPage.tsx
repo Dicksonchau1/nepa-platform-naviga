@@ -1,3 +1,6 @@
+import { PricingPage } from '@/routes/PricingPage'
+
+export default PricingPage
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Check } from '@phosphor-icons/react'

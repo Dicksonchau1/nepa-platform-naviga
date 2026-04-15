@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import {
@@ -8,23 +8,35 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { CaretDown, List } from '@phosphor-icons/react'
 import { CaretDown, List, X } from '@phosphor-icons/react'
 import logoImage from '@/assets/images/Gemini_Generated_Image_8oxhp28oxhp28oxh.png'
 
+const SCROLL_THRESHOLD = 20
+
 export function Navbar() {
   const [openMenu, setOpenMenu] = useState<string | null>(null)
-  const [mobileOpen, setMobileOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [isMobileOpen, setIsMobileOpen] = useState(false)
   const location = useLocation()
+  const navigate = useNavigate()
 
   const isActive = (path: string) => location.pathname === path
 
   useEffect(() => {
+    let ticking = false
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > SCROLL_THRESHOLD)
+          ticking = false
+        })
+        ticking = true
+      }
     }
 
-    window.addEventListener('scroll', handleScroll)
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
@@ -50,6 +62,10 @@ export function Navbar() {
           </Link>
 
           <div className="hidden lg:flex items-center gap-8">
+            <DropdownMenu
+              open={openMenu === 'products'}
+              onOpenChange={(open) => setOpenMenu(open ? 'products' : null)}
+            >
             <DropdownMenu open={openMenu === 'products'} onOpenChange={(open) => setOpenMenu(open ? 'products' : null)}>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-1 text-sm font-medium text-white/70 hover:text-white transition-colors">
@@ -130,6 +146,10 @@ export function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
 
+            <DropdownMenu
+              open={openMenu === 'resources'}
+              onOpenChange={(open) => setOpenMenu(open ? 'resources' : null)}
+            >
             <DropdownMenu open={openMenu === 'resources'} onOpenChange={(open) => setOpenMenu(open ? 'resources' : null)}>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-1 text-sm font-medium text-white/70 hover:text-white transition-colors">
@@ -184,6 +204,10 @@ export function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
 
+            <DropdownMenu
+              open={openMenu === 'business'}
+              onOpenChange={(open) => setOpenMenu(open ? 'business' : null)}
+            >
             <DropdownMenu open={openMenu === 'business'} onOpenChange={(open) => setOpenMenu(open ? 'business' : null)}>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-1 text-sm font-medium text-white/70 hover:text-white transition-colors">
@@ -219,6 +243,10 @@ export function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
 
+            <DropdownMenu
+              open={openMenu === 'about'}
+              onOpenChange={(open) => setOpenMenu(open ? 'about' : null)}
+            >
             <DropdownMenu open={openMenu === 'about'} onOpenChange={(open) => setOpenMenu(open ? 'about' : null)}>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-1 text-sm font-medium text-white/70 hover:text-white transition-colors">
@@ -292,6 +320,107 @@ export function Navbar() {
                 <Link to="/signup">Sign up</Link>
               </Button>
             </div>
+          </div>
+          <div className="lg:hidden flex items-center">
+            <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
+              <SheetTrigger asChild>
+                <button
+                  type="button"
+                  className="inline-flex items-center justify-center rounded-md border border-white/15 bg-white/5 p-2 text-white/80 hover:text-white hover:border-cyan-500/40 transition-colors"
+                  aria-label="Open navigation menu"
+                >
+                  <List size={20} weight="bold" />
+                </button>
+              </SheetTrigger>
+              <SheetContent
+                side="left"
+                className="w-full sm:max-w-none bg-[#060b14] border-r border-cyan-500/20 p-0"
+              >
+                <div className="flex h-full flex-col px-6 py-8">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={logoImage}
+                      alt="AuraSense"
+                      className="h-7 w-7 object-contain rounded-sm [mix-blend-mode:lighten]"
+                    />
+                    <span className="text-sm font-semibold text-white">AuraSense</span>
+                  </div>
+
+                  <div className="mt-8 flex-1 overflow-y-auto space-y-8">
+                    <div className="space-y-3">
+                      <p className="text-xs font-mono uppercase tracking-[0.3em] text-cyan-400/70">
+                        Products
+                      </p>
+                      <div className="flex flex-col gap-2">
+                        <Link to="/products/soda" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          SODA
+                        </Link>
+                        <Link to="/products/roda" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          RODA
+                        </Link>
+                        <Link to="/products/voda-coda" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          VODA/CODA
+                        </Link>
+                        <Link to="/products/hri" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          HRI
+                        </Link>
+                        <Link to="/products/foda" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          FODA
+                        </Link>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <p className="text-xs font-mono uppercase tracking-[0.3em] text-cyan-400/70">
+                        Explore
+                      </p>
+                      <div className="flex flex-col gap-2">
+                        <Link to="/nepa" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          NEPA Core
+                        </Link>
+                        <Link to="/pricing" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          Pricing
+                        </Link>
+                        <Link to="/resources/docs" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          Docs
+                        </Link>
+                        <Link to="/about/company" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          About
+                        </Link>
+                        <Link to="/about/contact" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          Contact
+                        </Link>
+                        <Link to="/business" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          Business
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-8 grid gap-3">
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-center text-white/70 hover:text-white hover:bg-white/10"
+                      onClick={() => {
+                        navigate('/auth/sign-in')
+                        setIsMobileOpen(false)
+                      }}
+                    >
+                      Sign In
+                    </Button>
+                    <Button
+                      className="w-full justify-center bg-cyan-500 text-black hover:bg-cyan-400"
+                      onClick={() => {
+                        navigate('/auth/sign-up')
+                        setIsMobileOpen(false)
+                      }}
+                    >
+                      Start Pilot
+                    </Button>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>

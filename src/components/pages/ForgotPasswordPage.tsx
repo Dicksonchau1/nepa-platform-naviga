@@ -6,30 +6,53 @@ import { Label } from '@/components/ui/label'
 import { ArrowRight, ArrowLeft, EnvelopeSimple, CheckCircle } from '@phosphor-icons/react'
 import { CinematicBackground } from '@/components/CinematicBackground'
 import { toast } from 'sonner'
+import { supabase } from '@/lib/supabase'
 
 export function ForgotPasswordPage() {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const navigate = useNavigate()
+
+  const getFriendlyError = (message: string) => {
+    const normalized = message.toLowerCase()
+    if (normalized.includes('user') && normalized.includes('not found')) {
+      return 'No account exists with this email address.'
+    }
+    return message
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+    setErrorMsg(null)
 
-    setTimeout(() => {
-      setIsLoading(false)
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset-password`,
+    })
+    if (!error) {
       setEmailSent(true)
       toast.success('Password reset link sent to your email')
-    }, 1500)
+    } else {
+      setErrorMsg(getFriendlyError(error.message))
+    }
+    setIsLoading(false)
   }
 
-  const handleResend = () => {
+  const handleResend = async () => {
     setIsLoading(true)
-    setTimeout(() => {
-      setIsLoading(false)
+    setErrorMsg(null)
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset-password`,
+    })
+    if (!error) {
       toast.success('Email resent successfully')
-    }, 1000)
+    } else {
+      setErrorMsg(getFriendlyError(error.message))
+    }
+    setIsLoading(false)
   }
 
   if (emailSent) {
@@ -80,6 +103,7 @@ export function ForgotPasswordPage() {
                 </div>
 
                 <Button
+                  onClick={() => navigate('/auth/sign-in')}
                   onClick={() => navigate('/signin')}
                   variant="outline"
                   className="w-full h-11 border-border/70 hover:border-primary/40 backdrop-blur-sm bg-background/20 rounded-xl"
@@ -114,6 +138,11 @@ export function ForgotPasswordPage() {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
+                {errorMsg && (
+                  <div className="rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                    {errorMsg}
+                  </div>
+                )}
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-sm font-medium">
                     Email
@@ -141,6 +170,7 @@ export function ForgotPasswordPage() {
 
               <div className="mt-8 text-center">
                 <button
+                  onClick={() => navigate('/auth/sign-in')}
                   onClick={() => navigate('/signin')}
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-2"
                 >
