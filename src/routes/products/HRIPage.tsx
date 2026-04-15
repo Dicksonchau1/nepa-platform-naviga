@@ -64,7 +64,7 @@ const architectureDiagram = (
   </div>
 )
 
-export function HRIPAge() {
+export function HRIPage() {
   return (
     <ProductPage
       eyebrow="HRI"

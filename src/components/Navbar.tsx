@@ -93,6 +93,7 @@ export function Navbar() {
           <button
             type="button"
             onClick={() => handleNavigate('/')}
+            aria-label="Navigate to home page"
             className="flex items-center gap-2.5 group"
           >
             <div className="relative h-8 w-8 flex items-center justify-center">

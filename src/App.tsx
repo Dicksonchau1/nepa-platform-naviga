@@ -28,7 +28,7 @@ import { RODAPage } from '@/routes/products/RODAPage'
 import { FODAPage } from '@/routes/products/FODAPage'
 import { NepaAgentPage } from '@/routes/products/NepaAgentPage'
 import { SODAPage } from '@/routes/products/SODAPage'
-import { HRIPAge } from '@/routes/products/HRIPAge'
+import { HRIPage } from '@/routes/products/HRIPage'
 
 import { DocsPage } from '@/routes/resources/DocsPage'
 import { ApiReferencePage } from '@/routes/resources/ApiReferencePage'
@@ -154,7 +154,7 @@ function AppRoutes() {
         <Route path="/products/foda" element={<FODAPage />} />
         <Route path="/products/nepa" element={<NepaAgentPage />} />
         <Route path="/products/soda" element={<SODAPage />} />
-        <Route path="/products/hri" element={<HRIPAge />} />
+        <Route path="/products/hri" element={<HRIPage />} />
         <Route path="/products/enterprise" element={<Navigate to="/business#enterprise-services" replace />} />
 
         <Route path="/docs" element={<DocsPage />} />
