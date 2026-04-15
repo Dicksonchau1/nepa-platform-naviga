@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase'
 import { Eye, EyeSlash, ArrowRight } from '@phosphor-icons/react'
 
 type AuthMode = 'signin' | 'signup' | 'forgot'
+const MIN_PASSWORD_LENGTH = 8
 
 export default function AuthPage() {
   const navigate = useNavigate()
@@ -137,7 +138,7 @@ export default function AuthPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="- - - - - - - - - - - - "
                     required
-                    minLength={8}
+                    minLength={MIN_PASSWORD_LENGTH}
                     className="w-full bg-[#060b14] border border-cyan-500/20 rounded-lg px-4 py-3 pr-12 text-white placeholder-gray-600 font-mono text-sm focus:outline-none focus:border-cyan-500/60 transition-colors"
                   />
                   <button

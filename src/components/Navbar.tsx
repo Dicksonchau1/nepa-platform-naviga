@@ -11,7 +11,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { CaretDown, List } from '@phosphor-icons/react'
 import logoImage from '@/assets/images/Gemini_Generated_Image_8oxhp28oxhp28oxh.png'
 
-const NAVBAR_SCROLL_ACTIVATION_THRESHOLD = 20
+const SCROLL_THRESHOLD = 20
 
 export function Navbar() {
   const [openMenu, setOpenMenu] = useState<string | null>(null)
@@ -27,7 +27,7 @@ export function Navbar() {
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          setIsScrolled(window.scrollY > NAVBAR_SCROLL_ACTIVATION_THRESHOLD)
+          setIsScrolled(window.scrollY > SCROLL_THRESHOLD)
           ticking = false
         })
         ticking = true
