@@ -1,37 +1,49 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ArrowRight, ArrowLeft, EnvelopeSimple, CheckCircle } from '@phosphor-icons/react'
 import { CinematicBackground } from '@/components/CinematicBackground'
 import { toast } from 'sonner'
+import { supabase } from '@/lib/supabase'
 
-interface ForgotPasswordPageProps {
-  onNavigate: (page: string) => void
-}
-
-export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
+export function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+    setErrorMsg(null)
 
-    setTimeout(() => {
-      setIsLoading(false)
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset-password`,
+    })
+    if (!error) {
       setEmailSent(true)
       toast.success('Password reset link sent to your email')
-    }, 1500)
+    } else {
+      setErrorMsg(error.message)
+    }
+    setIsLoading(false)
   }
 
-  const handleResend = () => {
+  const handleResend = async () => {
     setIsLoading(true)
-    setTimeout(() => {
-      setIsLoading(false)
+    setErrorMsg(null)
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset-password`,
+    })
+    if (!error) {
       toast.success('Email resent successfully')
-    }, 1000)
+    } else {
+      setErrorMsg(error.message)
+    }
+    setIsLoading(false)
   }
 
   if (emailSent) {
@@ -82,7 +94,7 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
                 </div>
 
                 <Button
-                  onClick={() => onNavigate('signin')}
+                  onClick={() => navigate('/auth/sign-in')}
                   variant="outline"
                   className="w-full h-11 border-border/70 hover:border-primary/40 backdrop-blur-sm bg-background/20 rounded-xl"
                 >
@@ -116,6 +128,11 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
+                {errorMsg && (
+                  <div className="rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                    {errorMsg}
+                  </div>
+                )}
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-sm font-medium">
                     Email
@@ -143,7 +160,7 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
 
               <div className="mt-8 text-center">
                 <button
-                  onClick={() => onNavigate('signin')}
+                  onClick={() => navigate('/auth/sign-in')}
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-2"
                 >
                   <ArrowLeft size={14} weight="bold" />

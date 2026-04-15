@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -7,25 +7,32 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { CaretDown } from '@phosphor-icons/react'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { CaretDown, List } from '@phosphor-icons/react'
 import logoImage from '@/assets/images/Gemini_Generated_Image_8oxhp28oxhp28oxh.png'
 
 export function Navbar() {
-  const [isProductsOpen, setIsProductsOpen] = useState(false)
-  const [isResourcesOpen, setIsResourcesOpen] = useState(false)
-  const [isBusinessOpen, setIsBusinessOpen] = useState(false)
-  const [isAboutOpen, setIsAboutOpen] = useState(false)
+  const [openMenu, setOpenMenu] = useState<string | null>(null)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [isMobileOpen, setIsMobileOpen] = useState(false)
   const location = useLocation()
+  const navigate = useNavigate()
 
   const isActive = (path: string) => location.pathname === path
 
   useEffect(() => {
+    let ticking = false
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 20)
+          ticking = false
+        })
+        ticking = true
+      }
     }
 
-    window.addEventListener('scroll', handleScroll)
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
@@ -50,8 +57,11 @@ export function Navbar() {
             </span>
           </Link>
 
-          <div className="flex items-center gap-8">
-            <DropdownMenu open={isProductsOpen} onOpenChange={setIsProductsOpen}>
+          <div className="hidden lg:flex items-center gap-8">
+            <DropdownMenu
+              open={openMenu === 'products'}
+              onOpenChange={(open) => setOpenMenu(open ? 'products' : null)}
+            >
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-1 text-sm font-medium text-white/70 hover:text-white transition-colors">
                   Products
@@ -59,7 +69,7 @@ export function Navbar() {
                     size={14}
                     weight="bold"
                     className={`transition-transform ${
-                      isProductsOpen ? 'rotate-180' : ''
+                      openMenu === 'products' ? 'rotate-180' : ''
                     }`}
                   />
                 </button>
@@ -69,7 +79,7 @@ export function Navbar() {
                 className="w-72 bg-[#0A0D14]/98 backdrop-blur-xl border-white/10"
               >
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10">
-                  <NavLink to="/products/voda" onClick={() => setIsProductsOpen(false)}>
+                  <NavLink to="/products/voda" onClick={() => setOpenMenu(null)}>
                     <div className="flex flex-col gap-1 py-1.5">
                       <span className="font-semibold text-sm text-white">
                         VODA — Video Agent
@@ -81,7 +91,7 @@ export function Navbar() {
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10">
-                  <NavLink to="/products/roda" onClick={() => setIsProductsOpen(false)}>
+                  <NavLink to="/products/roda" onClick={() => setOpenMenu(null)}>
                     <div className="flex flex-col gap-1 py-1.5">
                       <span className="font-semibold text-sm text-white">
                         RODA — Robotic Agent
@@ -93,7 +103,7 @@ export function Navbar() {
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10">
-                  <NavLink to="/products/eoda" onClick={() => setIsProductsOpen(false)}>
+                  <NavLink to="/products/eoda" onClick={() => setOpenMenu(null)}>
                     <div className="flex flex-col gap-1 py-1.5">
                       <span className="font-semibold text-sm text-white">
                         EODA — Edge Agent
@@ -105,7 +115,7 @@ export function Navbar() {
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10">
-                  <NavLink to="/products/foda" onClick={() => setIsProductsOpen(false)}>
+                  <NavLink to="/products/foda" onClick={() => setOpenMenu(null)}>
                     <div className="flex flex-col gap-1 py-1.5">
                       <span className="font-semibold text-sm text-white">
                         FODA — Facade Agent
@@ -117,7 +127,7 @@ export function Navbar() {
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10">
-                  <NavLink to="/products/soda" onClick={() => setIsProductsOpen(false)}>
+                  <NavLink to="/products/soda" onClick={() => setOpenMenu(null)}>
                     <div className="flex flex-col gap-1 py-1.5">
                       <span className="font-semibold text-sm text-white">
                         SODA — Surveillance Agent
@@ -131,7 +141,10 @@ export function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <DropdownMenu open={isResourcesOpen} onOpenChange={setIsResourcesOpen}>
+            <DropdownMenu
+              open={openMenu === 'resources'}
+              onOpenChange={(open) => setOpenMenu(open ? 'resources' : null)}
+            >
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-1 text-sm font-medium text-white/70 hover:text-white transition-colors">
                   Resources
@@ -139,7 +152,7 @@ export function Navbar() {
                     size={14}
                     weight="bold"
                     className={`transition-transform ${
-                      isResourcesOpen ? 'rotate-180' : ''
+                      openMenu === 'resources' ? 'rotate-180' : ''
                     }`}
                   />
                 </button>
@@ -149,19 +162,19 @@ export function Navbar() {
                 className="w-48 bg-[#0A0D14]/98 backdrop-blur-xl border-white/10"
               >
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
-                  <NavLink to="/resources/docs" onClick={() => setIsResourcesOpen(false)}>
+                  <NavLink to="/resources/docs" onClick={() => setOpenMenu(null)}>
                     Documentation
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
-                  <NavLink to="/resources/api" onClick={() => setIsResourcesOpen(false)}>
+                  <NavLink to="/resources/api" onClick={() => setOpenMenu(null)}>
                     API Reference
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
                   <NavLink
                     to="/resources/guides"
-                    onClick={() => setIsResourcesOpen(false)}
+                    onClick={() => setOpenMenu(null)}
                   >
                     Guides & Tutorials
                   </NavLink>
@@ -169,7 +182,7 @@ export function Navbar() {
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
                   <NavLink
                     to="/resources/changelog"
-                    onClick={() => setIsResourcesOpen(false)}
+                    onClick={() => setOpenMenu(null)}
                   >
                     Changelog
                   </NavLink>
@@ -177,7 +190,7 @@ export function Navbar() {
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
                   <NavLink
                     to="/resources/status"
-                    onClick={() => setIsResourcesOpen(false)}
+                    onClick={() => setOpenMenu(null)}
                   >
                     Status
                   </NavLink>
@@ -185,7 +198,10 @@ export function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <DropdownMenu open={isBusinessOpen} onOpenChange={setIsBusinessOpen}>
+            <DropdownMenu
+              open={openMenu === 'business'}
+              onOpenChange={(open) => setOpenMenu(open ? 'business' : null)}
+            >
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-1 text-sm font-medium text-white/70 hover:text-white transition-colors">
                   Business
@@ -193,7 +209,7 @@ export function Navbar() {
                     size={14}
                     weight="bold"
                     className={`transition-transform ${
-                      isBusinessOpen ? 'rotate-180' : ''
+                      openMenu === 'business' ? 'rotate-180' : ''
                     }`}
                   />
                 </button>
@@ -203,24 +219,27 @@ export function Navbar() {
                 className="w-48 bg-[#0A0D14]/98 backdrop-blur-xl border-white/10"
               >
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
-                  <NavLink to="/business/partnership" onClick={() => setIsBusinessOpen(false)}>
+                  <NavLink to="/business/partnership" onClick={() => setOpenMenu(null)}>
                     Partnership
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
-                  <NavLink to="/business/case-studies" onClick={() => setIsBusinessOpen(false)}>
+                  <NavLink to="/business/case-studies" onClick={() => setOpenMenu(null)}>
                     Case Studies
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
-                  <NavLink to="/business/plans" onClick={() => setIsBusinessOpen(false)}>
+                  <NavLink to="/business/plans" onClick={() => setOpenMenu(null)}>
                     Plans
                   </NavLink>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <DropdownMenu open={isAboutOpen} onOpenChange={setIsAboutOpen}>
+            <DropdownMenu
+              open={openMenu === 'about'}
+              onOpenChange={(open) => setOpenMenu(open ? 'about' : null)}
+            >
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-1 text-sm font-medium text-white/70 hover:text-white transition-colors">
                   About
@@ -228,7 +247,7 @@ export function Navbar() {
                     size={14}
                     weight="bold"
                     className={`transition-transform ${
-                      isAboutOpen ? 'rotate-180' : ''
+                      openMenu === 'about' ? 'rotate-180' : ''
                     }`}
                   />
                 </button>
@@ -238,27 +257,27 @@ export function Navbar() {
                 className="w-48 bg-[#0A0D14]/98 backdrop-blur-xl border-white/10"
               >
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
-                  <NavLink to="/about/company" onClick={() => setIsAboutOpen(false)}>
+                  <NavLink to="/about/company" onClick={() => setOpenMenu(null)}>
                     Company
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
-                  <NavLink to="/about/contact" onClick={() => setIsAboutOpen(false)}>
+                  <NavLink to="/about/contact" onClick={() => setOpenMenu(null)}>
                     Contact
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
-                  <NavLink to="/about/privacy" onClick={() => setIsAboutOpen(false)}>
+                  <NavLink to="/about/privacy" onClick={() => setOpenMenu(null)}>
                     Privacy
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
-                  <NavLink to="/about/terms" onClick={() => setIsAboutOpen(false)}>
+                  <NavLink to="/about/terms" onClick={() => setOpenMenu(null)}>
                     Terms
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
-                  <NavLink to="/about/security" onClick={() => setIsAboutOpen(false)}>
+                  <NavLink to="/about/security" onClick={() => setOpenMenu(null)}>
                     Security
                   </NavLink>
                 </DropdownMenuItem>
@@ -293,6 +312,107 @@ export function Navbar() {
                 <Link to="/signup">Sign up</Link>
               </Button>
             </div>
+          </div>
+          <div className="lg:hidden flex items-center">
+            <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
+              <SheetTrigger asChild>
+                <button
+                  type="button"
+                  className="inline-flex items-center justify-center rounded-md border border-white/15 bg-white/5 p-2 text-white/80 hover:text-white hover:border-cyan-500/40 transition-colors"
+                  aria-label="Open navigation menu"
+                >
+                  <List size={20} weight="bold" />
+                </button>
+              </SheetTrigger>
+              <SheetContent
+                side="left"
+                className="w-full sm:max-w-none bg-[#060b14] border-r border-cyan-500/20 p-0"
+              >
+                <div className="flex h-full flex-col px-6 py-8">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={logoImage}
+                      alt="AuraSense"
+                      className="h-7 w-7 object-contain rounded-sm [mix-blend-mode:lighten]"
+                    />
+                    <span className="text-sm font-semibold text-white">AuraSense</span>
+                  </div>
+
+                  <div className="mt-8 flex-1 overflow-y-auto space-y-8">
+                    <div className="space-y-3">
+                      <p className="text-xs font-mono uppercase tracking-[0.3em] text-cyan-400/70">
+                        Products
+                      </p>
+                      <div className="flex flex-col gap-2">
+                        <Link to="/products/soda" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          SODA
+                        </Link>
+                        <Link to="/products/roda" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          RODA
+                        </Link>
+                        <Link to="/products/voda-coda" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          VODA/CODA
+                        </Link>
+                        <Link to="/products/hri" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          HRI
+                        </Link>
+                        <Link to="/products/foda" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          FODA
+                        </Link>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <p className="text-xs font-mono uppercase tracking-[0.3em] text-cyan-400/70">
+                        Explore
+                      </p>
+                      <div className="flex flex-col gap-2">
+                        <Link to="/nepa" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          NEPA Core
+                        </Link>
+                        <Link to="/pricing" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          Pricing
+                        </Link>
+                        <Link to="/resources/docs" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          Docs
+                        </Link>
+                        <Link to="/about/company" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          About
+                        </Link>
+                        <Link to="/about/contact" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          Contact
+                        </Link>
+                        <Link to="/business" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          Business
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-8 grid gap-3">
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-center text-white/70 hover:text-white hover:bg-white/10"
+                      onClick={() => {
+                        navigate('/auth/sign-in')
+                        setIsMobileOpen(false)
+                      }}
+                    >
+                      Sign In
+                    </Button>
+                    <Button
+                      className="w-full justify-center bg-cyan-500 text-black hover:bg-cyan-400"
+                      onClick={() => {
+                        navigate('/auth/sign-up')
+                        setIsMobileOpen(false)
+                      }}
+                    >
+                      Start Pilot
+                    </Button>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </div>
