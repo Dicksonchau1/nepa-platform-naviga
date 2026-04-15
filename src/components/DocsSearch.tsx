@@ -358,6 +358,10 @@ interface SearchTriggerProps {
 }
 
 export function SearchTrigger({ onOpen }: SearchTriggerProps) {
+  const isMac =
+    typeof navigator !== 'undefined' &&
+    /Mac|iPhone|iPad/.test(navigator.platform)
+
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
@@ -376,9 +380,9 @@ export function SearchTrigger({ onOpen }: SearchTriggerProps) {
     >
       <MagnifyingGlass className="w-4 h-4" />
       <span>Search docs...</span>
-       <kbd className="ml-auto mono text-xs px-2 py-0.5 rounded bg-muted border border-border group-hover:border-primary/30">
-         ⌘K / Ctrl+K
-       </kbd>
+      <kbd className="ml-auto mono text-xs px-2 py-0.5 rounded bg-muted border border-border group-hover:border-primary/30">
+        {isMac ? '⌘K' : 'Ctrl+K'}
+      </kbd>
     </button>
   )
 }

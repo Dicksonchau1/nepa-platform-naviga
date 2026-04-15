@@ -57,6 +57,7 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
+  const mobileMenuId = 'mobile-navigation'
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10)
@@ -282,12 +283,13 @@ export function Navbar() {
                   type="button"
                   aria-label="Open navigation menu"
                   aria-expanded={mobileOpen}
+                  aria-controls={mobileMenuId}
                   className="inline-flex items-center justify-center rounded-md border border-white/10 bg-white/5 p-2 text-white hover:bg-white/10"
                 >
                   <List size={18} weight="bold" />
                 </button>
               </SheetTrigger>
-              <SheetContent className="bg-[#050508]/98 border-white/10 text-white">
+              <SheetContent id={mobileMenuId} className="bg-[#050508]/98 border-white/10 text-white">
                 <div className="flex flex-col gap-6 pt-6">
                   <div className="flex flex-col gap-2">
                     <span className="text-xs font-mono uppercase tracking-widest text-white/40">

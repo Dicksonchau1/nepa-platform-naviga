@@ -35,7 +35,7 @@ export function useScrollGradient() {
 
     if (mediaQuery.matches) {
       applyGradient(0)
-      return undefined
+      return
     }
 
     handleScroll()

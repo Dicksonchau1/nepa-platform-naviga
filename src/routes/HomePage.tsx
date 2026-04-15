@@ -134,7 +134,7 @@ export function HomePage() {
               </div>
               <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-6 text-sm text-white/70">
                 <div>
-                  <div className="text-xs uppercase tracking-widest text-white/40">Latency</div>
+                  <div className="text-xs uppercase tracking-widest text-white/40">Inference latency</div>
                   <div className="text-2xl text-cyan-300">&lt;<CountUp target={2} suffix="ms" /></div>
                 </div>
                 <div>
