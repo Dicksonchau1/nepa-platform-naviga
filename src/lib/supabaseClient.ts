@@ -6,15 +6,19 @@
 import { createClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+const envSupabaseUrl = import.meta.env.VITE_SUPABASE_URL
+const envSupabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error(
-    'Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY in environment variables. ' +
-    'Copy .env.example to .env and fill in your Supabase credentials.'
+if (!envSupabaseUrl || !envSupabaseAnonKey) {
+  console.warn(
+    'Supabase environment variables are missing. Copy .env.example to .env and set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.'
   )
 }
+
+const supabaseUrl = envSupabaseUrl ?? 'https://example.supabase.co'
+const supabaseAnonKey = envSupabaseAnonKey ?? 'public-anon-key'
+
+export const isSupabaseConfigured = Boolean(envSupabaseUrl && envSupabaseAnonKey)
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
