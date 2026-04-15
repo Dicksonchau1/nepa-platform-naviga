@@ -7,10 +7,16 @@ export function useWorkspace() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    let isActive = true
+
     async function load() {
+      setLoading(true)
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        setLoading(false)
+      if (!user || !isActive) {
+        if (isActive) {
+          setSubscription(null)
+          setLoading(false)
+        }
         return
       }
 
@@ -19,6 +25,8 @@ export function useWorkspace() {
         .select('*')
         .eq('owner_id', user.id)
         .single()
+
+      if (!isActive) return
 
       if (data) {
         setSubscription({
@@ -52,6 +60,19 @@ export function useWorkspace() {
       setLoading(false)
     }
     load()
+
+    const {
+      data: { subscription: authSubscription },
+    } = supabase.auth.onAuthStateChange(() => {
+      if (isActive) {
+        load()
+      }
+    })
+
+    return () => {
+      isActive = false
+      authSubscription.unsubscribe()
+    }
   }, [])
 
   return { subscription, loading }

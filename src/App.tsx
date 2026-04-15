@@ -47,7 +47,10 @@ import { NepaAgent } from '@/pages/NepaAgent'
 
 function AppRoutes() {
   const navigate = useNavigate()
-  const handleNavigate = (page: string) => navigate(`/${page}`)
+  const handleNavigate = (page: string) => {
+    const normalizedPage = page.startsWith('/') ? page.slice(1) : page
+    navigate(`/${normalizedPage}`)
+  }
 
   return (
     <Routes>

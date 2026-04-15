@@ -15,6 +15,14 @@ export function ForgotPasswordPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const navigate = useNavigate()
 
+  const getFriendlyError = (message: string) => {
+    const normalized = message.toLowerCase()
+    if (normalized.includes('user') && normalized.includes('not found')) {
+      return 'No account exists with this email address.'
+    }
+    return message
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
@@ -27,7 +35,7 @@ export function ForgotPasswordPage() {
       setEmailSent(true)
       toast.success('Password reset link sent to your email')
     } else {
-      setErrorMsg(error.message)
+      setErrorMsg(getFriendlyError(error.message))
     }
     setIsLoading(false)
   }
@@ -41,7 +49,7 @@ export function ForgotPasswordPage() {
     if (!error) {
       toast.success('Email resent successfully')
     } else {
-      setErrorMsg(error.message)
+      setErrorMsg(getFriendlyError(error.message))
     }
     setIsLoading(false)
   }
