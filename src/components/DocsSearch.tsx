@@ -1,15 +1,15 @@
-import { useState, useEffect, useMemo } from 'react'
-import { MagnifyingGlass, X, FileText, Code, Book, Clock, ListChecks, Funnel, Tag, Cube } from '@phosphor-icons/react'
-import { Input } from '@/components/ui/input'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Badge } from '@/components/ui/badge'
-import { ScrollArea } from '@/components/ui/scroll-area'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { MagnifyingGlass, X, FileText, Code, Book, Clock, ListChecks, Tag, Cube } from '@phosphor-icons/react'
+
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { allSearchableContent, type SearchEntry } from '@/data/searchContent'
 
-const categoryIcons = {
+const categoryIcons: Record<SearchEntry['category'], typeof FileText> = {
   docs: FileText,
   api: Code,
   guides: Book,
@@ -19,8 +19,8 @@ const categoryIcons = {
   pricing: Tag,
 }
 
-const categoryLabels = {
-  docs: 'Documentation',
+const categoryLabels: Record<SearchEntry['category'], string> = {
+  docs: 'Docs',
   api: 'API Reference',
   guides: 'Guides',
   changelog: 'Changelog',
@@ -29,239 +29,79 @@ const categoryLabels = {
   pricing: 'Pricing',
 }
 
-interface DocsSearchProps {
+export interface DocsSearchProps {
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
 export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
   const [query, setQuery] = useState('')
-  const [selectedCategories, setSelectedCategories] = useState<Set<SearchEntry['category']>>(new Set())
-  const [selectedSections, setSelectedSections] = useState<Set<string>>(new Set())
-  const [showFilters, setShowFilters] = useState(false)
   const navigate = useNavigate()
 
-  const availableSections = useMemo(() => {
-    const sections = new Set<string>()
-    allSearchableContent.forEach(item => {
-      if (item.section) sections.add(item.section)
-    })
-    return Array.from(sections).sort()
-  }, [])
+  const results = useMemo(() => {
+    const search = query.trim().toLowerCase()
+    if (!search) return [] as SearchEntry[]
 
-  const toggleCategory = (category: SearchEntry['category']) => {
-    setSelectedCategories(prev => {
-      const next = new Set(prev)
-      if (next.has(category)) {
-        next.delete(category)
-      } else {
-        next.add(category)
-      }
-      return next
-    })
-  }
-
-  const toggleSection = (section: string) => {
-    setSelectedSections(prev => {
-      const next = new Set(prev)
-      if (next.has(section)) {
-        next.delete(section)
-      } else {
-        next.add(section)
-      }
-      return next
-    })
-  }
-
-  const clearFilters = () => {
-    setSelectedCategories(new Set())
-    setSelectedSections(new Set())
-  }
-
-  const hasActiveFilters = selectedCategories.size > 0 || selectedSections.size > 0
-
-  const filtered = useMemo(() =>
-    allSearchableContent.filter(item =>
-      item.title.toLowerCase().includes(query.toLowerCase()) ||
-      item.content.toLowerCase().includes(query.toLowerCase())
-    ),
-    [query]
-  )
-
-  const searchResults = useMemo(() => {
-    if (!query.trim()) return []
-
-    const lowerQuery = query.toLowerCase()
-    const terms = lowerQuery.split(/\s+/).filter(Boolean)
-
-    return filtered
-      .filter(item => {
-        if (selectedCategories.size > 0 && !selectedCategories.has(item.category)) {
-          return false
-        }
-        if (selectedSections.size > 0 && (!item.section || !selectedSections.has(item.section))) {
-          return false
-        }
-        return true
-      })
-      .map(item => {
+    return allSearchableContent
+      .map((entry) => {
+        const haystack = [entry.title, entry.content, entry.section ?? '', ...(entry.keywords ?? [])].join(' ').toLowerCase()
         let score = 0
-        const lowerTitle = item.title.toLowerCase()
-        const lowerContent = item.content.toLowerCase()
-        const lowerSection = (item.section || '').toLowerCase()
-        const keywords = (item.keywords || []).map(keyword => keyword.toLowerCase())
-
-        if (lowerTitle.includes(lowerQuery)) score += 100
-        if (lowerContent.includes(lowerQuery)) score += 50
-        if (lowerSection.includes(lowerQuery)) score += 30
-
-        keywords.forEach(keyword => {
-          if (keyword.includes(lowerQuery)) score += 40
-        })
-
-        terms.forEach(term => {
-          if (lowerTitle.includes(term)) score += 20
-          if (lowerContent.includes(term)) score += 10
-          if (lowerSection.includes(term)) score += 5
-          keywords.forEach(keyword => {
-            if (keyword.includes(term)) score += 8
-          })
-        })
-
-        return { ...item, score }
+        if (entry.title.toLowerCase().includes(search)) score += 100
+        if (entry.content.toLowerCase().includes(search)) score += 40
+        if ((entry.keywords ?? []).some((keyword) => keyword.toLowerCase().includes(search))) score += 30
+        if (haystack.includes(search)) score += 20
+        return { entry, score }
       })
-      .filter(item => item.score > 0)
+      .filter(({ score }) => score > 0)
       .sort((a, b) => b.score - a.score)
-      .slice(0, 15)
-  }, [filtered, query, selectedCategories, selectedSections])
-
-  const handleSelect = (result: SearchEntry) => {
-    navigate(result.url)
-    onOpenChange(false)
-    setQuery('')
-  }
+      .slice(0, 12)
+      .map(({ entry }) => entry)
+  }, [query])
 
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault()
+    const handler = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault()
         onOpenChange(true)
       }
     }
+
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [onOpenChange])
 
   useEffect(() => {
-    if (!open) {
-      setQuery('')
-      setShowFilters(false)
-    }
+    if (!open) setQuery('')
   }, [open])
+
+  const handleSelect = (entry: SearchEntry) => {
+    navigate(entry.url)
+    onOpenChange(false)
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl p-0 gap-0">
+      <DialogContent className="max-w-3xl gap-0 p-0">
         <DialogHeader className="p-6 pb-4">
           <DialogTitle className="sr-only">Search Documentation</DialogTitle>
-          <div className="space-y-3">
-            <div className="relative">
-              <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              <Input
-                placeholder="Search docs, products, pricing..."
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="pl-10 pr-10 h-12 text-base"
-                autoFocus
-              />
-              {query && (
-                <button
-                  onClick={() => setQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              )}
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <Button
-                variant={showFilters ? "default" : "outline"}
-                size="sm"
-                onClick={() => setShowFilters(!showFilters)}
-                className="gap-2"
+          <div className="relative">
+            <MagnifyingGlass className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search docs, products, pricing..."
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              className="h-12 pl-10 pr-10 text-base"
+              autoFocus
+            />
+            {query && (
+              <button
+                type="button"
+                onClick={() => setQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                aria-label="Clear search"
               >
-                <Funnel className="w-4 h-4" />
-                Filters
-                {hasActiveFilters && (
-                  <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
-                    {selectedCategories.size + selectedSections.size}
-                  </Badge>
-                )}
-              </Button>
-              
-              {hasActiveFilters && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={clearFilters}
-                  className="text-xs"
-                >
-                  Clear filters
-                </Button>
-              )}
-            </div>
-
-            {showFilters && (
-              <div className="space-y-4 p-4 border border-border rounded-lg bg-muted/30">
-                <div>
-                  <h4 className="text-sm font-semibold mb-2">Category</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {(Object.keys(categoryLabels) as Array<SearchEntry['category']>).map(category => {
-                      const Icon = categoryIcons[category]
-                      const isSelected = selectedCategories.has(category)
-                      return (
-                        <button
-                          key={category}
-                          onClick={() => toggleCategory(category)}
-                          className={cn(
-                            "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium border transition-all",
-                            isSelected
-                              ? "bg-primary text-primary-foreground border-primary"
-                              : "bg-background border-border hover:border-primary/50 hover:bg-accent"
-                          )}
-                        >
-                          <Icon className="w-3.5 h-3.5" />
-                          {categoryLabels[category]}
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="text-sm font-semibold mb-2">Section</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {availableSections.map(section => {
-                      const isSelected = selectedSections.has(section)
-                      return (
-                        <button
-                          key={section}
-                          onClick={() => toggleSection(section)}
-                          className={cn(
-                            "px-3 py-1.5 rounded-md text-xs font-medium border transition-all",
-                            isSelected
-                              ? "bg-accent text-accent-foreground border-accent"
-                              : "bg-background border-border hover:border-accent/50 hover:bg-accent/30"
-                          )}
-                        >
-                          {section}
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-              </div>
+                <X className="h-5 w-5" />
+              </button>
             )}
           </div>
         </DialogHeader>
@@ -269,69 +109,40 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
         <ScrollArea className="max-h-[500px]">
           <div className="px-6 pb-6">
             {!query && (
-              <div className="text-center py-12 text-muted-foreground">
-                <MagnifyingGlass className="w-12 h-12 mx-auto mb-4 opacity-40" />
+              <div className="py-12 text-center text-muted-foreground">
+                <MagnifyingGlass className="mx-auto mb-4 h-12 w-12 opacity-40" />
                 <p className="text-sm">Start typing to search across all documentation</p>
-                {hasActiveFilters && (
-                  <p className="text-xs mt-2">
-                    {selectedCategories.size + selectedSections.size} filter(s) active
-                  </p>
-                )}
               </div>
             )}
 
-            {query && searchResults.length === 0 && (
-              <div className="text-center py-12 text-muted-foreground">
-                <p className="text-sm">No results found for "{query}"</p>
-                {hasActiveFilters ? (
-                  <p className="text-xs mt-2">Try removing some filters or using different keywords</p>
-                ) : (
-                  <p className="text-xs mt-2">Try different keywords or check the spelling</p>
-                )}
+            {query && results.length === 0 && (
+              <div className="py-12 text-center text-muted-foreground">
+                <p className="text-sm">No results found for &quot;{query}&quot;</p>
+                <p className="mt-2 text-xs">Try a different keyword or product name</p>
               </div>
             )}
 
-            {searchResults.length > 0 && (
+            {results.length > 0 && (
               <div className="space-y-2">
-                {hasActiveFilters && (
-                  <div className="flex items-center gap-2 mb-3 pb-3 border-b border-border">
-                    <p className="text-xs text-muted-foreground">
-                      Filtered by:
-                    </p>
-                    {Array.from(selectedCategories).map(cat => (
-                      <Badge key={cat} variant="secondary" className="text-xs">
-                        {categoryLabels[cat]}
-                      </Badge>
-                    ))}
-                    {Array.from(selectedSections).map(sec => (
-                      <Badge key={sec} variant="outline" className="text-xs">
-                        {sec}
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-                {searchResults.map((result) => {
+                {results.map((result) => {
                   const Icon = categoryIcons[result.category]
                   return (
                     <button
                       key={result.id}
+                      type="button"
                       onClick={() => handleSelect(result)}
-                      className="w-full text-left p-4 rounded-lg border border-border bg-card hover:bg-accent/50 hover:border-primary/30 transition-all group"
+                      className="w-full rounded-lg border border-border bg-card p-4 text-left transition-all hover:border-primary/30 hover:bg-accent/50"
                     >
                       <div className="flex items-start gap-3">
-                        <Icon className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h4 className="font-semibold text-sm group-hover:text-primary transition-colors">
-                              {result.title}
-                            </h4>
+                        <Icon className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
+                        <div className="min-w-0 flex-1">
+                          <div className="mb-1 flex items-center gap-2">
+                            <h4 className="text-sm font-semibold transition-colors hover:text-primary">{result.title}</h4>
                             <Badge variant="outline" className="mono text-xs">
                               {categoryLabels[result.category]}
                             </Badge>
                           </div>
-                          <p className="text-sm text-muted-foreground line-clamp-2">
-                            {result.content}
-                          </p>
+                          <p className="line-clamp-2 text-sm text-muted-foreground">{result.content}</p>
                         </div>
                       </div>
                     </button>
@@ -342,14 +153,13 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
           </div>
         </ScrollArea>
 
-        <div className="border-t border-border px-6 py-3 bg-muted/30">
+        <div className="border-t border-border bg-muted/30 px-6 py-3">
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <div className="flex items-center gap-4">
-              <span className="mono">↑↓ Navigate</span>
-              <span className="mono">↵ Select</span>
-              <span className="mono">ESC Close</span>
+              <span className="mono">Cmd/Ctrl + K</span>
+              <span className="mono">Enter to open</span>
             </div>
-            <span>{searchResults.length > 0 && `${searchResults.length} results`}</span>
+            <span>{results.length > 0 ? `${results.length} results` : ''}</span>
           </div>
         </div>
       </DialogContent>
@@ -357,37 +167,31 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
   )
 }
 
-interface SearchTriggerProps {
-  onOpen: () => void
-}
-
-export function SearchTrigger({ onOpen }: SearchTriggerProps) {
-  const isMac =
-    typeof navigator !== 'undefined' &&
-    ((navigator as Navigator & { userAgentData?: { platform?: string } }).userAgentData?.platform === 'macOS' ||
-      /Mac|iPhone|iPad/.test(navigator.userAgent))
+export function SearchTrigger({ onOpen }: { onOpen: () => void }) {
+  const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform)
 
   useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault()
+    const handler = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault()
         onOpen()
       }
     }
-    document.addEventListener('keydown', down)
-    return () => document.removeEventListener('keydown', down)
+
+    document.addEventListener('keydown', handler)
+    return () => document.removeEventListener('keydown', handler)
   }, [onOpen])
 
   return (
-    <button
+    <Button
+      type="button"
+      variant="outline"
       onClick={onOpen}
-      className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-card hover:bg-accent/50 hover:border-primary/30 transition-all text-sm text-muted-foreground hover:text-foreground group"
+      className="flex w-full items-center gap-2 rounded-lg border-border bg-card px-4 py-2 text-sm text-muted-foreground transition-all hover:border-primary/30 hover:bg-accent/50 hover:text-foreground"
     >
-      <MagnifyingGlass className="w-4 h-4" />
+      <MagnifyingGlass className="h-4 w-4" />
       <span>Search docs...</span>
-      <kbd className="ml-auto mono text-xs px-2 py-0.5 rounded bg-muted border border-border group-hover:border-primary/30">
-        {isMac ? '⌘K' : 'Ctrl+K'}
-      </kbd>
-    </button>
+      <kbd className="mono ml-auto rounded border border-border bg-muted px-2 py-0.5 text-xs">{isMac ? '?K' : 'Ctrl+K'}</kbd>
+    </Button>
   )
 }
