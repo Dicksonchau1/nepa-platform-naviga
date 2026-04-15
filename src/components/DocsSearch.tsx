@@ -364,7 +364,8 @@ interface SearchTriggerProps {
 export function SearchTrigger({ onOpen }: SearchTriggerProps) {
   const isMac =
     typeof navigator !== 'undefined' &&
-    /Mac|iPhone|iPad/.test(navigator.platform)
+    ((navigator as Navigator & { userAgentData?: { platform?: string } }).userAgentData?.platform === 'macOS' ||
+      /Mac|iPhone|iPad/.test(navigator.userAgent))
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {

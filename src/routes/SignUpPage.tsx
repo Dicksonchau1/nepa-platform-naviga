@@ -60,11 +60,10 @@ export function SignUpPage() {
       })
       toast.success('Account created! Check your email to confirm.')
       if (redirectTo) {
-        navigate('/signin', { state: { from: { pathname: redirectTo } } })
+        navigate('/auth/sign-in', { state: { from: { pathname: redirectTo } } })
       } else {
-        navigate('/signin')
+        navigate('/auth/sign-in')
       }
-      navigate('/auth/sign-in')
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Sign up failed'
       toast.error(message)
