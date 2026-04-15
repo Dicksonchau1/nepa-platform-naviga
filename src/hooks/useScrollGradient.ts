@@ -5,28 +5,50 @@ export function useScrollGradient() {
   const [gradientPosition, setGradientPosition] = useState({ x: 50, y: 50 })
 
   useEffect(() => {
-    const handleScroll = () => {
-      const windowHeight = window.innerHeight
-      const documentHeight = document.documentElement.scrollHeight - windowHeight
-      const scrolled = window.scrollY
-      const progress = Math.min(scrolled / documentHeight, 1)
-      
+    if (typeof window === 'undefined') return
+
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    let frameId: number | null = null
+    let latestScroll = window.scrollY
+
+    const applyGradient = (progress: number) => {
       setScrollProgress(progress)
-      
+
       const x = 50 + Math.sin(progress * Math.PI * 2) * 20
       const y = 50 + Math.cos(progress * Math.PI * 2) * 20
-      
+
       setGradientPosition({ x, y })
-      
+
       document.documentElement.style.setProperty('--gradient-x', `${x}%`)
       document.documentElement.style.setProperty('--gradient-y', `${y}%`)
     }
 
+    const handleScroll = () => {
+      latestScroll = window.scrollY
+      if (frameId !== null) return
+      frameId = window.requestAnimationFrame(() => {
+        const windowHeight = window.innerHeight
+        const documentHeight = Math.max(document.documentElement.scrollHeight - windowHeight, 1)
+        const progress = Math.min(latestScroll / documentHeight, 1)
+        applyGradient(progress)
+        frameId = null
+      })
+    }
+
+    if (mediaQuery.matches) {
+      applyGradient(0)
+      return undefined
+    }
+
     handleScroll()
-    
     window.addEventListener('scroll', handleScroll, { passive: true })
-    
-    return () => window.removeEventListener('scroll', handleScroll)
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId)
+      }
+    }
   }, [])
 
   const getGradientColor = (progress: number) => {
