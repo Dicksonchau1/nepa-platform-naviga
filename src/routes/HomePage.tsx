@@ -1,293 +1,335 @@
-import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
+import { ArrowRight } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
-import { Terminal } from '@phosphor-icons/react'
+import { LiveBadge } from '@/components/LiveBadge'
+import { TerminalLine } from '@/components/TerminalLine'
+import { SensorSweep } from '@/components/SensorSweep'
 import { CountUp } from '@/components/CountUp'
-import heroVideo from '@/assets/video/home-hero.mp4'
+
+const pipeline = [
+  {
+    title: 'Sense',
+    body: 'Cameras, edge sensors, POS, and robotics state.',
+  },
+  {
+    title: 'Model',
+    body: 'NEPA SignatureMaps + live world model.',
+  },
+  {
+    title: 'Reason',
+    body: 'Anomaly scoring, memory, and consultation.',
+  },
+  {
+    title: 'Act',
+    body: 'Alerts, access control, and robotic dispatch.',
+  },
+  {
+    title: 'Report',
+    body: 'CODA evidence packs, summaries, and audits.',
+  },
+]
+
+const products = [
+  {
+    title: 'SODA',
+    description: 'Autonomous unmanned store operations.',
+    bullets: ['Store-level perception', 'Behavioral intelligence', 'Operator alerts'],
+    href: '/products/soda',
+  },
+  {
+    title: 'RODA',
+    description: 'Robotic restocking and physical execution.',
+    bullets: ['NERMN task dispatch', 'Edge-safe execution', 'Inventory sync'],
+    href: '/products/roda',
+  },
+  {
+    title: 'VODA / CODA',
+    description: 'Video intelligence + evidence SaaS pipeline.',
+    bullets: ['Anomaly detection', 'LLM escalation', 'Report synthesis'],
+    href: '/products/voda-coda',
+  },
+  {
+    title: 'HRI',
+    description: 'HR intelligence API + interview analytics.',
+    bullets: ['Scorecards', 'Transcript analytics', 'Webhooks + API'],
+    href: '/products/hri',
+  },
+]
+
+const worldModelChips = [
+  'SignatureMap',
+  'DopamineModulator',
+  'Consultation Layer',
+  'Dispatch Engine',
+  'Replay Trace',
+]
+
+const credibility = [
+  {
+    title: 'Runs at the edge',
+    body: 'Low-latency inference with local-first resilience.',
+  },
+  {
+    title: 'Low-latency decision loop',
+    body: 'NEPA keeps operations under millisecond-class response windows.',
+  },
+  {
+    title: 'LLM consulted only when needed',
+    body: 'Normal frames stay cheap; anomalies escalate on demand.',
+  },
+  {
+    title: 'Operator-ready evidence',
+    body: 'CODA turns every alert into a narrative evidence pack.',
+  },
+]
+
+const deployments = [
+  {
+    title: 'On-device Edge',
+    body: 'Edge-only nodes for privacy-first deployments.',
+  },
+  {
+    title: 'Hybrid Edge + SaaS',
+    body: 'Local inference with centralized SaaS control.',
+  },
+  {
+    title: 'Fleet SaaS Control',
+    body: 'Multi-site operations, reporting, and analytics.',
+  },
+]
 
 export function HomePage() {
-  const [videoPlaying, setVideoPlaying] = useState(true)
-  const [nepaRevealed, setNepaRevealed] = useState(false)
-  const [heroVisible, setHeroVisible] = useState(false)
-  const videoRef = useRef<HTMLVideoElement>(null)
-
-  useEffect(() => {
-    const nepaTimer = setTimeout(() => setNepaRevealed(true), 2000)
-    const heroTimer = setTimeout(() => {
-      setHeroVisible(true)
-      setVideoPlaying(false)
-    }, 3500)
-    
-    return () => {
-      clearTimeout(nepaTimer)
-      clearTimeout(heroTimer)
-    }
-  }, [])
-
-  const handleVideoEnded = () => {
-    if (videoRef.current) {
-      videoRef.current.pause()
-    }
-  }
-
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-background">
-      <video
-        ref={videoRef}
-        autoPlay
-        muted
-        playsInline
-        onEnded={handleVideoEnded}
-        className="absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1500"
-        style={{ opacity: videoPlaying ? 0.15 : 0.08 }}
-      >
-        <source src={heroVideo} type="video/mp4" />
-      </video>
-
-      <div 
-        className="absolute inset-0 transition-opacity duration-1500"
-        style={{ 
-          opacity: heroVisible ? 1 : 0,
-          background: 'radial-gradient(ellipse 120% 80% at 20% 50%, rgba(0,212,255,0.08) 0%, transparent 50%), radial-gradient(ellipse 100% 70% at 80% 30%, rgba(0,102,255,0.06) 0%, transparent 60%)'
-        }}
-      />
-      <div 
-        className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-transparent transition-opacity duration-1500"
-        style={{ opacity: heroVisible ? 1 : 0 }}
-      />
-      <div 
-        className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/80 transition-opacity duration-1500"
-        style={{ opacity: heroVisible ? 1 : 0 }}
-      />
-      <div 
-        className="absolute inset-0 transition-opacity duration-1500"
-        style={{ 
-          opacity: heroVisible ? 1 : 0,
-          background: 'linear-gradient(135deg, rgba(0,212,255,0.05) 0%, transparent 30%, rgba(107,33,255,0.03) 70%, transparent 100%)'
-        }}
-      />
-      
-      <div 
-        className="absolute inset-0 opacity-20 transition-opacity duration-1500" 
-        style={{
-          backgroundImage: 'radial-gradient(circle, rgba(0,212,255,0.08) 1px, transparent 1px)',
-          backgroundSize: '40px 40px',
-          opacity: heroVisible ? 0.2 : 0
-        }}
-      />
-
-      <div 
-        className="absolute left-0 right-0 h-px pointer-events-none transition-opacity duration-1500"
-        style={{
-          background: 'linear-gradient(90deg, rgba(0,212,255,0.4) 0%, transparent 60%)',
-          animation: 'sweep 8s linear infinite',
-          opacity: heroVisible ? 1 : 0
-        }}
-      />
-
-      <div className="relative z-20 container mx-auto px-8 pt-32 pb-16 min-h-screen flex flex-col justify-center">
-        <div className="max-w-5xl">
-          <div 
-            className="flex items-center gap-3 mb-12 transition-opacity duration-1000"
-            style={{ opacity: heroVisible ? 1 : 0 }}
-          >
-            <div className="relative flex items-center justify-center w-3 h-3">
-              <div className="absolute w-3 h-3 bg-cyan-400 rounded-full animate-ping opacity-75" />
-              <div className="relative w-2 h-2 bg-cyan-500 rounded-full" />
-            </div>
-            <span className="font-mono text-[10px] tracking-[0.22em] text-cyan-400/70 uppercase">
-              System Online
-            </span>
-          </div>
-
-          <div
-            className="mb-10 transition-all duration-1000 ease-out"
-            style={{
-              opacity: heroVisible ? 1 : 0,
-              transform: heroVisible ? 'translateY(0)' : 'translateY(32px)',
-            }}
-          >
-            <h1 
-              className="text-7xl md:text-9xl font-bold tracking-tight leading-[0.95] mb-4"
-              style={{
-                color: 'white',
-                textShadow: '0 4px 8px rgba(0,0,0,0.5), 0 8px 24px rgba(0,212,255,0.3), 0 0 60px rgba(0,212,255,0.15)',
-                transform: 'translateZ(0)',
-              }}
-            >
-              AuraSense
-            </h1>
-            <h2
-              className="text-4xl md:text-6xl font-light tracking-tight leading-tight"
-              style={{
-                transition: 'opacity 1s ease-out 0.3s, transform 1s ease-out 0.3s',
-                opacity: heroVisible ? 1 : 0,
-                transform: heroVisible ? 'translateY(0)' : 'translateY(24px)',
-                color: '#00D4FF',
-                textShadow: '0 3px 6px rgba(0,0,0,0.5), 0 6px 18px rgba(0,212,255,0.4)',
-              }}
-            >
-              Video Agent
-            </h2>
-          </div>
-
-          <div
-            className="mb-12 transition-opacity duration-1000 ease-out delay-700"
-            style={{ opacity: heroVisible ? 1 : 0 }}
-          >
-            <div className="inline-block border-l-2 border-cyan-500/40 pl-6 mb-8">
-              <p 
-                className="font-mono text-xs tracking-[0.28em] uppercase mb-3 transition-all duration-700"
-                style={{
-                  opacity: nepaRevealed ? 1 : 0,
-                  transform: nepaRevealed ? 'translateX(0)' : 'translateX(-12px)',
-                  color: '#00D4FF',
-                  textShadow: '0 2px 4px rgba(0,0,0,0.5)',
-                }}
-              >
-                NEPA
+    <div className="relative min-h-screen w-full overflow-hidden bg-background text-white">
+      <section className="relative overflow-hidden">
+        <SensorSweep />
+        <div className="container mx-auto px-6 pt-32 pb-20 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-12 items-center">
+            <div>
+              <LiveBadge label="SYSTEM LIVE" className="mb-6" />
+              <h1 className="text-4xl md:text-6xl font-semibold tracking-tight leading-tight">
+                Neuromorphic edge intelligence for autonomous operations
+              </h1>
+              <p className="mt-6 text-lg text-white/70 max-w-2xl">
+                NEPA builds a live world model from video, sensors, and behavior streams — then dispatches alerts,
+                reports, and robotic actions in real time.
               </p>
-              <p 
-                className="text-xl md:text-2xl font-light leading-relaxed mb-1 transition-all duration-700 delay-200"
-                style={{
-                  opacity: nepaRevealed ? 1 : 0,
-                  transform: nepaRevealed ? 'translateX(0)' : 'translateX(-12px)',
-                  color: 'white',
-                  textShadow: '0 2px 6px rgba(0,0,0,0.4)',
-                }}
-              >
-                Neuromorphic
-              </p>
-              <p 
-                className="text-xl md:text-2xl font-light leading-relaxed transition-all duration-700 delay-300"
-                style={{
-                  opacity: nepaRevealed ? 1 : 0,
-                  transform: nepaRevealed ? 'translateX(0)' : 'translateX(-12px)',
-                  color: 'white',
-                  textShadow: '0 2px 6px rgba(0,0,0,0.4)',
-                }}
-              >
-                Edge Perception Agent
-              </p>
+              <div className="mt-8 flex flex-wrap gap-3 text-xs uppercase tracking-[0.2em] text-cyan-200/70">
+                <span className="px-3 py-1 rounded-full border border-cyan-400/30">Edge-native</span>
+                <span className="px-3 py-1 rounded-full border border-cyan-400/30">Real-time perception</span>
+                <span className="px-3 py-1 rounded-full border border-cyan-400/30">Robotic action</span>
+                <span className="px-3 py-1 rounded-full border border-cyan-400/30">Replayable evidence</span>
+                <span className="px-3 py-1 rounded-full border border-cyan-400/30">SaaS + on-prem</span>
+              </div>
+              <div className="mt-10 flex flex-wrap gap-4">
+                <Button asChild className="bg-cyan-500 text-black hover:bg-cyan-400">
+                  <Link to="/contact">
+                    Start pilot
+                    <ArrowRight className="ml-2" weight="bold" />
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="border-white/30 text-white hover:bg-white/10">
+                  <Link to="/platform">Watch system flow</Link>
+                </Button>
+              </div>
+              <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-6 text-sm text-white/70">
+                <div>
+                  <div className="text-xs uppercase tracking-widest text-white/40">Latency</div>
+                  <div className="text-2xl text-cyan-300">&lt;<CountUp target={2} suffix="ms" /></div>
+                </div>
+                <div>
+                  <div className="text-xs uppercase tracking-widest text-white/40">Active lanes</div>
+                  <div className="text-2xl text-cyan-300"><CountUp target={8} /></div>
+                </div>
+                <div>
+                  <div className="text-xs uppercase tracking-widest text-white/40">Anomaly score</div>
+                  <div className="text-2xl text-cyan-300">0.87</div>
+                </div>
+                <div>
+                  <div className="text-xs uppercase tracking-widest text-white/40">Dispatches</div>
+                  <div className="text-2xl text-cyan-300"><CountUp target={42} /></div>
+                </div>
+              </div>
             </div>
 
-            <p 
-              className="text-base max-w-xl leading-relaxed"
-              style={{
-                color: 'rgba(255,255,255,0.75)',
-                textShadow: '0 1px 3px rgba(0,0,0,0.4)',
-              }}
-            >
-              Deterministic inference at the edge. No cloud. No latency. No compromise. 
-              Built for autonomous retail, aerial inspection, and robotic delivery operations 
-              across Asia-Pacific.
-            </p>
-          </div>
-
-          <div
-            className="flex items-center gap-4 flex-wrap mb-16 transition-opacity duration-1000 ease-out delay-1000"
-            style={{ opacity: heroVisible ? 1 : 0 }}
-          >
-            <Button
-              asChild
-              size="lg"
-              className="border border-cyan-500/40 text-black bg-cyan-500 hover:bg-cyan-400 font-mono text-[11px] tracking-[0.18em] uppercase px-8 py-6 shadow-lg shadow-cyan-500/30"
-              style={{
-                textShadow: 'none',
-              }}
-            >
-              <Link to="/dashboard">
-                <Terminal size={20} weight="duotone" className="mr-2" />
-                Launch NEPA Console
-              </Link>
-            </Button>
-
-            <Button
-              asChild
-              size="lg"
-              variant="ghost"
-              className="border border-white/20 text-white/80 hover:bg-white/10 hover:text-white font-mono text-[11px] tracking-[0.18em] uppercase px-8 py-6"
-            >
-              <Link to="/about/contact">Request pilot access</Link>
-            </Button>
-          </div>
-
-          <div
-            className="font-mono text-[11px] flex items-center gap-8 flex-wrap border-t border-white/10 pt-8 transition-opacity duration-1000 ease-out delay-1000"
-            style={{ opacity: heroVisible ? 1 : 0 }}
-          >
-            <div className="flex flex-col gap-1">
-              <span 
-                className="text-[10px] tracking-wider uppercase"
-                style={{
-                  color: 'rgba(255,255,255,0.35)',
-                  textShadow: '0 1px 2px rgba(0,0,0,0.3)',
-                }}
-              >
-                Inference Latency
-              </span>
-              <span 
-                className="font-semibold text-base"
-                style={{
-                  color: '#00D4FF',
-                  textShadow: '0 2px 4px rgba(0,0,0,0.4), 0 0 12px rgba(0,212,255,0.3)',
-                }}
-              >
-                &lt;<CountUp target={42} suffix="ms" />
-              </span>
-            </div>
-            <div className="w-px h-10 bg-white/10" />
-            <div className="flex flex-col gap-1">
-              <span 
-                className="text-[10px] tracking-wider uppercase"
-                style={{
-                  color: 'rgba(255,255,255,0.35)',
-                  textShadow: '0 1px 2px rgba(0,0,0,0.3)',
-                }}
-              >
-                Edge Nodes Active
-              </span>
-              <span 
-                className="font-semibold text-base"
-                style={{
-                  color: '#00D4FF',
-                  textShadow: '0 2px 4px rgba(0,0,0,0.4), 0 0 12px rgba(0,212,255,0.3)',
-                }}
-              >
-                <CountUp target={12} />
-              </span>
-            </div>
-            <div className="w-px h-10 bg-white/10" />
-            <div className="flex flex-col gap-1">
-              <span 
-                className="text-[10px] tracking-wider uppercase"
-                style={{
-                  color: 'rgba(255,255,255,0.35)',
-                  textShadow: '0 1px 2px rgba(0,0,0,0.3)',
-                }}
-              >
-                Audit Events Today
-              </span>
-              <span 
-                className="font-semibold text-base"
-                style={{
-                  color: '#00D4FF',
-                  textShadow: '0 2px 4px rgba(0,0,0,0.4), 0 0 12px rgba(0,212,255,0.3)',
-                }}
-              >
-                <CountUp target={3847} />
-              </span>
+            <div className="relative">
+              <div className="rounded-2xl border border-cyan-400/30 bg-black/60 p-6 backdrop-blur-xl">
+                <div className="text-xs uppercase tracking-[0.2em] text-cyan-300/70 mb-4">System feed</div>
+                <div className="space-y-3">
+                  <TerminalLine label="STORE" value="HK-KLN-01" delay={200} />
+                  <TerminalLine label="LANES" value="08 ACTIVE" delay={400} />
+                  <TerminalLine label="LATENCY" value="1.9ms" delay={600} />
+                  <TerminalLine label="ZONE_03" value="anomaly_score 0.87" delay={800} />
+                  <TerminalLine label="DISPATCH" value="RODA_RESTOCK_QUEUED" delay={1000} />
+                  <TerminalLine label="CODA" value="report rendering" delay={1200} />
+                </div>
+              </div>
+              <div className="absolute -bottom-6 -right-6 h-32 w-32 rounded-full bg-cyan-500/20 blur-3xl" />
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <style>{`
-        @keyframes sweep {
-          0%   { top: -2px; }
-          100% { top: 100%; }
-        }
-      `}</style>
+      <section className="py-20 border-t border-white/10 bg-black/40">
+        <div className="container mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center text-sm text-white/70">
+          <div>
+            <div className="text-xs uppercase tracking-widest text-white/40">Edge nodes</div>
+            <div className="text-2xl text-white"><CountUp target={12} /></div>
+          </div>
+          <div>
+            <div className="text-xs uppercase tracking-widest text-white/40">Stores monitored</div>
+            <div className="text-2xl text-white"><CountUp target={24} /></div>
+          </div>
+          <div>
+            <div className="text-xs uppercase tracking-widest text-white/40">RODA queues</div>
+            <div className="text-2xl text-white"><CountUp target={18} /></div>
+          </div>
+          <div>
+            <div className="text-xs uppercase tracking-widest text-white/40">Reports today</div>
+            <div className="text-2xl text-white"><CountUp target={148} /></div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-24">
+        <div className="container mx-auto px-6">
+          <div className="flex items-center justify-between flex-wrap gap-6 mb-12">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-semibold">From perception to action</h2>
+              <p className="text-white/60 mt-3 max-w-xl">
+                One intelligence platform. Multiple execution domains. NEPA perceives, reasons, predicts,
+                dispatches, and reports.
+              </p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            {pipeline.map((step) => (
+              <div key={step.title} className="rounded-xl border border-white/10 bg-white/5 p-6">
+                <div className="text-xs uppercase tracking-[0.25em] text-cyan-200/60">{step.title}</div>
+                <p className="mt-3 text-sm text-white/70">{step.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-24 bg-black/40">
+        <div className="container mx-auto px-6">
+          <h2 className="text-3xl md:text-4xl font-semibold mb-10">Product constellation</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {products.map((product) => (
+              <div key={product.title} className="rounded-2xl border border-white/10 bg-white/5 p-8">
+                <div className="flex items-start justify-between gap-6">
+                  <div>
+                    <h3 className="text-2xl font-semibold">{product.title}</h3>
+                    <p className="text-white/60 mt-2">{product.description}</p>
+                    <ul className="mt-4 space-y-2 text-sm text-white/70">
+                      {product.bullets.map((bullet) => (
+                        <li key={bullet}>• {bullet}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <Button asChild variant="outline" className="border-white/20 text-white">
+                    <Link to={product.href}>Learn more</Link>
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-24">
+        <div className="container mx-auto px-6 grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-10 items-center">
+          <div>
+            <h2 className="text-3xl md:text-4xl font-semibold">NEPA world model</h2>
+            <p className="text-white/60 mt-4">
+              NEPA is not a detector. It is a live operational world model. Every frame updates spatial memory,
+              every anomaly adjusts behavioral priors, and every action closes the loop between perception and execution.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {worldModelChips.map((chip) => (
+                <span
+                  key={chip}
+                  className="px-3 py-1 rounded-full border border-cyan-400/30 text-xs uppercase tracking-[0.2em] text-cyan-200/70"
+                >
+                  {chip}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="rounded-2xl border border-cyan-400/30 bg-black/50 p-8">
+            <div className="text-xs uppercase tracking-[0.2em] text-cyan-300/70 mb-4">World model panel</div>
+            <div className="grid grid-cols-2 gap-4 text-sm text-white/70">
+              <div className="rounded-lg border border-white/10 p-4">Zones + lanes</div>
+              <div className="rounded-lg border border-white/10 p-4">Agent trails</div>
+              <div className="rounded-lg border border-white/10 p-4">Anomaly heat</div>
+              <div className="rounded-lg border border-white/10 p-4">CODA markers</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-24 bg-black/40">
+        <div className="container mx-auto px-6">
+          <h2 className="text-3xl md:text-4xl font-semibold mb-10">Why AuraSense</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {credibility.map((item) => (
+              <div key={item.title} className="rounded-xl border border-white/10 bg-white/5 p-6">
+                <h3 className="text-lg font-semibold">{item.title}</h3>
+                <p className="text-white/60 mt-2 text-sm">{item.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-24">
+        <div className="container mx-auto px-6">
+          <h2 className="text-3xl md:text-4xl font-semibold mb-10">Deployment modes</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {deployments.map((item) => (
+              <div key={item.title} className="rounded-xl border border-white/10 bg-white/5 p-6">
+                <h3 className="text-lg font-semibold">{item.title}</h3>
+                <p className="text-white/60 mt-2 text-sm">{item.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-24 bg-black/40">
+        <div className="container mx-auto px-6 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+          <div>
+            <h2 className="text-3xl md:text-4xl font-semibold">Pricing preview</h2>
+            <p className="text-white/60 mt-2">Choose pilot, store, fleet, or API-first plans based on deployment scope.</p>
+          </div>
+          <Button asChild className="bg-cyan-500 text-black hover:bg-cyan-400">
+            <Link to="/pricing">View pricing</Link>
+          </Button>
+        </div>
+      </section>
+
+      <section className="py-24">
+        <div className="container mx-auto px-6">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-10 text-center">
+            <h2 className="text-3xl md:text-4xl font-semibold mb-4">
+              Bring one store, one robot, or one video pipeline online.
+            </h2>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Button asChild className="bg-cyan-500 text-black hover:bg-cyan-400">
+                <Link to="/contact">Start pilot</Link>
+              </Button>
+              <Button asChild variant="outline" className="border-white/30 text-white">
+                <Link to="/contact">Talk to engineering</Link>
+              </Button>
+              <Button asChild variant="ghost" className="text-white/70 hover:text-white">
+                <Link to="/auth/sign-in">Sign in</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }
