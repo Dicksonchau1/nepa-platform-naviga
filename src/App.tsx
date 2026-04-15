@@ -4,10 +4,13 @@ import { AppLayout } from '@/components/AppLayout'
 
 import { HomePage } from '@/routes/HomePage'
 import { LandingPage } from '@/routes/LandingPage'
+import { PlatformPage } from '@/routes/PlatformPage'
+import { ProductsPage } from '@/routes/ProductsPage'
 import { SignInPage } from '@/routes/SignInPage'
 import { SignUpPage } from '@/routes/SignUpPage'
 import { ForgotPasswordPage } from '@/routes/ForgotPasswordPage'
 import { ResetPasswordPage } from '@/routes/ResetPasswordPage'
+import { SdkPage } from '@/routes/SdkPage'
 import { TwoFactorSetupPage } from '@/routes/TwoFactorSetupPage'
 import { TwoFactorVerifyPage } from '@/routes/TwoFactorVerifyPage'
 import { PlaygroundPage } from '@/routes/PlaygroundPage'
@@ -22,10 +25,10 @@ import { ContactSubmissionsPage } from '@/routes/dashboard/ContactSubmissionsPag
 
 import { VODAPage } from '@/routes/products/VODAPage'
 import { RODAPage } from '@/routes/products/RODAPage'
-import { EODAPage } from '@/routes/products/EODAPage'
 import { FODAPage } from '@/routes/products/FODAPage'
 import { NepaAgentPage } from '@/routes/products/NepaAgentPage'
 import { SODAPage } from '@/routes/products/SODAPage'
+import { HRIPAge } from '@/routes/products/HRIPAge'
 
 import { DocsPage } from '@/routes/resources/DocsPage'
 import { ApiReferencePage } from '@/routes/resources/ApiReferencePage'
@@ -66,7 +69,25 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   }
 
   if (!user) {
-    return <Navigate to="/signin" state={{ from: location }} replace />
+    return <Navigate to="/auth/sign-in" state={{ from: location }} replace />
+  }
+
+  return <>{children}</>
+}
+
+function PublicOnlyRoute({ children }: { children: React.ReactNode }) {
+  const { user, isLoading } = useAuth()
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-muted-foreground">Loading...</p>
+      </div>
+    )
+  }
+
+  if (user) {
+    return <Navigate to="/dashboard" replace />
   }
 
   return <>{children}</>
@@ -78,11 +99,42 @@ function AppRoutes() {
       <Route element={<AppLayout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/landing" element={<LandingPage />} />
-        
-        <Route path="/signin" element={<SignInPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/platform" element={<PlatformPage />} />
+        <Route path="/products" element={<ProductsPage />} />
+        <Route path="/nepa" element={<NepaAgentPage />} />
+
+        <Route
+          path="/auth/sign-in"
+          element={
+            <PublicOnlyRoute>
+              <SignInPage />
+            </PublicOnlyRoute>
+          }
+        />
+        <Route
+          path="/auth/sign-up"
+          element={
+            <PublicOnlyRoute>
+              <SignUpPage />
+            </PublicOnlyRoute>
+          }
+        />
+        <Route
+          path="/auth/forgot-password"
+          element={
+            <PublicOnlyRoute>
+              <ForgotPasswordPage />
+            </PublicOnlyRoute>
+          }
+        />
+        <Route
+          path="/auth/reset-password"
+          element={
+            <PublicOnlyRoute>
+              <ResetPasswordPage />
+            </PublicOnlyRoute>
+          }
+        />
         <Route path="/2fa-setup" element={<TwoFactorSetupPage pendingEmail="" />} />
         <Route path="/2fa-verify" element={<TwoFactorVerifyPage pendingEmail="" />} />
 
@@ -96,36 +148,52 @@ function AppRoutes() {
         <Route path="/business/case-studies" element={<CaseStudies />} />
         <Route path="/business/plans" element={<Plans />} />
 
-        <Route path="/products/voda" element={<VODAPage />} />
+        <Route path="/products/voda-coda" element={<VODAPage />} />
+        <Route path="/products/voda" element={<Navigate to="/products/voda-coda" replace />} />
         <Route path="/products/roda" element={<RODAPage />} />
-        <Route path="/products/eoda" element={<EODAPage />} />
         <Route path="/products/foda" element={<FODAPage />} />
-        <Route path="/products/nepa-agent" element={<NepaAgentPage />} />
+        <Route path="/products/nepa" element={<NepaAgentPage />} />
         <Route path="/products/soda" element={<SODAPage />} />
-        <Route path="/products" element={<Navigate to="/landing" replace />} />
+        <Route path="/products/hri" element={<HRIPAge />} />
         <Route path="/products/enterprise" element={<Navigate to="/business#enterprise-services" replace />} />
 
-        <Route path="/resources/docs" element={<DocsPage />} />
-        <Route path="/resources/api" element={<ApiReferencePage />} />
-        <Route path="/resources/guides" element={<GuidesPage />} />
-        <Route path="/resources/changelog" element={<ChangelogPage />} />
-        <Route path="/resources/status" element={<StatusPage />} />
+        <Route path="/docs" element={<DocsPage />} />
+        <Route path="/docs/api" element={<ApiReferencePage />} />
+        <Route path="/docs/sdk" element={<SdkPage />} />
+        <Route path="/docs/guides" element={<GuidesPage />} />
+        <Route path="/docs/changelog" element={<ChangelogPage />} />
+        <Route path="/docs/status" element={<StatusPage />} />
 
+        <Route path="/about" element={<Navigate to="/about/company" replace />} />
         <Route path="/about/company" element={<CompanyPage />} />
         <Route path="/about/technology" element={<TechnologyPage />} />
         <Route path="/about/careers" element={<CareersPage />} />
         <Route path="/about/community" element={<CommunityPage />} />
         <Route path="/about/contact" element={<ContactPage />} />
-        <Route path="/about/privacy" element={<PrivacyPage />} />
-        <Route path="/about/terms" element={<TermsPage />} />
         <Route path="/about/security" element={<SecurityPage />} />
+        <Route path="/contact" element={<Navigate to="/about/contact" replace />} />
+        <Route path="/legal/terms" element={<TermsPage />} />
+        <Route path="/legal/privacy" element={<PrivacyPage />} />
+        <Route path="/legal" element={<Navigate to="/legal/terms" replace />} />
         <Route path="/business/case-studies/unmanned-retail-hk" element={<Navigate to="/business#case-studies" replace />} />
         <Route path="/business/case-studies/drone-inspection-facade" element={<Navigate to="/business#case-studies" replace />} />
         <Route path="/business/case-studies/robotic-delivery-logistics" element={<Navigate to="/business#case-studies" replace />} />
+        <Route path="/case-studies" element={<Navigate to="/business/case-studies" replace />} />
+        <Route path="/resources/docs" element={<Navigate to="/docs" replace />} />
+        <Route path="/resources/api" element={<Navigate to="/docs/api" replace />} />
+        <Route path="/resources/guides" element={<Navigate to="/docs/guides" replace />} />
+        <Route path="/resources/changelog" element={<Navigate to="/docs/changelog" replace />} />
+        <Route path="/resources/status" element={<Navigate to="/docs/status" replace />} />
+        <Route path="/about/privacy" element={<Navigate to="/legal/privacy" replace />} />
+        <Route path="/about/terms" element={<Navigate to="/legal/terms" replace />} />
       </Route>
 
       {/* Legacy login redirect */}
-      <Route path="/login" element={<Navigate to="/signin" replace />} />
+      <Route path="/login" element={<Navigate to="/auth/sign-in" replace />} />
+      <Route path="/signin" element={<Navigate to="/auth/sign-in" replace />} />
+      <Route path="/signup" element={<Navigate to="/auth/sign-up" replace />} />
+      <Route path="/forgot-password" element={<Navigate to="/auth/forgot-password" replace />} />
+      <Route path="/reset-password" element={<Navigate to="/auth/reset-password" replace />} />
 
       {/* Protected Dashboard with portal sub-routes */}
       <Route
