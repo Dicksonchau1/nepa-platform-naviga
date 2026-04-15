@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Checkbox } from '@/components/ui/checkbox'
 import { ArrowRight, Eye, EyeSlash } from '@phosphor-icons/react'
 import { CinematicBackground } from '@/components/CinematicBackground'
 import { toast } from 'sonner'
@@ -12,6 +13,7 @@ export function SignInPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [rememberMe, setRememberMe] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
@@ -47,7 +49,7 @@ export function SignInPage() {
             
             <div className="relative z-10">
               <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold mb-2">Sign in to NEPA</h1>
+                <h1 className="text-3xl font-bold mb-2">Sign in to AuraSense</h1>
                 <p className="text-sm text-muted-foreground">
                   Access your deployments, dashboards, and APIs
                 </p>
@@ -71,7 +73,7 @@ export function SignInPage() {
                   <div className="flex items-center justify-between">
                     <Label htmlFor="password">Password</Label>
                     <Link
-                      to="/forgot-password"
+                      to="/auth/forgot-password"
                       className="text-xs text-primary hover:underline"
                     >
                       Forgot password?
@@ -97,11 +99,14 @@ export function SignInPage() {
                   </div>
                 </div>
 
-                <Button
-                  type="submit"
-                  className="w-full h-11"
-                  disabled={isLoading}
-                >
+                <div className="flex items-center justify-between text-sm text-muted-foreground">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <Checkbox checked={rememberMe} onCheckedChange={(value) => setRememberMe(Boolean(value))} />
+                    Remember me
+                  </label>
+                </div>
+
+                <Button type="submit" className="w-full h-11" disabled={isLoading}>
                   {isLoading ? 'Signing in...' : 'Sign in'}
                   {!isLoading && <ArrowRight className="ml-2" size={16} />}
                 </Button>
@@ -109,7 +114,7 @@ export function SignInPage() {
 
               <div className="mt-8 text-center text-sm">
                 <span className="text-muted-foreground">Don't have an account? </span>
-                <Link to="/signup" className="text-primary font-medium hover:underline">
+                <Link to="/auth/sign-up" className="text-primary font-medium hover:underline">
                   Get started
                 </Link>
               </div>

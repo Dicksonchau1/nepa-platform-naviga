@@ -1,5 +1,8 @@
 import ProductPage from './ProductPage'
 import { ShieldCheck, Eye, Brain, Robot } from '@phosphor-icons/react'
+export { SODAPage } from '@/routes/products/SODAPage'
+import { ProductPage } from './ProductPage'
+import { MonitorPlay, BellRinging, IdentificationBadge } from '@phosphor-icons/react'
 
 export default function SODAPage() {
   return (

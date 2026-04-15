@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import {
@@ -8,35 +10,121 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { CaretDown, List } from '@phosphor-icons/react'
+import logoImage from '@/assets/images/Gemini_Generated_Image_8oxhp28oxhp28oxh.png'
+
+const productLinks = [
+  {
+    title: 'SODA — Unmanned Store OS',
+    description: 'Autonomous store operations and orchestration.',
+    href: '/products/soda',
+  },
+  {
+    title: 'RODA — Robotic Execution',
+    description: 'Physical restocking and task execution.',
+    href: '/products/roda',
+  },
+  {
+    title: 'VODA / CODA — Video Intelligence',
+    description: 'Video-to-evidence SaaS pipeline.',
+    href: '/products/voda-coda',
+  },
+  {
+    title: 'HRI — Interview Analytics',
+    description: 'Human resource intelligence APIs.',
+    href: '/products/hri',
+  },
+  {
+    title: 'FODA — Inspection (Optional)',
+    description: 'Drone and inspection intelligence.',
+    href: '/products/foda',
+  },
+]
+
+const docsLinks = [
+  { title: 'Docs', href: '/docs' },
+  { title: 'API Reference', href: '/docs/api' },
+  { title: 'SDKs', href: '/docs/sdk' },
+]
+
+const aboutLinks = [
+  { title: 'Company', href: '/about/company' },
+  { title: 'Technology', href: '/about/technology' },
+  { title: 'Security', href: '/about/security' },
+]
 import { CaretDown, List, X } from '@phosphor-icons/react'
 import logoImage from '@/assets/images/Gemini_Generated_Image_8oxhp28oxhp28oxh.png'
 
+const SCROLL_THRESHOLD = 20
+
 export function Navbar() {
   const [openMenu, setOpenMenu] = useState<string | null>(null)
-  const [mobileOpen, setMobileOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
   const location = useLocation()
+  const navigate = useNavigate()
+  const mobileMenuId = 'mobile-navigation'
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 10)
+    handleScroll()
+  const [isMobileOpen, setIsMobileOpen] = useState(false)
+  const location = useLocation()
+  const navigate = useNavigate()
 
   const isActive = (path: string) => location.pathname === path
 
   useEffect(() => {
+    let ticking = false
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > SCROLL_THRESHOLD)
+          ticking = false
+        })
+        ticking = true
+      }
     }
 
-    window.addEventListener('scroll', handleScroll)
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  useEffect(() => {
+    setOpenMenu(null)
+  }, [location.pathname])
+
+  const handleNavigate = (href: string) => {
+    navigate(href)
+    setOpenMenu(null)
+    setMobileOpen(false)
+  }
+
+  const isActive = (path: string) => {
+    if (path === '/') return location.pathname === '/'
+    return location.pathname === path || location.pathname.startsWith(`${path}/`)
+  }
+
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 ${
-      isScrolled 
-        ? 'border-white/10 bg-[#050508]/95 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,212,255,0.1)]' 
-        : 'border-white/5 bg-[#050508]/80 backdrop-blur-md'
-    }`}>
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 ${
+        isScrolled
+          ? 'border-white/10 bg-[#050508]/95 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,212,255,0.1)]'
+          : 'border-white/5 bg-[#050508]/80 backdrop-blur-md'
+      }`}
+    >
       <div className="container mx-auto px-6 py-3.5">
-        <div className="flex items-center justify-between gap-8">
-          <Link to="/" className="flex items-center gap-2.5 group">
+        <div className="flex items-center justify-between gap-6">
+          <Link
+            to="/"
+            onClick={() => {
+              setOpenMenu(null)
+              setMobileOpen(false)
+            }}
+            aria-label="Navigate to home page"
+            className="flex items-center gap-2.5 group"
+          >
             <div className="relative h-8 w-8 flex items-center justify-center">
               <img
                 src={logoImage}
@@ -49,14 +137,37 @@ export function Navbar() {
             </span>
           </Link>
 
+          <div className="hidden lg:flex items-center gap-6">
+            <button
+              type="button"
+              onClick={() => handleNavigate('/platform')}
+              className={`text-sm font-medium transition-colors ${
+                isActive('/platform') ? 'text-white' : 'text-white/70 hover:text-white'
+              }`}
+            >
+              Platform
+            </button>
+
           <div className="hidden lg:flex items-center gap-8">
+            <DropdownMenu
+              open={openMenu === 'products'}
+              onOpenChange={(open) => setOpenMenu(open ? 'products' : null)}
+            >
             <DropdownMenu open={openMenu === 'products'} onOpenChange={(open) => setOpenMenu(open ? 'products' : null)}>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1 text-sm font-medium text-white/70 hover:text-white transition-colors">
+                <button
+                  type="button"
+                  className={`flex items-center gap-1 text-sm font-medium transition-colors ${
+                    openMenu === 'products' || location.pathname.startsWith('/products')
+                      ? 'text-white'
+                      : 'text-white/70 hover:text-white'
+                  }`}
+                >
                   Products
                   <CaretDown
                     size={14}
                     weight="bold"
+                    className={`transition-transform ${openMenu === 'products' ? 'rotate-180' : ''}`}
                     className={`transition-transform ${
                       openMenu === 'products' ? 'rotate-180' : ''
                     }`}
@@ -65,8 +176,14 @@ export function Navbar() {
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="center"
-                className="w-72 bg-[#0A0D14]/98 backdrop-blur-xl border-white/10"
+                className="w-80 bg-[#0A0D14]/98 backdrop-blur-xl border-white/10"
               >
+                {productLinks.map((item) => (
+                  <DropdownMenuItem
+                    key={item.href}
+                    onClick={() => handleNavigate(item.href)}
+                    className="cursor-pointer focus:bg-cyan-500/10"
+                  >
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10">
                   <Link to="/products/soda" className="flex flex-col gap-0.5 px-3 py-2.5" onClick={() => setOpenMenu(null)}>
                     <span className="text-sm font-medium text-white">SODA</span>
@@ -97,16 +214,46 @@ export function Navbar() {
                     <span className="text-xs text-gray-500 font-mono">Drone inspection · audit-grade evidence</span>
                   </Link>
                 </DropdownMenuItem>
+                  <NavLink to="/products/soda" onClick={() => setOpenMenu(null)}>
+                    <div className="flex flex-col gap-1 py-1.5">
+                      <span className="font-semibold text-sm text-white">{item.title}</span>
+                      <span className="text-xs text-white/50">{item.description}</span>
+                    </div>
+                  </DropdownMenuItem>
+                ))}
               </DropdownMenuContent>
             </DropdownMenu>
 
+            <button
+              type="button"
+              onClick={() => handleNavigate('/pricing')}
+              className={`text-sm font-medium transition-colors ${
+                isActive('/pricing') ? 'text-white' : 'text-white/70 hover:text-white'
+              }`}
+            >
+              Pricing
+            </button>
+
+            <DropdownMenu open={openMenu === 'docs'} onOpenChange={(open) => setOpenMenu(open ? 'docs' : null)}>
+            <DropdownMenu
+              open={openMenu === 'resources'}
+              onOpenChange={(open) => setOpenMenu(open ? 'resources' : null)}
+            >
             <DropdownMenu open={openMenu === 'resources'} onOpenChange={(open) => setOpenMenu(open ? 'resources' : null)}>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1 text-sm font-medium text-white/70 hover:text-white transition-colors">
-                  Resources
+                <button
+                  type="button"
+                  className={`flex items-center gap-1 text-sm font-medium transition-colors ${
+                    openMenu === 'docs' || location.pathname.startsWith('/docs')
+                      ? 'text-white'
+                      : 'text-white/70 hover:text-white'
+                  }`}
+                >
+                  Docs
                   <CaretDown
                     size={14}
                     weight="bold"
+                    className={`transition-transform ${openMenu === 'docs' ? 'rotate-180' : ''}`}
                     className={`transition-transform ${
                       openMenu === 'resources' ? 'rotate-180' : ''
                     }`}
@@ -115,8 +262,21 @@ export function Navbar() {
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="center"
-                className="w-48 bg-[#0A0D14]/98 backdrop-blur-xl border-white/10"
+                className="w-56 bg-[#0A0D14]/98 backdrop-blur-xl border-white/10"
               >
+                {docsLinks.map((item) => (
+                  <DropdownMenuItem
+                    key={item.href}
+                    onClick={() => handleNavigate(item.href)}
+                    className="cursor-pointer focus:bg-cyan-500/10 text-white/80"
+                  >
+                    {item.title}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu open={openMenu === 'about'} onOpenChange={(open) => setOpenMenu(open ? 'about' : null)}>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
                   <NavLink to="/resources/docs" onClick={() => setOpenMenu(null)}>
                     Documentation
@@ -154,13 +314,25 @@ export function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
 
+            <DropdownMenu
+              open={openMenu === 'business'}
+              onOpenChange={(open) => setOpenMenu(open ? 'business' : null)}
+            >
             <DropdownMenu open={openMenu === 'business'} onOpenChange={(open) => setOpenMenu(open ? 'business' : null)}>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1 text-sm font-medium text-white/70 hover:text-white transition-colors">
-                  Business
+                <button
+                  type="button"
+                  className={`flex items-center gap-1 text-sm font-medium transition-colors ${
+                    openMenu === 'about' || location.pathname.startsWith('/about')
+                      ? 'text-white'
+                      : 'text-white/70 hover:text-white'
+                  }`}
+                >
+                  About
                   <CaretDown
                     size={14}
                     weight="bold"
+                    className={`transition-transform ${openMenu === 'about' ? 'rotate-180' : ''}`}
                     className={`transition-transform ${
                       openMenu === 'business' ? 'rotate-180' : ''
                     }`}
@@ -169,8 +341,85 @@ export function Navbar() {
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="center"
-                className="w-48 bg-[#0A0D14]/98 backdrop-blur-xl border-white/10"
+                className="w-56 bg-[#0A0D14]/98 backdrop-blur-xl border-white/10"
               >
+                {aboutLinks.map((item) => (
+                  <DropdownMenuItem
+                    key={item.href}
+                    onClick={() => handleNavigate(item.href)}
+                    className="cursor-pointer focus:bg-cyan-500/10 text-white/80"
+                  >
+                    {item.title}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <button
+              type="button"
+              onClick={() => handleNavigate('/contact')}
+              className={`text-sm font-medium transition-colors ${
+                isActive('/contact') ? 'text-white' : 'text-white/70 hover:text-white'
+              }`}
+            >
+              Contact
+            </button>
+          </div>
+
+          <div className="hidden lg:flex items-center gap-3">
+            <Button
+              onClick={() => handleNavigate('/auth/sign-in')}
+              size="sm"
+              variant="ghost"
+              className="text-sm font-medium text-white/60 hover:text-white hover:bg-white/5 transition-all"
+            >
+              Sign in
+            </Button>
+
+            <Button
+              onClick={() => handleNavigate('/contact')}
+              size="sm"
+              className="relative text-sm font-semibold bg-gradient-to-r from-cyan-500 to-blue-500 text-black hover:from-cyan-400 hover:to-blue-400 transition-all shadow-[0_0_20px_rgba(0,212,255,0.3)] hover:shadow-[0_0_30px_rgba(0,212,255,0.5)] border-0"
+            >
+              Start pilot
+            </Button>
+          </div>
+
+          <div className="flex items-center gap-2 lg:hidden">
+            <Button
+              onClick={() => handleNavigate('/auth/sign-in')}
+              size="sm"
+              variant="ghost"
+              className="text-sm font-medium text-white/70 hover:text-white hover:bg-white/5"
+            >
+              Sign in
+            </Button>
+            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+              <SheetTrigger asChild>
+                <button
+                  type="button"
+                  aria-label="Open navigation menu"
+                  aria-expanded={mobileOpen}
+                  aria-controls={mobileMenuId}
+                  className="inline-flex items-center justify-center rounded-md border border-white/10 bg-white/5 p-2 text-white hover:bg-white/10"
+                >
+                  <List size={18} weight="bold" />
+                </button>
+              </SheetTrigger>
+              <SheetContent id={mobileMenuId} className="bg-[#050508]/98 border-white/10 text-white">
+                <div className="flex flex-col gap-6 pt-6">
+                  <div className="flex flex-col gap-2">
+                    <span className="text-xs font-mono uppercase tracking-widest text-white/40">
+                      Platform
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleNavigate('/platform')}
+                      className="text-left text-base font-semibold text-white"
+                    >
+                      Platform overview
+                    </button>
+                  </div>
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-cyan-500/10 text-white/80">
                   <NavLink to="/business/partnership" onClick={() => setOpenMenu(null)}>
                     Partnership
@@ -189,6 +438,10 @@ export function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
 
+            <DropdownMenu
+              open={openMenu === 'about'}
+              onOpenChange={(open) => setOpenMenu(open ? 'about' : null)}
+            >
             <DropdownMenu open={openMenu === 'about'} onOpenChange={(open) => setOpenMenu(open ? 'about' : null)}>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-1 text-sm font-medium text-white/70 hover:text-white transition-colors">
@@ -234,34 +487,180 @@ export function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <div className="flex items-center gap-3">
-              <Button
-                asChild
-                size="sm"
-                variant="ghost"
-                className="text-sm font-medium text-white/60 hover:text-white hover:bg-white/5 transition-all"
-              >
-                <Link to="/dashboard">Console</Link>
-              </Button>
+                  <div className="flex flex-col gap-2">
+                    <span className="text-xs font-mono uppercase tracking-widest text-white/40">
+                      Products
+                    </span>
+                    {productLinks.map((item) => (
+                      <button
+                        key={item.href}
+                        type="button"
+                        onClick={() => handleNavigate(item.href)}
+                        className="text-left text-sm text-white/80 hover:text-white"
+                      >
+                        {item.title}
+                      </button>
+                    ))}
+                  </div>
 
-              <Button
-                asChild
-                size="sm"
-                className="relative text-sm font-semibold bg-gradient-to-r from-cyan-500 to-blue-500 text-black hover:from-cyan-400 hover:to-blue-400 transition-all shadow-[0_0_20px_rgba(0,212,255,0.3)] hover:shadow-[0_0_30px_rgba(0,212,255,0.5)] border-0"
-              >
-                <Link to="/agent">
-                  <span className="relative z-10">NEPA Agent</span>
-                </Link>
-              </Button>
+                  <div className="flex flex-col gap-2">
+                    <span className="text-xs font-mono uppercase tracking-widest text-white/40">
+                      Docs
+                    </span>
+                    {docsLinks.map((item) => (
+                      <button
+                        key={item.href}
+                        type="button"
+                        onClick={() => handleNavigate(item.href)}
+                        className="text-left text-sm text-white/80 hover:text-white"
+                      >
+                        {item.title}
+                      </button>
+                    ))}
+                  </div>
 
-              <Button
-                asChild
-                size="sm"
-                className="text-sm font-semibold bg-white/10 text-white hover:bg-white/15 border border-white/20 hover:border-white/30 transition-all backdrop-blur-sm"
+                  <div className="flex flex-col gap-2">
+                    <span className="text-xs font-mono uppercase tracking-widest text-white/40">
+                      Company
+                    </span>
+                    {aboutLinks.map((item) => (
+                      <button
+                        key={item.href}
+                        type="button"
+                        onClick={() => handleNavigate(item.href)}
+                        className="text-left text-sm text-white/80 hover:text-white"
+                      >
+                        {item.title}
+                      </button>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => handleNavigate('/contact')}
+                      className="text-left text-sm text-white/80 hover:text-white"
+                    >
+                      Contact
+                    </button>
+                  </div>
+
+                  <div className="flex flex-col gap-3 pt-2">
+                    <Button
+                      onClick={() => handleNavigate('/pricing')}
+                      variant="outline"
+                      className="border-white/20 text-white"
+                    >
+                      View pricing
+                    </Button>
+                    <Button
+                      onClick={() => handleNavigate('/contact')}
+                      className="bg-gradient-to-r from-cyan-500 to-blue-500 text-black"
+                    >
+                      Start pilot
+                    </Button>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
+          <div className="lg:hidden flex items-center">
+            <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
+              <SheetTrigger asChild>
+                <button
+                  type="button"
+                  className="inline-flex items-center justify-center rounded-md border border-white/15 bg-white/5 p-2 text-white/80 hover:text-white hover:border-cyan-500/40 transition-colors"
+                  aria-label="Open navigation menu"
+                >
+                  <List size={20} weight="bold" />
+                </button>
+              </SheetTrigger>
+              <SheetContent
+                side="left"
+                className="w-full sm:max-w-none bg-[#060b14] border-r border-cyan-500/20 p-0"
               >
-                <Link to="/signup">Sign up</Link>
-              </Button>
-            </div>
+                <div className="flex h-full flex-col px-6 py-8">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={logoImage}
+                      alt="AuraSense"
+                      className="h-7 w-7 object-contain rounded-sm [mix-blend-mode:lighten]"
+                    />
+                    <span className="text-sm font-semibold text-white">AuraSense</span>
+                  </div>
+
+                  <div className="mt-8 flex-1 overflow-y-auto space-y-8">
+                    <div className="space-y-3">
+                      <p className="text-xs font-mono uppercase tracking-[0.3em] text-cyan-400/70">
+                        Products
+                      </p>
+                      <div className="flex flex-col gap-2">
+                        <Link to="/products/soda" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          SODA
+                        </Link>
+                        <Link to="/products/roda" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          RODA
+                        </Link>
+                        <Link to="/products/voda-coda" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          VODA/CODA
+                        </Link>
+                        <Link to="/products/hri" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          HRI
+                        </Link>
+                        <Link to="/products/foda" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          FODA
+                        </Link>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <p className="text-xs font-mono uppercase tracking-[0.3em] text-cyan-400/70">
+                        Explore
+                      </p>
+                      <div className="flex flex-col gap-2">
+                        <Link to="/nepa" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          NEPA Core
+                        </Link>
+                        <Link to="/pricing" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          Pricing
+                        </Link>
+                        <Link to="/resources/docs" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          Docs
+                        </Link>
+                        <Link to="/about/company" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          About
+                        </Link>
+                        <Link to="/about/contact" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          Contact
+                        </Link>
+                        <Link to="/business" onClick={() => setIsMobileOpen(false)} className="text-white/80 hover:text-white">
+                          Business
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-8 grid gap-3">
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-center text-white/70 hover:text-white hover:bg-white/10"
+                      onClick={() => {
+                        navigate('/auth/sign-in')
+                        setIsMobileOpen(false)
+                      }}
+                    >
+                      Sign In
+                    </Button>
+                    <Button
+                      className="w-full justify-center bg-cyan-500 text-black hover:bg-cyan-400"
+                      onClick={() => {
+                        navigate('/auth/sign-up')
+                        setIsMobileOpen(false)
+                      }}
+                    >
+                      Start Pilot
+                    </Button>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>

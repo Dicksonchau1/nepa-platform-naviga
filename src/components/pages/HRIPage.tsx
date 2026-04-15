@@ -56,6 +56,13 @@ export default function HRIPage() {
         '> report_generated: hri_eval_2024_0415.json',
         '> audit_chain sealed — export ready',
       ]}
+import { Placeholder } from '@/components/Placeholder'
+
+export default function HRIPage() {
+  return (
+    <Placeholder
+      title="HRI — HR Intelligence"
+      description="Interview analysis and candidate scoring powered by NEPA intelligence."
     />
   )
 }

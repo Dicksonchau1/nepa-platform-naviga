@@ -1,3 +1,4 @@
+export { VODAPage } from '@/routes/products/VODAPage'
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { HudPanel } from '@/components/HudPanel'

@@ -1,5 +1,8 @@
 import ProductPage from './ProductPage'
 import { ArrowsClockwise, Cpu, Package, Gear } from '@phosphor-icons/react'
+export { RODAPage } from '@/routes/products/RODAPage'
+import { ProductPage } from './ProductPage'
+import { Path, GitBranch, UserCircleGear } from '@phosphor-icons/react'
 
 export default function RODAPage() {
   return (

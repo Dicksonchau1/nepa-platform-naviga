@@ -8,14 +8,14 @@ export function Footer() {
           <div>
             <h3 className="text-sm font-semibold text-foreground mb-3">Platform</h3>
             <div className="flex flex-col gap-2 text-sm text-muted-foreground">
-              <Link to="/landing" className="hover:text-primary transition-colors">
-                Landing
-              </Link>
               <Link to="/" className="hover:text-primary transition-colors">
                 Home
               </Link>
-              <Link to="/playground" className="hover:text-primary transition-colors">
-                Playground
+              <Link to="/platform" className="hover:text-primary transition-colors">
+                Platform
+              </Link>
+              <Link to="/nepa" className="hover:text-primary transition-colors">
+                NEPA
               </Link>
             </div>
           </div>
@@ -44,19 +44,19 @@ export function Footer() {
           <div>
             <h3 className="text-sm font-semibold text-foreground mb-3">Resources</h3>
             <div className="flex flex-col gap-2 text-sm text-muted-foreground">
-              <Link to="/resources/docs" className="hover:text-primary transition-colors">
+              <Link to="/docs" className="hover:text-primary transition-colors">
                 Docs
               </Link>
-              <Link to="/resources/api" className="hover:text-primary transition-colors">
+              <Link to="/docs/api" className="hover:text-primary transition-colors">
                 API Reference
               </Link>
-              <Link to="/resources/guides" className="hover:text-primary transition-colors">
-                Guides
+              <Link to="/docs/sdk" className="hover:text-primary transition-colors">
+                SDKs
               </Link>
-              <Link to="/resources/changelog" className="hover:text-primary transition-colors">
+              <Link to="/docs/changelog" className="hover:text-primary transition-colors">
                 Changelog
               </Link>
-              <Link to="/resources/status" className="hover:text-primary transition-colors">
+              <Link to="/docs/status" className="hover:text-primary transition-colors">
                 Status
               </Link>
             </div>
@@ -68,13 +68,13 @@ export function Footer() {
               <Link to="/about/company" className="hover:text-primary transition-colors">
                 About
               </Link>
-              <Link to="/about/contact" className="hover:text-primary transition-colors">
+              <Link to="/contact" className="hover:text-primary transition-colors">
                 Contact
               </Link>
-              <Link to="/about/privacy" className="hover:text-primary transition-colors">
+              <Link to="/legal/privacy" className="hover:text-primary transition-colors">
                 Privacy
               </Link>
-              <Link to="/about/terms" className="hover:text-primary transition-colors">
+              <Link to="/legal/terms" className="hover:text-primary transition-colors">
                 Terms
               </Link>
               <Link to="/about/security" className="hover:text-primary transition-colors">

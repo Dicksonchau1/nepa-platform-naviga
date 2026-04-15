@@ -989,6 +989,204 @@ export type Database = {
           },
         ]
       }
+      api_keys: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          id: string
+          key_hash: string
+          key_prefix: string
+          last_used_at: string | null
+          name: string
+          product_scopes: string[] | null
+          revoked: boolean
+          workspace_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          key_hash: string
+          key_prefix: string
+          last_used_at?: string | null
+          name: string
+          product_scopes?: string[] | null
+          revoked?: boolean
+          workspace_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          key_hash?: string
+          key_prefix?: string
+          last_used_at?: string | null
+          name?: string
+          product_scopes?: string[] | null
+          revoked?: boolean
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      usage_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json | null
+          product: string
+          quantity: number | null
+          workspace_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          product: string
+          quantity?: number | null
+          workspace_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          product?: string
+          quantity?: number | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      workspace_members: {
+        Row: {
+          joined_at: string | null
+          role: string
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          joined_at?: string | null
+          role?: string
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          joined_at?: string | null
+          role?: string
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: []
+      }
+      workspace_subscriptions: {
+        Row: {
+          api_quota_monthly: number | null
+          billing_cycle_end: string | null
+          billing_cycle_start: string | null
+          camera_limit: number | null
+          coda_enabled: boolean | null
+          consultation_calls_monthly: number | null
+          created_at: string | null
+          foda_enabled: boolean | null
+          hri_calls_monthly: number | null
+          hri_enabled: boolean | null
+          id: string
+          max_stores: number | null
+          max_users: number | null
+          owner_id: string | null
+          plan: string
+          roda_enabled: boolean | null
+          soda_enabled: boolean | null
+          status: string
+          storage_retention_days: number | null
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          updated_at: string | null
+          video_minutes_monthly: number | null
+          voda_enabled: boolean | null
+          workspace_id: string | null
+        }
+        Insert: {
+          api_quota_monthly?: number | null
+          billing_cycle_end?: string | null
+          billing_cycle_start?: string | null
+          camera_limit?: number | null
+          coda_enabled?: boolean | null
+          consultation_calls_monthly?: number | null
+          created_at?: string | null
+          foda_enabled?: boolean | null
+          hri_calls_monthly?: number | null
+          hri_enabled?: boolean | null
+          id?: string
+          max_stores?: number | null
+          max_users?: number | null
+          owner_id?: string | null
+          plan?: string
+          roda_enabled?: boolean | null
+          soda_enabled?: boolean | null
+          status?: string
+          storage_retention_days?: number | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string | null
+          video_minutes_monthly?: number | null
+          voda_enabled?: boolean | null
+          workspace_id?: string | null
+        }
+        Update: {
+          api_quota_monthly?: number | null
+          billing_cycle_end?: string | null
+          billing_cycle_start?: string | null
+          camera_limit?: number | null
+          coda_enabled?: boolean | null
+          consultation_calls_monthly?: number | null
+          created_at?: string | null
+          foda_enabled?: boolean | null
+          hri_calls_monthly?: number | null
+          hri_enabled?: boolean | null
+          id?: string
+          max_stores?: number | null
+          max_users?: number | null
+          owner_id?: string | null
+          plan?: string
+          roda_enabled?: boolean | null
+          soda_enabled?: boolean | null
+          status?: string
+          storage_retention_days?: number | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string | null
+          video_minutes_monthly?: number | null
+          voda_enabled?: boolean | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      workspaces: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+          owner_id: string | null
+          slug: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+          owner_id?: string | null
+          slug: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+          owner_id?: string | null
+          slug?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -1228,4 +1426,3 @@ export const Constants = {
     },
   },
 } as const
-

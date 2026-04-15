@@ -137,6 +137,20 @@ type ChartTooltipContentProps = ComponentProps<"div"> & {
   nameKey?: string
   labelKey?: string
 }
+type TooltipValue = number | string | ReadonlyArray<number | string>
+type TooltipName = number | string
+
+type TooltipContentProps = RechartsPrimitive.TooltipContentProps<
+  TooltipValue,
+  TooltipName
+> &
+  ComponentProps<"div"> & {
+    hideLabel?: boolean
+    hideIndicator?: boolean
+    indicator?: "line" | "dot" | "dashed"
+    nameKey?: string
+    labelKey?: string
+  }
 
 function ChartTooltipContent({
   active,
@@ -153,6 +167,7 @@ function ChartTooltipContent({
   nameKey,
   labelKey,
 }: ChartTooltipContentProps) {
+}: TooltipContentProps) {
   const { config } = useChart()
 
   const tooltipLabel = useMemo(() => {
@@ -213,7 +228,7 @@ function ChartTooltipContent({
 
           return (
             <div
-              key={item.dataKey}
+              key={key}
               className={cn(
                 "[&>svg]:text-muted-foreground flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5",
                 indicator === "dot" && "items-center"
@@ -281,6 +296,10 @@ type ChartLegendContentProps = ComponentProps<"div"> & {
   hideIcon?: boolean
   payload?: ChartPayloadItem[]
   verticalAlign?: "top" | "bottom"
+type LegendContentProps = ComponentProps<"div"> & {
+  payload?: RechartsPrimitive.LegendPayload[]
+  verticalAlign?: "top" | "bottom" | "middle"
+  hideIcon?: boolean
   nameKey?: string
 }
 
@@ -291,6 +310,7 @@ function ChartLegendContent({
   verticalAlign = "bottom",
   nameKey,
 }: ChartLegendContentProps) {
+}: LegendContentProps) {
   const { config } = useChart()
 
   if (!payload?.length) {

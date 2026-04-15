@@ -117,14 +117,14 @@ export function LoginPage() {
           </form>
 
           <div className="mt-6 text-center text-sm text-muted-foreground">
-            <Link to="/forgot-password" className="hover:text-primary transition-colors">
+            <Link to="/auth/forgot-password" className="hover:text-primary transition-colors">
               Forgot password?
             </Link>
           </div>
 
           <div className="mt-4 text-center text-sm text-muted-foreground">
             Don't have an account?{' '}
-            <Link to="/signup" className="text-primary hover:underline">
+            <Link to="/auth/sign-up" className="text-primary hover:underline">
               Sign up
             </Link>
           </div>

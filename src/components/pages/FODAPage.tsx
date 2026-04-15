@@ -1,4 +1,6 @@
 import ProductPage from './ProductPage'
+export { FODAPage } from '@/routes/products/FODAPage'
+import { ProductPage } from './ProductPage'
 import { Drone, Scan, Certificate } from '@phosphor-icons/react'
 
 export default function FODAPage() {

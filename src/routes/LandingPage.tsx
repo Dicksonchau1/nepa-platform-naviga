@@ -799,11 +799,11 @@ export function LandingPage() {
           </p>
           <div className="flex flex-wrap gap-6">
             {[
-              { label: 'Privacy',  to: '/about/privacy' },
-              { label: 'Terms',    to: '/about/terms' },
+              { label: 'Privacy',  to: '/legal/privacy' },
+              { label: 'Terms',    to: '/legal/terms' },
               { label: 'Security', to: '/about/security' },
               { label: 'Contact',  to: '/about/contact' },
-              { label: 'Status',   to: '/resources/status' },
+              { label: 'Status',   to: '/docs/status' },
             ].map((l) => (
               <Link
                 key={l.to}

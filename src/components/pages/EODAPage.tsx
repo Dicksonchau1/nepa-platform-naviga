@@ -1,5 +1,8 @@
 import ProductPage from './ProductPage'
 import { Cpu, Lightning, CloudSlash, ShieldCheck } from '@phosphor-icons/react'
+export { EODAPage } from '@/routes/products/EODAPage'
+import { ProductPage } from './ProductPage'
+import { Cpu, Lightning, CloudSlash } from '@phosphor-icons/react'
 
 export default function EODAPage() {
   return (
