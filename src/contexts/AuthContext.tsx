@@ -14,13 +14,13 @@ interface AuthContextType {
   isLoading: boolean
   error: string | null
   signIn: (email: string, password: string) => Promise<void>
-  signUp: (
-    email: string,
-    password: string,
-    displayName?: string,
-    company?: string,
+  signUp: (params: {
+    email: string
+    password: string
+    displayName?: string
+    company?: string
     useCase?: string
-  ) => Promise<void>
+  }) => Promise<void>
   signOut: () => Promise<void>
   resetPassword: (email: string) => Promise<void>
   updatePassword: (newPassword: string) => Promise<void>
@@ -103,13 +103,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const signUp = async (
-    email: string,
-    password: string,
-    displayName?: string,
-    company?: string,
+  const signUp = async ({
+    email,
+    password,
+    displayName,
+    company,
+    useCase,
+  }: {
+    email: string
+    password: string
+    displayName?: string
+    company?: string
     useCase?: string
-  ) => {
+  }) => {
     setIsLoading(true)
     setError(null)
     try {

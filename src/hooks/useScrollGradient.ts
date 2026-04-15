@@ -5,8 +5,6 @@ export function useScrollGradient() {
   const [gradientPosition, setGradientPosition] = useState({ x: 50, y: 50 })
 
   useEffect(() => {
-    if (typeof window === 'undefined') return undefined
-
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
     let frameId: number | null = null
     let latestScroll = window.scrollY

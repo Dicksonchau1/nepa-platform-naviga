@@ -111,7 +111,7 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
         const lowerTitle = item.title.toLowerCase()
         const lowerContent = item.content.toLowerCase()
         const lowerSection = (item.section || '').toLowerCase()
-        const keywords = (item.keywords || []).map((keyword) => keyword.toLowerCase())
+        const keywords = item.keywords || []
 
         if (lowerTitle.includes(lowerQuery)) score += 100
         if (lowerContent.includes(lowerQuery)) score += 50

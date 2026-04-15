@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -90,9 +90,12 @@ export function Navbar() {
     >
       <div className="container mx-auto px-6 py-3.5">
         <div className="flex items-center justify-between gap-6">
-          <button
-            type="button"
-            onClick={() => handleNavigate('/')}
+          <Link
+            to="/"
+            onClick={() => {
+              setOpenMenu(null)
+              setMobileOpen(false)
+            }}
             aria-label="Navigate to home page"
             className="flex items-center gap-2.5 group"
           >
@@ -106,7 +109,7 @@ export function Navbar() {
             <span className="text-[15px] font-semibold text-white group-hover:text-cyan-400 transition-colors">
               AuraSense
             </span>
-          </button>
+          </Link>
 
           <div className="hidden lg:flex items-center gap-6">
             <button

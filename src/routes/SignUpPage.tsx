@@ -44,7 +44,13 @@ export function SignUpPage() {
     setIsLoading(true)
 
     try {
-      await signUp(email, password, name, company, useCase)
+      await signUp({
+        email,
+        password,
+        displayName: name,
+        company,
+        useCase,
+      })
       toast.success('Account created! Check your email to confirm.')
       navigate('/auth/sign-in')
     } catch (err) {
@@ -173,14 +179,8 @@ export function SignUpPage() {
                     htmlFor="terms"
                     className="text-sm text-muted-foreground leading-tight cursor-pointer"
                   >
-                    I agree to the{' '}
-                <Link to="/legal/terms" className="text-primary hover:underline">
-                  Terms
-                </Link>{' '}
-                and{' '}
-                <Link to="/legal/privacy" className="text-primary hover:underline">
-                  Privacy Policy
-                </Link>
+                    I agree to the <Link to="/legal/terms" className="text-primary hover:underline">Terms</Link> and{' '}
+                    <Link to="/legal/privacy" className="text-primary hover:underline">Privacy Policy</Link>
                   </label>
                 </div>
 
