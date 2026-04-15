@@ -1,11 +1,7 @@
 import { ProductPage } from './ProductPage'
 import { MonitorPlay, BellRinging, IdentificationBadge } from '@phosphor-icons/react'
 
-interface SODAPageProps {
-  onNavigate: (page: string) => void
-}
-
-export function SODAPage({ onNavigate }: SODAPageProps) {
+export function SODAPage() {
   return (
     <ProductPage
       eyebrow="NEPA PLATFORM · SURVEILLANCE AGENT"
@@ -33,7 +29,6 @@ export function SODAPage({ onNavigate }: SODAPageProps) {
       ]}
       integrationTitle="How SODA Connects to NEPA Core"
       integrationDescription="SODA runs the NEPA inference core across distributed camera nodes. Central control plane for rule management and alert aggregation. Supports ONVIF cameras and custom RTSP streams. Full GDPR and HIPAA compliance mode available."
-      onNavigate={onNavigate}
     />
   )
 }
