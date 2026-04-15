@@ -31,7 +31,7 @@ export function DashboardLayout() {
   const handleLogout = async () => {
     await signOut()
     toast.success('Signed out successfully')
-    navigate('/signin')
+    navigate('/auth/sign-in')
   }
 
   return (

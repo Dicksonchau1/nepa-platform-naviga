@@ -1,3 +1,4 @@
+export { SODAPage } from '@/routes/products/SODAPage'
 import { ProductPage } from './ProductPage'
 import { MonitorPlay, BellRinging, IdentificationBadge } from '@phosphor-icons/react'
 

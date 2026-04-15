@@ -1,3 +1,4 @@
+export { RODAPage } from '@/routes/products/RODAPage'
 import { ProductPage } from './ProductPage'
 import { Path, GitBranch, UserCircleGear } from '@phosphor-icons/react'
 

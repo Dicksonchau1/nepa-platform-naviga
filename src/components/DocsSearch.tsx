@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { MagnifyingGlass, X, FileText, Code, Book, Clock, ListChecks, Funnel, Tag, Cube } from '@phosphor-icons/react'
 import { MagnifyingGlass, X, FileText, Code, Book, Clock, Lightbulb, Funnel } from '@phosphor-icons/react'
 import { Input } from '@/components/ui/input'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -7,6 +8,17 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { searchContent } from '@/data/searchContent'
+
+export interface SearchableContent {
+  id: string
+  title: string
+  content: string
+  category: 'docs' | 'api' | 'guides' | 'changelog' | 'status' | 'products' | 'pricing'
+  section?: string
+  url: string
+  keywords?: string[]
+}
 import { searchContent, type SearchEntry } from '@/data/searchContent'
 
 const categoryIcons = {
@@ -14,6 +26,9 @@ const categoryIcons = {
   api: Code,
   guide: Book,
   changelog: Clock,
+  status: ListChecks,
+  products: Cube,
+  pricing: Tag,
   concept: Lightbulb,
 }
 
@@ -22,6 +37,9 @@ const categoryLabels = {
   api: 'API Reference',
   guide: 'Guide',
   changelog: 'Changelog',
+  status: 'Status',
+  products: 'Products',
+  pricing: 'Pricing',
   concept: 'Concept',
 }
 
@@ -37,6 +55,10 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
   const [showFilters, setShowFilters] = useState(false)
   const navigate = useNavigate()
 
+  const availableSections = useMemo(() => {
+    const sections = new Set<string>()
+    searchContent.forEach(item => {
+      if (item.section) sections.add(item.section)
   const availableTags = useMemo(() => {
     const tags = new Set<string>()
     searchContent.forEach(item => {
@@ -105,6 +127,10 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
         terms.forEach(term => {
           if (lowerTitle.includes(term)) score += 20
           if (lowerContent.includes(term)) score += 10
+          if (lowerSection.includes(term)) score += 5
+            keywords.forEach(keyword => {
+              if (keyword.includes(term)) score += 8
+            })
           if (lowerTags.some(tag => tag.includes(term))) score += 8
         })
 
@@ -147,8 +173,8 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
           <div className="space-y-3">
             <div className="relative">
               <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              <Input
-                placeholder="Search docs, API reference, guides..."
+                <Input
+                  placeholder="Search docs, products, pricing..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 className="pl-10 pr-10 h-12 text-base"
@@ -342,6 +368,10 @@ interface SearchTriggerProps {
 }
 
 export function SearchTrigger({ onOpen }: SearchTriggerProps) {
+  const isMac =
+    typeof navigator !== 'undefined' &&
+    /Mac|iPhone|iPad/.test(navigator.platform)
+
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
@@ -361,7 +391,7 @@ export function SearchTrigger({ onOpen }: SearchTriggerProps) {
       <MagnifyingGlass className="w-4 h-4" />
       <span>Search docs...</span>
       <kbd className="ml-auto mono text-xs px-2 py-0.5 rounded bg-muted border border-border group-hover:border-primary/30">
-        ⌘K
+        {isMac ? '⌘K' : 'Ctrl+K'}
       </kbd>
     </button>
   )
