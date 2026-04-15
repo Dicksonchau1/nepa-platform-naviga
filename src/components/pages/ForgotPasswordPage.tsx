@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -6,11 +7,8 @@ import { ArrowRight, ArrowLeft, EnvelopeSimple, CheckCircle } from '@phosphor-ic
 import { CinematicBackground } from '@/components/CinematicBackground'
 import { toast } from 'sonner'
 
-interface ForgotPasswordPageProps {
-  onNavigate: (page: string) => void
-}
-
-export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
+export function ForgotPasswordPage() {
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
@@ -82,7 +80,7 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
                 </div>
 
                 <Button
-                  onClick={() => onNavigate('signin')}
+                  onClick={() => navigate('/signin')}
                   variant="outline"
                   className="w-full h-11 border-border/70 hover:border-primary/40 backdrop-blur-sm bg-background/20 rounded-xl"
                 >
@@ -143,7 +141,7 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
 
               <div className="mt-8 text-center">
                 <button
-                  onClick={() => onNavigate('signin')}
+                  onClick={() => navigate('/signin')}
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-2"
                 >
                   <ArrowLeft size={14} weight="bold" />
