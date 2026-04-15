@@ -31,12 +31,17 @@ export function SignUpPage() {
       return
     }
 
+    if (!company.trim()) {
+      toast.error('Please enter your company name')
+      return
+    }
+
     if (password !== confirmPassword) {
       toast.error('Passwords do not match')
       return
     }
 
-    if (!useCase) {
+    if (!useCase.trim()) {
       toast.error('Please select a primary use case')
       return
     }

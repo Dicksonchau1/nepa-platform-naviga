@@ -281,6 +281,7 @@ export function Navbar() {
                 <button
                   type="button"
                   aria-label="Open navigation menu"
+                  aria-expanded={mobileOpen}
                   className="inline-flex items-center justify-center rounded-md border border-white/10 bg-white/5 p-2 text-white hover:bg-white/10"
                 >
                   <List size={18} weight="bold" />

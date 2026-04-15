@@ -26,8 +26,8 @@ export function useScrollGradient() {
       if (frameId !== null) return
       frameId = window.requestAnimationFrame(() => {
         const windowHeight = window.innerHeight
-        const documentHeight = Math.max(document.documentElement.scrollHeight - windowHeight, 1)
-        const progress = Math.min(latestScroll / documentHeight, 1)
+        const documentHeight = document.documentElement.scrollHeight - windowHeight
+        const progress = documentHeight <= 0 ? 0 : Math.min(latestScroll / documentHeight, 1)
         applyGradient(progress)
         frameId = null
       })
