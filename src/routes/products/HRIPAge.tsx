@@ -1,24 +1,24 @@
 import { ProductPage } from '@/components/pages/ProductPage'
-import { Users, ChatText, FileSearch, ChartLineUp, Key, Broadcast } from '@phosphor-icons/react'
+import { User, FileText, ChartLine, Key, Bell, Lightning } from '@phosphor-icons/react'
 
 const featureGrid = [
   {
-    icon: <Users size={28} weight="duotone" />,
+    icon: <User size={28} weight="duotone" />,
     title: 'Interview sessions',
     description: 'Capture structured interview signals across sessions.',
   },
   {
-    icon: <ChatText size={28} weight="duotone" />,
+    icon: <FileText size={28} weight="duotone" />,
     title: 'Transcript intelligence',
     description: 'Analyze transcripts with behavioral scoring.',
   },
   {
-    icon: <FileSearch size={28} weight="duotone" />,
+    icon: <ChartLine size={28} weight="duotone" />,
     title: 'Scorecards',
     description: 'Generate consistent scorecards and insight objects.',
   },
   {
-    icon: <ChartLineUp size={28} weight="duotone" />,
+    icon: <Lightning size={28} weight="duotone" />,
     title: 'Decision analytics',
     description: 'Track hiring outcomes and bias signals over time.',
   },
@@ -28,7 +28,7 @@ const featureGrid = [
     description: 'Tokenized API packages with clear quotas.',
   },
   {
-    icon: <Broadcast size={28} weight="duotone" />,
+    icon: <Bell size={28} weight="duotone" />,
     title: 'Webhook delivery',
     description: 'Push insights to ATS or internal tooling.',
   },

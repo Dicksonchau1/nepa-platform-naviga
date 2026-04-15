@@ -1,5 +1,5 @@
 import { ProductPage } from '@/components/pages/ProductPage'
-import { Eye, Radar, ShieldCheck, SquaresFour, Bell, Layout } from '@phosphor-icons/react'
+import { Eye, Camera, ShieldCheck, SquaresFour, Bell, Layout } from '@phosphor-icons/react'
 
 const featureGrid = [
   {
@@ -8,7 +8,7 @@ const featureGrid = [
     description: 'Track entry, exit, and customer flow with precision and zone context.',
   },
   {
-    icon: <Radar size={28} weight="duotone" />,
+    icon: <Camera size={28} weight="duotone" />,
     title: 'Shelf & Zone Analytics',
     description: 'Detect dwell, depletion, and unusual movement in every lane.',
   },

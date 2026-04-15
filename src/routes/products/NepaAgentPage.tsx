@@ -1,16 +1,16 @@
 import { ProductPage } from '@/components/pages/ProductPage'
-import { Radar, Brain, MapPin, Pulse, ChatDots, PaperPlaneRight, FilmSlate } from '@phosphor-icons/react'
+import { Eye, Circuitry, MapPin, Lightning, ChatText, Rocket, FileText } from '@phosphor-icons/react'
 import { LiveBadge } from '@/components/LiveBadge'
 import { TerminalLine } from '@/components/TerminalLine'
 
 const featureGrid = [
   {
-    icon: <Radar size={28} weight="duotone" />,
+    icon: <Eye size={28} weight="duotone" />,
     title: 'Edge Perception',
     description: 'Neuromorphic inference runs at the edge with deterministic latency.',
   },
   {
-    icon: <Brain size={28} weight="duotone" />,
+    icon: <Circuitry size={28} weight="duotone" />,
     title: 'SignatureMap Learning',
     description: 'Every frame updates time-indexed world state and behavioral priors.',
   },
@@ -20,22 +20,22 @@ const featureGrid = [
     description: 'Live store memory of zones, entities, and persistent anomalies.',
   },
   {
-    icon: <Pulse size={28} weight="duotone" />,
+    icon: <Lightning size={28} weight="duotone" />,
     title: 'Anomaly Prediction',
     description: 'Predictive state scoring for risk and operational drift.',
   },
   {
-    icon: <ChatDots size={28} weight="duotone" />,
+    icon: <ChatText size={28} weight="duotone" />,
     title: 'Consultation Layer',
     description: 'Optional LLM escalation only when thresholds fire.',
   },
   {
-    icon: <PaperPlaneRight size={28} weight="duotone" />,
+    icon: <Rocket size={28} weight="duotone" />,
     title: 'Dispatch Layer',
     description: 'Action contracts for alerts, gates, robots, and systems.',
   },
   {
-    icon: <FilmSlate size={28} weight="duotone" />,
+    icon: <FileText size={28} weight="duotone" />,
     title: 'Replay & Evidence',
     description: 'CODA-compatible evidence traces for audits and reviews.',
   },
