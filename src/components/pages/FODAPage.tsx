@@ -1,11 +1,8 @@
+export { FODAPage } from '@/routes/products/FODAPage'
 import { ProductPage } from './ProductPage'
 import { Drone, Scan, Certificate } from '@phosphor-icons/react'
 
-interface FODAPageProps {
-  onNavigate: (page: string) => void
-}
-
-export function FODAPage({ onNavigate }: FODAPageProps) {
+export function FODAPage() {
   return (
     <ProductPage
       eyebrow="NEPA PLATFORM · FACADE AGENT"
@@ -33,7 +30,6 @@ export function FODAPage({ onNavigate }: FODAPageProps) {
       ]}
       integrationTitle="How FODA Connects to NEPA Core"
       integrationDescription="FODA deploys the NEPA inference core on drone edge hardware for real-time facade inspection. Supports DJI SDK and custom flight controllers. Post-flight evidence packages include raw sensor data, inference decisions, and cryptographic seals."
-      onNavigate={onNavigate}
     />
   )
 }

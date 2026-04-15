@@ -167,7 +167,7 @@ export function Plans() {
                 Talk to us →
               </Link>
               <Link
-                to="/resources/docs"
+                to="/docs"
                 className="border border-white/20 text-white/70 text-sm px-7 py-3 hover:border-white/40 hover:text-white transition-colors"
               >
                 Read the docs →

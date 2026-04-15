@@ -1,11 +1,8 @@
+export { VODAPage } from '@/routes/products/VODAPage'
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { HudPanel } from '@/components/HudPanel'
 import { LiveBadge } from '@/components/LiveBadge'
-
-interface VODAPageProps {
-  onNavigate: (page: string) => void
-}
 
 const FEED_LABELS = [
   { id: 'A', label: 'PERSON',     status: 'TRACKED',   x: '15%', y: '25%' },
@@ -85,7 +82,7 @@ const USE_CASES = [
   },
 ]
 
-export function VODAPage({ onNavigate }: VODAPageProps) {
+export function VODAPage() {
   const [tickerIndex, setTickerIndex] = useState(0)
   const [visible, setVisible]         = useState(false)
 

@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ArrowRight, Eye, EyeSlash } from '@phosphor-icons/react'
 import { CinematicBackground } from '@/components/CinematicBackground'
 import { toast } from 'sonner'
@@ -15,6 +16,8 @@ export function SignUpPage() {
   const [company, setCompany] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [useCase, setUseCase] = useState('')
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
@@ -30,16 +33,38 @@ export function SignUpPage() {
       return
     }
 
+    if (!company.trim()) {
+      toast.error('Please enter your company name')
+      return
+    }
+
+    if (password !== confirmPassword) {
+      toast.error('Passwords do not match')
+      return
+    }
+
+    if (!useCase.trim()) {
+      toast.error('Please select a primary use case')
+      return
+    }
+
     setIsLoading(true)
 
     try {
-      await signUp(email, password, name)
+      await signUp({
+        email,
+        password,
+        displayName: name,
+        company,
+        useCase,
+      })
       toast.success('Account created! Check your email to confirm.')
       if (redirectTo) {
         navigate('/signin', { state: { from: { pathname: redirectTo } } })
       } else {
         navigate('/signin')
       }
+      navigate('/auth/sign-in')
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Sign up failed'
       toast.error(message)
@@ -60,7 +85,7 @@ export function SignUpPage() {
             
             <div className="relative z-10">
               <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold mb-2">Get started with NEPA</h1>
+                <h1 className="text-3xl font-bold mb-2">Get started with AuraSense</h1>
                 <p className="text-sm text-muted-foreground">
                   Deploy perception infrastructure for your autonomous systems
                 </p>
@@ -107,6 +132,21 @@ export function SignUpPage() {
                 </div>
 
                 <div className="space-y-2">
+                  <Label htmlFor="use-case">Primary use case</Label>
+                  <Select value={useCase} onValueChange={setUseCase}>
+                    <SelectTrigger id="use-case" className="h-11 bg-background/50">
+                      <SelectValue placeholder="Select a product focus" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="soda">SODA — Unmanned store ops</SelectItem>
+                      <SelectItem value="voda-coda">VODA/CODA — Video intelligence</SelectItem>
+                      <SelectItem value="hri">HRI — HR analytics API</SelectItem>
+                      <SelectItem value="enterprise">Enterprise platform</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
                   <div className="relative">
                     <Input
@@ -128,6 +168,19 @@ export function SignUpPage() {
                   </div>
                 </div>
 
+                <div className="space-y-2">
+                  <Label htmlFor="confirm-password">Confirm password</Label>
+                  <Input
+                    id="confirm-password"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="••••••••"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    className="h-11 bg-background/50"
+                  />
+                </div>
+
                 <div className="flex items-start gap-2">
                   <Checkbox
                     id="terms"
@@ -138,14 +191,8 @@ export function SignUpPage() {
                     htmlFor="terms"
                     className="text-sm text-muted-foreground leading-tight cursor-pointer"
                   >
-                    I agree to the{' '}
-                    <Link to="/about/terms" className="text-primary hover:underline">
-                      Terms
-                    </Link>{' '}
-                    and{' '}
-                    <Link to="/about/privacy" className="text-primary hover:underline">
-                      Privacy Policy
-                    </Link>
+                    I agree to the <Link to="/legal/terms" className="text-primary hover:underline">Terms</Link> and{' '}
+                    <Link to="/legal/privacy" className="text-primary hover:underline">Privacy Policy</Link>
                   </label>
                 </div>
 
@@ -161,7 +208,7 @@ export function SignUpPage() {
 
               <div className="mt-8 text-center text-sm">
                 <span className="text-muted-foreground">Already have an account? </span>
-                <Link to="/signin" className="text-primary font-medium hover:underline">
+                <Link to="/auth/sign-in" className="text-primary font-medium hover:underline">
                   Sign in
                 </Link>
               </div>

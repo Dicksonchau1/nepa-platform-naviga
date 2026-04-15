@@ -14,7 +14,13 @@ interface AuthContextType {
   isLoading: boolean
   error: string | null
   signIn: (email: string, password: string) => Promise<void>
-  signUp: (email: string, password: string, displayName?: string) => Promise<void>
+  signUp: (params: {
+    email: string
+    password: string
+    displayName?: string
+    company?: string
+    useCase?: string
+  }) => Promise<void>
   signOut: () => Promise<void>
   resetPassword: (email: string) => Promise<void>
   updatePassword: (newPassword: string) => Promise<void>
@@ -97,7 +103,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const signUp = async (email: string, password: string, displayName?: string) => {
+  const signUp = async ({
+    email,
+    password,
+    displayName,
+    company,
+    useCase,
+  }: {
+    email: string
+    password: string
+    displayName?: string
+    company?: string
+    useCase?: string
+  }) => {
     setIsLoading(true)
     setError(null)
     try {
@@ -105,7 +123,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         email,
         password,
         options: {
-          data: { display_name: displayName },
+          data: {
+            display_name: displayName,
+            company,
+            use_case: useCase,
+          },
         },
       })
       if (signUpError) throw signUpError
@@ -141,7 +163,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const resetPassword = async (email: string) => {
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
+      redirectTo: `${window.location.origin}/auth/reset-password`,
     })
     if (resetError) throw resetError
   }

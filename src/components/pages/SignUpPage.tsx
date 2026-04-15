@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -9,11 +10,11 @@ import { CinematicBackground } from '@/components/CinematicBackground'
 import { toast } from 'sonner'
 
 interface SignUpPageProps {
-  onNavigate: (page: string) => void
   onSignUpSuccess?: (email: string) => void
 }
 
-export function SignUpPage({ onNavigate, onSignUpSuccess }: SignUpPageProps) {
+export function SignUpPage({ onSignUpSuccess }: SignUpPageProps) {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -42,7 +43,7 @@ export function SignUpPage({ onNavigate, onSignUpSuccess }: SignUpPageProps) {
       if (onSignUpSuccess) {
         onSignUpSuccess(formData.email)
       } else {
-        onNavigate('home')
+        navigate('/')
       }
     }, 1500)
   }
@@ -188,7 +189,7 @@ export function SignUpPage({ onNavigate, onSignUpSuccess }: SignUpPageProps) {
                     I agree to the{' '}
                     <button
                       type="button"
-                      onClick={() => onNavigate('terms')}
+                      onClick={() => navigate('/about/terms')}
                       className="text-primary hover:text-primary/80 transition-colors"
                     >
                       Terms
@@ -196,7 +197,7 @@ export function SignUpPage({ onNavigate, onSignUpSuccess }: SignUpPageProps) {
                     {' '}and{' '}
                     <button
                       type="button"
-                      onClick={() => onNavigate('privacy')}
+                      onClick={() => navigate('/about/privacy')}
                       className="text-primary hover:text-primary/80 transition-colors"
                     >
                       Privacy Policy
@@ -217,7 +218,7 @@ export function SignUpPage({ onNavigate, onSignUpSuccess }: SignUpPageProps) {
               <div className="mt-8 text-center text-sm">
                 <span className="text-muted-foreground">Already have an account? </span>
                 <button
-                  onClick={() => onNavigate('signin')}
+                  onClick={() => navigate('/signin')}
                   className="text-primary hover:text-primary/80 transition-colors font-medium"
                 >
                   Sign in
