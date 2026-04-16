@@ -1,37 +1,110 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { List, X } from '@phosphor-icons/react'
+import { CaretDown, List, X } from '@phosphor-icons/react'
 
 import logoImage from '@/assets/images/Gemini_Generated_Image_8oxhp28oxhp28oxh.png'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 
-const links = [
-  { label: 'Platform', href: '/platform' },
-  { label: 'Products', href: '/products' },
-  { label: 'Pricing', href: '/pricing' },
-  { label: 'Docs', href: '/docs' },
-  { label: 'About', href: '/about/company' },
+/* ── dropdown data ───────────────────────────────────────── */
+
+const platformItems = [
+  { label: 'NEPA World Model', desc: 'Introducing Vodec Agent NEPA', href: '/platform', featured: true },
+  { label: 'VODA', desc: 'Video Intelligence Pipeline', href: '/products/voda' },
+  { label: 'SODA', desc: 'Store Operating System', href: '/products/soda' },
+  { label: 'RODA', desc: 'Robotic Dispatch Agent', href: '/products/roda' },
+  { label: 'FODA', desc: 'Infrastructure Inspection', href: '/products/foda' },
+  { label: 'EODA', desc: 'Edge Operations Agent', href: '/products/eoda' },
+  { label: 'HRI', desc: 'Behavioral Intelligence API', href: '/products/hri' },
 ]
 
-function NavLinkItem({ href, label, onClick }: { href: string; label: string; onClick?: () => void }) {
-  const location = useLocation()
-  const active = location.pathname === href || location.pathname.startsWith(`${href}/`)
+const businessItems = [
+  { label: 'About Us', href: '/about/company' },
+  { label: 'Careers', href: '/about/careers' },
+  { label: 'Partnership', href: '/business/partnership' },
+]
 
+/* ── dropdown component ──────────────────────────────────── */
+
+function DesktopDropdown({
+  label,
+  children,
+}: {
+  label: string
+  children: React.ReactNode
+}) {
+  const [open, setOpen] = useState(false)
+  const timeout = useRef<ReturnType<typeof setTimeout>>()
+  const location = useLocation()
+
+  // close on route change
+  useEffect(() => setOpen(false), [location.pathname])
+
+  const enter = () => { clearTimeout(timeout.current); setOpen(true) }
+  const leave = () => { timeout.current = setTimeout(() => setOpen(false), 150) }
+
+  return (
+    <div className="relative" onMouseEnter={enter} onMouseLeave={leave}>
+      <button
+        type="button"
+        className={`flex items-center gap-1 text-sm font-medium transition-colors ${
+          open ? 'text-white' : 'text-white/70 hover:text-white'
+        }`}
+      >
+        {label}
+        <CaretDown
+          size={12}
+          weight="bold"
+          className={`transition-transform ${open ? 'rotate-180' : ''}`}
+        />
+      </button>
+
+      {open && (
+        <div className="absolute left-1/2 top-full z-50 pt-3 -translate-x-1/2">
+          <div className="min-w-[260px] rounded-lg border border-white/10 bg-[#0a0d14]/95 p-2 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-xl">
+            {children}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function DropdownLink({
+  href,
+  label,
+  desc,
+  featured,
+  onClick,
+}: {
+  href: string
+  label: string
+  desc?: string
+  featured?: boolean
+  onClick?: () => void
+}) {
   return (
     <Link
       to={href}
       onClick={onClick}
-      className={`text-sm font-medium transition-colors ${active ? 'text-white' : 'text-white/70 hover:text-white'}`}
+      className={`block rounded-md px-3 py-2.5 transition-colors hover:bg-white/5 ${
+        featured ? 'mb-1 border-b border-white/5 pb-3' : ''
+      }`}
     >
-      {label}
+      <span className={`block text-sm font-medium ${featured ? 'text-cyan-400' : 'text-white/90'}`}>
+        {label}
+      </span>
+      {desc && <span className="block text-xs text-white/40 mt-0.5">{desc}</span>}
     </Link>
   )
 }
 
+/* ── main Navbar ──────────────────────────────────────────── */
+
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [mobileSection, setMobileSection] = useState<string | null>(null)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -44,7 +117,11 @@ export function Navbar() {
   const navigateAndClose = (href: string) => {
     navigate(href)
     setMobileOpen(false)
+    setMobileSection(null)
   }
+
+  const toggleMobileSection = (key: string) =>
+    setMobileSection((prev) => (prev === key ? null : key))
 
   return (
     <nav
@@ -55,17 +132,39 @@ export function Navbar() {
       }`}
     >
       <div className="container mx-auto flex items-center justify-between gap-6 px-6 py-3.5">
+        {/* ── logo ─────────────── */}
         <Link to="/" className="flex items-center gap-2.5" onClick={() => setMobileOpen(false)}>
           <img src={logoImage} alt="AuraSense" className="h-8 w-8 rounded-sm object-contain [mix-blend-mode:lighten]" />
           <span className="text-[15px] font-semibold text-white transition-colors hover:text-cyan-400">AuraSense</span>
         </Link>
 
+        {/* ── desktop links ────── */}
         <div className="hidden items-center gap-6 lg:flex">
-          {links.map((link) => (
-            <NavLinkItem key={link.href} href={link.href} label={link.label} />
-          ))}
+          {/* Platform dropdown */}
+          <DesktopDropdown label="Platform">
+            {platformItems.map((item) => (
+              <DropdownLink key={item.href} {...item} />
+            ))}
+          </DesktopDropdown>
+
+          {/* Business dropdown */}
+          <DesktopDropdown label="Business">
+            {businessItems.map((item) => (
+              <DropdownLink key={item.href} href={item.href} label={item.label} />
+            ))}
+          </DesktopDropdown>
+
+          {/* Direct links */}
+          <Link to="/pricing" className="text-sm font-medium text-white/70 transition-colors hover:text-white">
+            Pricing
+          </Link>
+
+          <Link to="/nepa" className="text-sm font-medium text-white/70 transition-colors hover:text-white">
+            NEPA Agent
+          </Link>
         </div>
 
+        {/* ── desktop CTA ──────── */}
         <div className="hidden items-center gap-3 lg:flex">
           <Button
             onClick={() => navigateAndClose('/auth?mode=signin')}
@@ -80,10 +179,11 @@ export function Navbar() {
             size="sm"
             className="border-0 bg-gradient-to-r from-cyan-500 to-blue-500 text-sm font-semibold text-black shadow-[0_0_20px_rgba(0,212,255,0.3)] transition-all hover:from-cyan-400 hover:to-blue-400 hover:shadow-[0_0_30px_rgba(0,212,255,0.5)]"
           >
-            Start pilot
+            Request Pilot
           </Button>
         </div>
 
+        {/* ── mobile ───────────── */}
         <div className="flex items-center gap-2 lg:hidden">
           <Button
             onClick={() => navigateAndClose('/auth?mode=signin')}
@@ -121,21 +221,76 @@ export function Navbar() {
                   </button>
                 </div>
 
-                <div className="mt-8 flex-1 space-y-8 overflow-y-auto">
-                  <div className="space-y-3">
-                    <p className="text-xs font-mono uppercase tracking-[0.3em] text-cyan-400/70">Navigation</p>
-                    <div className="flex flex-col gap-2">
-                      {links.map((link) => (
-                        <button
-                          key={link.href}
-                          type="button"
-                          onClick={() => navigateAndClose(link.href)}
-                          className="text-left text-sm text-white/80 hover:text-white"
-                        >
-                          {link.label}
-                        </button>
-                      ))}
-                    </div>
+                <div className="mt-8 flex-1 space-y-6 overflow-y-auto">
+                  {/* Platform accordion */}
+                  <div className="space-y-2">
+                    <button
+                      type="button"
+                      onClick={() => toggleMobileSection('platform')}
+                      className="flex w-full items-center justify-between text-xs font-mono uppercase tracking-[0.3em] text-cyan-400/70"
+                    >
+                      Platform
+                      <CaretDown
+                        size={12}
+                        weight="bold"
+                        className={`transition-transform ${mobileSection === 'platform' ? 'rotate-180' : ''}`}
+                      />
+                    </button>
+                    {mobileSection === 'platform' && (
+                      <div className="flex flex-col gap-1 pl-2">
+                        {platformItems.map((item) => (
+                          <button
+                            key={item.href}
+                            type="button"
+                            onClick={() => navigateAndClose(item.href)}
+                            className="text-left text-sm text-white/80 hover:text-white py-1"
+                          >
+                            <span className={item.featured ? 'text-cyan-400' : ''}>{item.label}</span>
+                            {item.desc && <span className="block text-xs text-white/35">{item.desc}</span>}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Business accordion */}
+                  <div className="space-y-2">
+                    <button
+                      type="button"
+                      onClick={() => toggleMobileSection('business')}
+                      className="flex w-full items-center justify-between text-xs font-mono uppercase tracking-[0.3em] text-cyan-400/70"
+                    >
+                      Business
+                      <CaretDown
+                        size={12}
+                        weight="bold"
+                        className={`transition-transform ${mobileSection === 'business' ? 'rotate-180' : ''}`}
+                      />
+                    </button>
+                    {mobileSection === 'business' && (
+                      <div className="flex flex-col gap-1 pl-2">
+                        {businessItems.map((item) => (
+                          <button
+                            key={item.href}
+                            type="button"
+                            onClick={() => navigateAndClose(item.href)}
+                            className="text-left text-sm text-white/80 hover:text-white py-1"
+                          >
+                            {item.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Direct links */}
+                  <div className="space-y-2 border-t border-white/5 pt-4">
+                    <button type="button" onClick={() => navigateAndClose('/pricing')} className="block text-sm text-white/80 hover:text-white">
+                      Pricing
+                    </button>
+                    <button type="button" onClick={() => navigateAndClose('/nepa')} className="block text-sm text-white/80 hover:text-white">
+                      NEPA Agent
+                    </button>
                   </div>
 
                   <div className="grid gap-3 border-t border-white/5 pt-4">
@@ -143,7 +298,7 @@ export function Navbar() {
                       View pricing
                     </Button>
                     <Button className="bg-cyan-500 text-black hover:bg-cyan-400" onClick={() => navigateAndClose('/contact')}>
-                      Start pilot
+                      Request Pilot
                     </Button>
                   </div>
                 </div>

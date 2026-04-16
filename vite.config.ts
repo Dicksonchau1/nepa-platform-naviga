@@ -21,15 +21,21 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('/node_modules/')) {
-            if (id.includes('/react-dom/') || id.includes('/react/')) return 'react-vendor'
-            if (id.includes('/react-router/') || id.includes('/react-router-dom/')) return 'router-vendor'
+            if (
+              /(?:^|\/)(?:react$|react-dom|react-router|react-router-dom|react-is|use-sync-external-store|scheduler|loose-envify|js-tokens|@remix-run\/router)(?:\/|$)/.test(id)
+            ) {
+              return 'react-core-vendor'
+            }
+            if (
+              /(?:^|\/)(?:@supabase\/|@octokit\/|d3|date-fns|marked|three|uuid|zod|@hookform\/resolvers|class-variance-authority|clsx|tailwind-merge|tw-animate-css)(?:\/|$)/.test(id)
+            ) {
+              return 'data-vendor'
+            }
             if (id.includes('/@supabase/')) return 'supabase-vendor'
-            if (id.includes('/@radix-ui/')) return 'radix-vendor'
             if (id.includes('/@phosphor-icons/')) return 'icons-vendor'
             if (id.includes('/recharts/')) return 'charts-vendor'
             if (id.includes('/cmdk/')) return 'command-palette-vendor'
             if (id.includes('/class-variance-authority/') || id.includes('/clsx/') || id.includes('/tailwind-merge/')) return 'style-utils-vendor'
-            return 'vendor'
           }
 
           if (id.includes('/src/routes/dashboard/')) return 'dashboard-routes'
