@@ -14,7 +14,6 @@ export function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
-  const navigate = useNavigate()
 
   const getFriendlyError = (message: string) => {
     const normalized = message.toLowerCase()
@@ -104,7 +103,6 @@ export function ForgotPasswordPage() {
 
                 <Button
                   onClick={() => navigate('/auth/sign-in')}
-                  onClick={() => navigate('/signin')}
                   variant="outline"
                   className="w-full h-11 border-border/70 hover:border-primary/40 backdrop-blur-sm bg-background/20 rounded-xl"
                 >
@@ -171,7 +169,6 @@ export function ForgotPasswordPage() {
               <div className="mt-8 text-center">
                 <button
                   onClick={() => navigate('/auth/sign-in')}
-                  onClick={() => navigate('/signin')}
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-2"
                 >
                   <ArrowLeft size={14} weight="bold" />

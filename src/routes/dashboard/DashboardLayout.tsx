@@ -10,9 +10,11 @@ import {
   FileText,
   Gauge,
   Envelope,
-  SignOut
+  SignOut,
+  Buildings
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
+import { NepaAgentPopup } from '@/components/dashboard/NepaAgentPopup'
 
 const navItems = [
   { path: '/dashboard', label: 'Overview', icon: House, exact: true },
@@ -22,6 +24,10 @@ const navItems = [
   { path: '/dashboard/voda', label: 'VODA', icon: Gauge },
   { path: '/dashboard/tasks', label: 'Missions', icon: FileText },
   { path: '/dashboard/contacts', label: 'Contacts', icon: Envelope },
+  { path: '/dashboard/registry/drones', label: 'Drone Registry', icon: Drone },
+  { path: '/dashboard/registry/cameras', label: 'Camera Registry', icon: VideoCamera },
+  { path: '/dashboard/registry/robots', label: 'Robot Registry', icon: Robot },
+  { path: '/dashboard/registry/buildings', label: 'Building Registry', icon: Buildings },
 ]
 
 export function DashboardLayout() {
@@ -104,6 +110,7 @@ export function DashboardLayout() {
           <Outlet />
         </main>
       </div>
+      <NepaAgentPopup />
     </div>
   )
 }

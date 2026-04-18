@@ -9,14 +9,8 @@ import { Toaster } from '@/components/ui/sonner'
 export function AppLayout() {
   return (
     <div className="min-h-screen bg-background relative">
-      <div className="pointer-events-none" aria-hidden="true">
-        <AnimatedBackground />
-      <div className="pointer-events-none fixed inset-0 z-0">
-        <AnimatedBackground />
-      </div>
-      <div className="pointer-events-none fixed inset-0 z-0">
-        <MouseSpotlight />
-      </div>
+      <AnimatedBackground />
+      <MouseSpotlight />
       <Navbar />
       <main className="pt-16 relative z-10">
         <Outlet />

@@ -18,7 +18,7 @@ export function TermsPage() {
             Legal agreement governing your use of the AuraSense NEPA platform and related services.
           </p>
           <p className="text-sm text-muted-foreground mt-4">
-            Last updated: January 15, 2024 · Effective: January 15, 2024
+            Last updated: April 15, 2026 · Effective: April 15, 2026
           </p>
         </div>
 

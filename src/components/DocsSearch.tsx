@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { MagnifyingGlass, X, FileText, Code, Book, Clock, ListChecks, Funnel, Tag, Cube } from '@phosphor-icons/react'
-import { MagnifyingGlass, X, FileText, Code, Book, Clock, Lightbulb, Funnel } from '@phosphor-icons/react'
+import { MagnifyingGlass, X, FileText, Code, Book, Clock, ListChecks, Funnel } from '@phosphor-icons/react'
 import { Input } from '@/components/ui/input'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
@@ -8,39 +7,241 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { searchContent } from '@/data/searchContent'
 
 export interface SearchableContent {
   id: string
   title: string
   content: string
-  category: 'docs' | 'api' | 'guides' | 'changelog' | 'status' | 'products' | 'pricing'
+  category: 'docs' | 'api' | 'guides' | 'changelog' | 'status'
   section?: string
   url: string
   keywords?: string[]
 }
-import { searchContent, type SearchEntry } from '@/data/searchContent'
+
+const allSearchableContent: SearchableContent[] = [
+  {
+    id: 'docs-quickstart',
+    title: 'Getting Started with VODA',
+    content: 'Deploy your first video operations agent in under 10 minutes. Prerequisites: NVIDIA Jetson Xavier NX, Ubuntu 20.04 LTS, RTSP camera stream, NEPA API key. Installation: curl -fsSL https://install.nepa.dev | sh',
+    category: 'docs',
+    section: 'Quick Start',
+    url: '/resources/docs',
+    keywords: ['voda', 'installation', 'jetson', 'setup', 'quickstart', 'camera']
+  },
+  {
+    id: 'docs-api-request',
+    title: 'First API Request',
+    content: 'Query the live world model from your application. Query entities using POST to /v1/query with window, entity_type, and zone parameters',
+    category: 'docs',
+    section: 'Quick Start',
+    url: '/resources/docs',
+    keywords: ['api', 'query', 'request', 'entities', 'world model']
+  },
+  {
+    id: 'docs-signature-map',
+    title: 'Signature Map',
+    content: 'Time-indexed graph of entities, events, and relations detected across all camera streams',
+    category: 'docs',
+    section: 'Core Concepts',
+    url: '/resources/docs',
+    keywords: ['signature map', 'entities', 'events', 'graph', 'timeline']
+  },
+  {
+    id: 'docs-event-stream',
+    title: 'Event Stream',
+    content: 'Monotonic log of all state changes with cryptographic timestamps and confidence scores',
+    category: 'docs',
+    section: 'Core Concepts',
+    url: '/resources/docs',
+    keywords: ['event stream', 'log', 'timestamps', 'monotonic']
+  },
+  {
+    id: 'docs-action-validation',
+    title: 'Action Validation',
+    content: 'Safety and feasibility checks for all agent-proposed actions before execution',
+    category: 'docs',
+    section: 'Core Concepts',
+    url: '/resources/docs',
+    keywords: ['action', 'validation', 'safety', 'feasibility']
+  },
+  {
+    id: 'docs-edge-runtime',
+    title: 'Edge Runtime Architecture',
+    content: 'Sparse event pipeline processing only salient changes. TensorRT-optimized inference at <50ms per frame. Local signature map maintained in lock-free data structures',
+    category: 'docs',
+    section: 'Architecture',
+    url: '/resources/docs',
+    keywords: ['edge', 'runtime', 'tensorrt', 'inference', 'neuromorphic']
+  },
+  {
+    id: 'docs-deployment',
+    title: 'Edge Deployment',
+    content: 'Install NEPA runtime on edge hardware. Supported platforms: NVIDIA Jetson Xavier NX, AGX Orin, Orin Nano',
+    category: 'docs',
+    section: 'Deployment',
+    url: '/resources/docs',
+    keywords: ['deployment', 'jetson', 'nvidia', 'hardware', 'edge']
+  },
+  {
+    id: 'api-query',
+    title: 'POST /query - Query Entities',
+    content: 'Query entities and events from the signature map. Request body includes window, entity_type, zone, filters with min_confidence and tags',
+    category: 'api',
+    section: 'Query',
+    url: '/resources/api',
+    keywords: ['query', 'entities', 'api', 'rest', 'endpoint']
+  },
+  {
+    id: 'api-timeline',
+    title: 'GET /query/timeline',
+    content: 'Retrieve event timeline for an entity. Query parameters: entity_id, start, end, include_video',
+    category: 'api',
+    section: 'Query',
+    url: '/resources/api',
+    keywords: ['timeline', 'events', 'history', 'entity']
+  },
+  {
+    id: 'api-aggregate',
+    title: 'POST /query/aggregate',
+    content: 'Aggregate statistics over time windows. Count entities by type and zone, average dwell time, peak occupancy by hour',
+    category: 'api',
+    section: 'Query',
+    url: '/resources/api',
+    keywords: ['aggregate', 'statistics', 'analytics', 'metrics']
+  },
+  {
+    id: 'api-action-propose',
+    title: 'POST /action/propose',
+    content: 'Propose an action for safety validation and execution. Actions: light_control, door_control, alert, audio_announce. Includes safety, feasibility, and policy checks',
+    category: 'api',
+    section: 'Action',
+    url: '/resources/api',
+    keywords: ['action', 'propose', 'control', 'safety', 'validation']
+  },
+  {
+    id: 'api-action-history',
+    title: 'GET /action/history',
+    content: 'Retrieve execution history with audit trail. Returns actions with execution_id, status, and cryptographic signatures',
+    category: 'api',
+    section: 'Action',
+    url: '/resources/api',
+    keywords: ['history', 'audit', 'actions', 'log']
+  },
+  {
+    id: 'api-stream-events',
+    title: 'WebSocket /stream/events',
+    content: 'Real-time event stream for live monitoring. Subscribe to event types: entity_detected, zone_entered, anomaly',
+    category: 'api',
+    section: 'Stream',
+    url: '/resources/api',
+    keywords: ['websocket', 'stream', 'real-time', 'events']
+  },
+  {
+    id: 'api-grpc-stream',
+    title: 'gRPC StreamEvents',
+    content: 'High-throughput streaming via gRPC. Service definition with StreamRequest and Event messages',
+    category: 'api',
+    section: 'Stream',
+    url: '/resources/api',
+    keywords: ['grpc', 'stream', 'protobuf', 'high-throughput']
+  },
+  {
+    id: 'api-auth',
+    title: 'API Key Management',
+    content: 'Create and manage API keys with scopes and expiration. POST /admin/keys/create with name, scopes, expires_at',
+    category: 'api',
+    section: 'Admin',
+    url: '/resources/api',
+    keywords: ['authentication', 'api key', 'security', 'authorization']
+  },
+  {
+    id: 'guides-voda-quickstart',
+    title: 'Quick Start: VODA in 10 Minutes',
+    content: 'Deploy your first video operations agent from scratch. Provision edge hardware, install runtime, connect cameras, activate and verify',
+    category: 'guides',
+    section: 'Getting Started',
+    url: '/resources/guides',
+    keywords: ['quickstart', 'voda', 'tutorial', 'beginner', 'setup']
+  },
+  {
+    id: 'guides-retail',
+    title: 'Unmanned Retail Deployment',
+    content: 'Full production setup for autonomous stores. Multi-camera layout planning, zone configuration, event rules, POS and gate integration',
+    category: 'guides',
+    section: 'Use Cases',
+    url: '/resources/guides',
+    keywords: ['retail', 'unmanned', 'store', 'deployment', 'production']
+  },
+  {
+    id: 'guides-roda',
+    title: 'RODA: Robotic Path Adaptation',
+    content: 'Deploy neuromorphic navigation for autonomous robots. Robot platform setup, mission state machine, spike-timing path adaptation, telemetry',
+    category: 'guides',
+    section: 'Advanced',
+    url: '/resources/guides',
+    keywords: ['roda', 'robot', 'navigation', 'autonomous', 'neuromorphic']
+  },
+  {
+    id: 'guides-foda',
+    title: 'FODA: Aerial Facade Inspection',
+    content: 'Drone-based structural inspection with cryptographic audit trails. Drone edge node, flight path planning, thermal RGB fusion, evidence chain',
+    category: 'guides',
+    section: 'Advanced',
+    url: '/resources/guides',
+    keywords: ['foda', 'drone', 'inspection', 'facade', 'aerial']
+  },
+  {
+    id: 'guides-llm-integration',
+    title: 'LLM Agent Integration',
+    content: 'Connect GPT-4, Claude, or custom LLMs to query the NEPA world model via tool APIs',
+    category: 'guides',
+    section: 'Integration',
+    url: '/resources/guides',
+    keywords: ['llm', 'integration', 'gpt', 'claude', 'agent']
+  },
+  {
+    id: 'guides-webhooks',
+    title: 'Webhook Event Stream',
+    content: 'Subscribe to real-time events and route them to your backend, Slack, PagerDuty, or custom systems',
+    category: 'guides',
+    section: 'Integration',
+    url: '/resources/guides',
+    keywords: ['webhook', 'events', 'integration', 'notifications']
+  },
+  {
+    id: 'guides-best-practices-hardware',
+    title: 'Hardware & Networking Best Practices',
+    content: 'Use wired Ethernet for camera streams, deploy UPS backup, monitor temperature, reserve bandwidth headroom',
+    category: 'guides',
+    section: 'Best Practices',
+    url: '/resources/guides',
+    keywords: ['hardware', 'networking', 'production', 'best practices']
+  },
+  {
+    id: 'guides-best-practices-security',
+    title: 'Security & Compliance Best Practices',
+    content: 'Rotate API keys every 90 days, enable audit log export, configure video retention policy, use site-specific encryption',
+    category: 'guides',
+    section: 'Best Practices',
+    url: '/resources/guides',
+    keywords: ['security', 'compliance', 'gdpr', 'encryption', 'audit']
+  }
+]
 
 const categoryIcons = {
-  product: FileText,
+  docs: FileText,
   api: Code,
-  guide: Book,
+  guides: Book,
   changelog: Clock,
-  status: ListChecks,
-  products: Cube,
-  pricing: Tag,
-  concept: Lightbulb,
+  status: ListChecks
 }
 
 const categoryLabels = {
-  product: 'Product',
+  docs: 'Documentation',
   api: 'API Reference',
-  guide: 'Guide',
+  guides: 'Guides',
   changelog: 'Changelog',
-  status: 'Status',
-  products: 'Products',
-  pricing: 'Pricing',
-  concept: 'Concept',
+  status: 'Status'
 }
 
 interface DocsSearchProps {
@@ -50,24 +251,20 @@ interface DocsSearchProps {
 
 export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
   const [query, setQuery] = useState('')
-  const [selectedCategories, setSelectedCategories] = useState<Set<SearchEntry['category']>>(new Set())
-  const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set())
+  const [selectedCategories, setSelectedCategories] = useState<Set<SearchableContent['category']>>(new Set())
+  const [selectedSections, setSelectedSections] = useState<Set<string>>(new Set())
   const [showFilters, setShowFilters] = useState(false)
   const navigate = useNavigate()
 
   const availableSections = useMemo(() => {
     const sections = new Set<string>()
-    searchContent.forEach(item => {
+    allSearchableContent.forEach(item => {
       if (item.section) sections.add(item.section)
-  const availableTags = useMemo(() => {
-    const tags = new Set<string>()
-    searchContent.forEach(item => {
-      item.tags.forEach(tag => tags.add(tag))
     })
-    return Array.from(tags).sort()
+    return Array.from(sections).sort()
   }, [])
 
-  const toggleCategory = (category: SearchEntry['category']) => {
+  const toggleCategory = (category: SearchableContent['category']) => {
     setSelectedCategories(prev => {
       const next = new Set(prev)
       if (next.has(category)) {
@@ -79,13 +276,13 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
     })
   }
 
-  const toggleTag = (tag: string) => {
-    setSelectedTags(prev => {
+  const toggleSection = (section: string) => {
+    setSelectedSections(prev => {
       const next = new Set(prev)
-      if (next.has(tag)) {
-        next.delete(tag)
+      if (next.has(section)) {
+        next.delete(section)
       } else {
-        next.add(tag)
+        next.add(section)
       }
       return next
     })
@@ -93,10 +290,10 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
 
   const clearFilters = () => {
     setSelectedCategories(new Set())
-    setSelectedTags(new Set())
+    setSelectedSections(new Set())
   }
 
-  const hasActiveFilters = selectedCategories.size > 0 || selectedTags.size > 0
+  const hasActiveFilters = selectedCategories.size > 0 || selectedSections.size > 0
 
   const searchResults = useMemo(() => {
     if (!query.trim()) return []
@@ -104,12 +301,12 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
     const lowerQuery = query.toLowerCase()
     const terms = lowerQuery.split(/\s+/).filter(Boolean)
 
-    return searchContent
+    return allSearchableContent
       .filter(item => {
         if (selectedCategories.size > 0 && !selectedCategories.has(item.category)) {
           return false
         }
-        if (selectedTags.size > 0 && !item.tags.some(tag => selectedTags.has(tag))) {
+        if (selectedSections.size > 0 && (!item.section || !selectedSections.has(item.section))) {
           return false
         }
         return true
@@ -118,20 +315,24 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
         let score = 0
         const lowerTitle = item.title.toLowerCase()
         const lowerContent = item.content.toLowerCase()
-        const lowerTags = item.tags.map(tag => tag.toLowerCase())
+        const lowerSection = (item.section || '').toLowerCase()
+        const keywords = item.keywords || []
 
         if (lowerTitle.includes(lowerQuery)) score += 100
         if (lowerContent.includes(lowerQuery)) score += 50
-        if (lowerTags.some(tag => tag.includes(lowerQuery))) score += 40
+        if (lowerSection.includes(lowerQuery)) score += 30
+
+        keywords.forEach(keyword => {
+          if (keyword.includes(lowerQuery)) score += 40
+        })
 
         terms.forEach(term => {
           if (lowerTitle.includes(term)) score += 20
           if (lowerContent.includes(term)) score += 10
           if (lowerSection.includes(term)) score += 5
-            keywords.forEach(keyword => {
-              if (keyword.includes(term)) score += 8
-            })
-          if (lowerTags.some(tag => tag.includes(term))) score += 8
+          keywords.forEach(keyword => {
+            if (keyword.includes(term)) score += 8
+          })
         })
 
         return { ...item, score }
@@ -139,24 +340,13 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
       .filter(item => item.score > 0)
       .sort((a, b) => b.score - a.score)
       .slice(0, 15)
-  }, [query, selectedCategories, selectedTags])
+  }, [query, selectedCategories, selectedSections])
 
-  const handleSelect = (result: SearchEntry) => {
-    navigate(result.href)
+  const handleSelect = (result: SearchableContent) => {
+    navigate(result.url)
     onOpenChange(false)
     setQuery('')
   }
-
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault()
-        onOpenChange(true)
-      }
-    }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [onOpenChange])
 
   useEffect(() => {
     if (!open) {
@@ -173,8 +363,8 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
           <div className="space-y-3">
             <div className="relative">
               <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  placeholder="Search docs, products, pricing..."
+              <Input
+                placeholder="Search docs, API reference, guides..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 className="pl-10 pr-10 h-12 text-base"
@@ -201,7 +391,7 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
                 Filters
                 {hasActiveFilters && (
                   <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
-                    {selectedCategories.size + selectedTags.size}
+                    {selectedCategories.size + selectedSections.size}
                   </Badge>
                 )}
               </Button>
@@ -223,7 +413,7 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
                 <div>
                   <h4 className="text-sm font-semibold mb-2">Category</h4>
                   <div className="flex flex-wrap gap-2">
-                    {(Object.keys(categoryLabels) as Array<SearchEntry['category']>).map(category => {
+                    {(Object.keys(categoryLabels) as Array<SearchableContent['category']>).map(category => {
                       const Icon = categoryIcons[category]
                       const isSelected = selectedCategories.has(category)
                       return (
@@ -246,14 +436,14 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
                 </div>
 
                 <div>
-                  <h4 className="text-sm font-semibold mb-2">Tags</h4>
+                  <h4 className="text-sm font-semibold mb-2">Section</h4>
                   <div className="flex flex-wrap gap-2">
-                    {availableTags.map(tag => {
-                      const isSelected = selectedTags.has(tag)
+                    {availableSections.map(section => {
+                      const isSelected = selectedSections.has(section)
                       return (
                         <button
-                          key={tag}
-                          onClick={() => toggleTag(tag)}
+                          key={section}
+                          onClick={() => toggleSection(section)}
                           className={cn(
                             "px-3 py-1.5 rounded-md text-xs font-medium border transition-all",
                             isSelected
@@ -261,7 +451,7 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
                               : "bg-background border-border hover:border-accent/50 hover:bg-accent/30"
                           )}
                         >
-                          {tag}
+                          {section}
                         </button>
                       )
                     })}
@@ -280,7 +470,7 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
                 <p className="text-sm">Start typing to search across all documentation</p>
                 {hasActiveFilters && (
                   <p className="text-xs mt-2">
-                    {selectedCategories.size + selectedTags.size} filter(s) active
+                    {selectedCategories.size + selectedSections.size} filter(s) active
                   </p>
                 )}
               </div>
@@ -309,9 +499,9 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
                         {categoryLabels[cat]}
                       </Badge>
                     ))}
-                    {Array.from(selectedTags).map(tag => (
-                      <Badge key={tag} variant="outline" className="text-xs">
-                        {tag}
+                    {Array.from(selectedSections).map(sec => (
+                      <Badge key={sec} variant="outline" className="text-xs">
+                        {sec}
                       </Badge>
                     ))}
                   </div>
@@ -335,6 +525,11 @@ export function DocsSearch({ open, onOpenChange }: DocsSearchProps) {
                               {categoryLabels[result.category]}
                             </Badge>
                           </div>
+                          {result.section && (
+                            <p className="text-xs text-muted-foreground mb-2 mono">
+                              {result.section}
+                            </p>
+                          )}
                           <p className="text-sm text-muted-foreground line-clamp-2">
                             {result.content}
                           </p>
@@ -368,10 +563,6 @@ interface SearchTriggerProps {
 }
 
 export function SearchTrigger({ onOpen }: SearchTriggerProps) {
-  const isMac =
-    typeof navigator !== 'undefined' &&
-    /Mac|iPhone|iPad/.test(navigator.platform)
-
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
@@ -391,7 +582,7 @@ export function SearchTrigger({ onOpen }: SearchTriggerProps) {
       <MagnifyingGlass className="w-4 h-4" />
       <span>Search docs...</span>
       <kbd className="ml-auto mono text-xs px-2 py-0.5 rounded bg-muted border border-border group-hover:border-primary/30">
-        {isMac ? '⌘K' : 'Ctrl+K'}
+        ⌘K
       </kbd>
     </button>
   )

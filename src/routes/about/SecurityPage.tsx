@@ -19,7 +19,7 @@ export function SecurityPage() {
             practices, certifications, and responsible disclosure.
           </p>
           <p className="text-sm text-muted-foreground mt-4">
-            Last updated: January 15, 2024
+            Last updated: April 15, 2026
           </p>
         </div>
 
