@@ -58,6 +58,10 @@ import { FacilityWatchPortal } from '@/routes/dashboard/portals/FacilityWatchPor
 import { RoboticOpsPortal } from '@/routes/dashboard/portals/RoboticOpsPortal'
 import { DroneInspectPortal } from '@/routes/dashboard/portals/DroneInspectPortal'
 import { VodaPortal } from '@/routes/dashboard/portals/VodaPortal'
+import { DroneRegistryPortal } from '@/routes/dashboard/portals/DroneRegistryPortal'
+import { CameraRegistryPortal } from '@/routes/dashboard/portals/CameraRegistryPortal'
+import { RobotRegistryPortal } from '@/routes/dashboard/portals/RobotRegistryPortal'
+import { BuildingRegistryPortal } from '@/routes/dashboard/portals/BuildingRegistryPortal'
 
 /* ---- Standalone pages ---- */
 import { NepaAgent } from '@/pages/NepaAgent'
@@ -141,9 +145,9 @@ function AppRoutes() {
 
         {/* Docs / Resources */}
         <Route path="/docs" element={<DocsPage />} />
-        <Route path="/docs/api" element={<ApiReferencePage />} />
-        <Route path="/docs/sdk" element={<SdkPage />} />
-        <Route path="/docs/guides" element={<GuidesPage />} />
+        <Route path="/docs/api" element={<ProtectedRoute><ApiReferencePage /></ProtectedRoute>} />
+        <Route path="/docs/sdk" element={<ProtectedRoute><SdkPage /></ProtectedRoute>} />
+        <Route path="/docs/guides" element={<ProtectedRoute><GuidesPage /></ProtectedRoute>} />
         <Route path="/docs/changelog" element={<ChangelogPage />} />
         <Route path="/docs/status" element={<StatusPage />} />
 
@@ -200,8 +204,15 @@ function AppRoutes() {
         <Route path="voda" element={<VodaPortal />} />
         <Route path="tasks" element={<RobotTasksPage />} />
         <Route path="contacts" element={<ContactSubmissionsPage />} />
-        {/* Legacy dashboard redirects */}
+        <Route path="registry/drones" element={<DroneRegistryPortal />} />
+        <Route path="registry/cameras" element={<CameraRegistryPortal />} />
+        <Route path="registry/robots" element={<RobotRegistryPortal />} />
+        <Route path="registry/buildings" element={<BuildingRegistryPortal />} />
+        {/* Legacy dashboard redirects + product-code aliases */}
         <Route path="facade" element={<Navigate to="/dashboard/drone-inspect" replace />} />
+        <Route path="foda" element={<Navigate to="/dashboard/drone-inspect" replace />} />
+        <Route path="soda" element={<Navigate to="/dashboard/facility-watch" replace />} />
+        <Route path="roda" element={<Navigate to="/dashboard/robotic-ops" replace />} />
         <Route path="audit" element={<DashboardPage />} />
         <Route path="live" element={<DashboardPage />} />
       </Route>

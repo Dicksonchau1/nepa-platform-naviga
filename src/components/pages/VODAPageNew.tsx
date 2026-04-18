@@ -4,42 +4,6 @@ import { HudPanel } from '@/components/HudPanel'
 import { LiveBadge } from '@/components/LiveBadge'
 
 const FEATURES = [
-const FEED_LABELS = [
-  { id: 'A', label: 'PERSON',     status: 'TRACKED',   x: '15%', y: '25%' },
-  { id: 'B', label: 'SHELF_ZONE', status: 'MONITORED', x: '58%', y: '38%' },
-  { id: 'C', label: 'OCCUPANCY',  status: '3',         x: '72%', y: '62%' },
-  { id: 'D', label: 'ANOMALY',    status: 'NONE',      x: '32%', y: '68%' },
-  { id: 'E', label: 'DWELL',      status: '00:47s',    x: '80%', y: '20%' },
-]
-
-const TICKER = [
-  'MOTION_EVENT: AISLE_2 — CLEAR',
-  'SHOPFRONT: NOMINAL',
-  'CROWD_DENSITY: LOW',
-  'LOITERING_ALERT: NONE',
-  'CAMERA_HEALTH: ALL_NOMINAL',
-  'INFERENCE_FPS: 27.8',
-  'AUDIT_WRITE: OK — HASH CONFIRMED',
-]
-
-const SPEC = [
-  { k: 'AGENT_ID',      v: 'VODA-v2.3' },
-  { k: 'DOMAIN',        v: 'Video operations & real-time detection' },
-  { k: 'INFERENCE_RT',  v: '< 36ms on Jetson Nano' },
-  { k: 'MODEL_BACKEND', v: 'YOLOv8 + ONNX + TensorRT' },
-  { k: 'CAMERA_INPUTS', v: 'Up to 16 concurrent streams' },
-  { k: 'AUDIT_CHAIN',   v: 'SHA-256 hash-linked event log' },
-  { k: 'DEPLOYMENT',    v: 'Edge-only — no cloud egress' },
-  { k: 'COMPLIANCE',    v: 'PDPO · GDPR by default' },
-  { k: 'STATUS',        v: 'Operational' },
-]
-
-const CAPABILITIES = [
-  {
-    n: '01',
-    title: 'Real-time object detection',
-    desc: 'YOLOv8-powered multi-class detection at up to 30 FPS on edge hardware. People, objects, zones, and events — classified on-device without any cloud round-trip.',
-  },
   {
     title: 'Quality Diagnosis',
     desc: 'Instantly score sharpness, exposure, noise, and color cast before you commit to long renders.',
@@ -86,15 +50,6 @@ const PRICING = [
 const CODE_SNIPPET = `curl -X POST "$VITE_VODA_API_URL/voda/diagnose" \\
   -H "X-API-Key: $VODA_API_KEY" \\
   -F "files=@/path/to/frame.png"`
-export function VODAPage() {
-  const [tickerIndex, setTickerIndex] = useState(0)
-  const [visible, setVisible]         = useState(false)
-
-  useEffect(() => {
-    const t1 = setTimeout(() => setVisible(true), 80)
-    const t2 = setInterval(() => setTickerIndex((i) => (i + 1) % TICKER.length), 2600)
-    return () => { clearTimeout(t1); clearInterval(t2) }
-  }, [])
 
 export function VODAPageNew() {
   return (
@@ -123,7 +78,6 @@ export function VODAPageNew() {
             <div className="flex flex-wrap items-center gap-4">
               <Link
                 to="/signup?redirect=/dashboard/voda"
-                to="/auth/sign-up?plan=trial"
                 className="bg-cyan-500 text-black font-semibold text-sm px-7 py-3 hover:bg-cyan-400 transition-colors"
               >
                 Try Free
@@ -242,7 +196,6 @@ export function VODAPageNew() {
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Link
               to="/signup?redirect=/dashboard/voda"
-              to="/auth/sign-up?plan=trial"
               className="bg-cyan-500 text-black font-semibold text-sm px-7 py-3 hover:bg-cyan-400 transition-colors"
             >
               Try Free

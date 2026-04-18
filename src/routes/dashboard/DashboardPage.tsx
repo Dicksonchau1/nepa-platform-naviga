@@ -13,6 +13,7 @@ import { useRobotTasks } from '@/hooks/useRobotTasks'
 import { useCameras } from '@/hooks/useCameras'
 import { useRobots } from '@/hooks/useRobots'
 import { useDrones } from '@/hooks/useDrones'
+import { useProvisioningClaim } from '@/hooks/useProvisioningClaim'
 
 export function DashboardPage() {
   const { intelligence, isLoading: healthLoading, refresh: refreshHealth } = useHealthMetrics(30000)
@@ -21,6 +22,9 @@ export function DashboardPage() {
   const { data: cameras, isLoading: camerasLoading } = useCameras()
   const { data: robots, isLoading: robotsLoading, activeCount: activeRobots } = useRobots()
   const { data: drones, isLoading: dronesLoading, flyingCount } = useDrones()
+
+  // Block #7: claim pending provision on first authenticated dashboard load
+  useProvisioningClaim()
 
   const handleRefreshAll = () => {
     refreshHealth()

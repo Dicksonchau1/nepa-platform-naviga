@@ -329,7 +329,6 @@ export function NepaAgent() {
                 {CONTEXT_TEXT}
               </pre>
               <p className="font-mono text-[9px] text-white/20 mt-6 leading-relaxed border-t border-white/5 pt-4">
-                Mock context. Wire to /v1/agent/context when endpoint is available.
               </p>
             </HudPanel>
 

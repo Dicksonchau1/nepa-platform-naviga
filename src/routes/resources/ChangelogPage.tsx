@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { GitCommit, Sparkle, Bug, Lightning } from '@phosphor-icons/react'
+import { GitCommit, CheckCircle, Warning, Shield, Clock } from '@phosphor-icons/react'
 import { DocsSearch, SearchTrigger } from '@/components/DocsSearch'
 
 export function ChangelogPage() {
@@ -10,7 +10,7 @@ export function ChangelogPage() {
   return (
     <div className="min-h-screen relative">
       <DocsSearch open={searchOpen} onOpenChange={setSearchOpen} />
-      
+
       <div className="page-bg">
         <div className="glow-orb glow-orb-1" />
         <div className="glow-orb glow-orb-2" />
@@ -22,7 +22,7 @@ export function ChangelogPage() {
           <Badge className="mb-4 mono" variant="outline">RESOURCES · CHANGELOG</Badge>
           <h1 className="text-5xl font-bold mb-6">Changelog</h1>
           <p className="text-xl text-muted-foreground max-w-3xl mb-6">
-            Latest updates, releases, and improvements to the NEPA neuromorphic platform.
+            Release history for the NEPA neuromorphic platform — what shipped, what is known, and what is coming next.
           </p>
           <div className="max-w-md">
             <SearchTrigger onOpen={() => setSearchOpen(true)} />
@@ -30,235 +30,217 @@ export function ChangelogPage() {
         </div>
 
         <div className="space-y-8">
+
+          {/* ── Version 2026.04 ── */}
           <Card className="glass-card">
             <CardHeader>
               <div className="flex items-start justify-between mb-2">
                 <div>
-                  <CardTitle className="text-2xl mb-2">Version 1.2.0</CardTitle>
+                  <CardTitle className="text-2xl mb-2">Version 2026.04 — Platform GA</CardTitle>
                   <div className="flex gap-2 items-center text-sm text-muted-foreground mono">
                     <GitCommit className="w-4 h-4" />
-                    <span>January 15, 2024</span>
+                    <time dateTime="2026-04-18">April 18, 2026</time>
                   </div>
                 </div>
-                <Badge className="mono">Latest</Badge>
+                <Badge className="mono">Current Release</Badge>
               </div>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-8">
+
+              {/* Shipped */}
               <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <Sparkle className="w-5 h-5 text-primary" weight="fill" />
-                  <h3 className="font-semibold">New Features</h3>
+                <div className="flex items-center gap-2 mb-4">
+                  <CheckCircle className="w-5 h-5 text-primary" weight="fill" />
+                  <h3 className="font-semibold text-base">Shipped</h3>
                 </div>
-                <ul className="space-y-2 text-sm text-muted-foreground">
+                <ul className="space-y-3 text-sm text-muted-foreground">
                   <li className="flex items-start gap-2">
                     <span className="text-primary mt-0.5">▸</span>
-                    <span><strong className="text-foreground">RODA Mission Telemetry:</strong> Real-time robot position, battery, and mission state streaming via WebSocket and gRPC</span>
+                    <span>
+                      <strong className="text-foreground">NEPA Core GA</strong> — V-JEPA 2 video world model paired with spike-timing-dependent plasticity (STDP) weights. Cause-and-effect structure of a retail environment learned from footage and simulation, reinforced through online STDP weight updates at the edge.
+                    </span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-primary mt-0.5">▸</span>
-                    <span><strong className="text-foreground">Multi-Site Dashboard:</strong> Aggregate view across all deployments with drill-down per site and zone</span>
+                    <span>
+                      <strong className="text-foreground">Online Continuous Training Loop</strong> — Inference outputs feed back into a supervised fine-tuning loop at the edge; deployed stores grow more accurate each week without a vendor update cycle.
+                    </span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-primary mt-0.5">▸</span>
-                    <span><strong className="text-foreground">Thermal Camera Support (FODA):</strong> FLIR and Seek Thermal integration for facade inspection with temperature overlay</span>
+                    <span>
+                      <strong className="text-foreground">Unified Portals: SODA · RODA · FODA · VODA</strong> — One NEPA core powers all four products. No integration tax between vendors.
+                    </span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-primary mt-0.5">▸</span>
-                    <span><strong className="text-foreground">LLM Tool Schema v2:</strong> Updated tool definitions with stricter type validation and confidence thresholds</span>
+                    <span>
+                      <strong className="text-foreground">NEPA Agent Popup (Dashboard)</strong> — Embedded assistant with a 9-entry knowledge table and rotating operational tips, available across all portal dashboards.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary mt-0.5">▸</span>
+                    <span>
+                      <strong className="text-foreground">Per-Portal Developer Mode</strong> — Each portal (FODA · RODA · SODA · VODA) ships a Developer tab with live API key generation, webhook endpoint registration, and usage inspection. Backed by row-level-security policies in Supabase.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary mt-0.5">▸</span>
+                    <span>
+                      <strong className="text-foreground">Live Ops + Audit Replay Dashboard</strong> — Dual-dashboard architecture. Live Ops for real-time floor state; Audit Replay with cryptographically signed, hash-chained SignatureMaps for compliance.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary mt-0.5">▸</span>
+                    <span>
+                      <strong className="text-foreground">WhatsApp Alert Channel</strong> — Operator alerts route directly to the manager's WhatsApp with a replay link to the signed inference frame. No dashboard-only hand-offs.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary mt-0.5">▸</span>
+                    <span>
+                      <strong className="text-foreground">Stripe Magic-Link Provisioning</strong> — Automated portal provisioning on checkout. Stripe <span className="mono text-xs">checkout.session.completed</span> webhook → Supabase <span className="mono text-xs">pending_provisions</span> → magic link delivered via email (Resend).
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary mt-0.5">▸</span>
+                    <span>
+                      <strong className="text-foreground">Pre-trained Robotic Team</strong> — Replenishment, inventory audit, floor care, and digital entry gate — orchestrated by the same NEPA core.
+                    </span>
                   </li>
                 </ul>
               </div>
 
+              {/* Known Limitations */}
               <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <Lightning className="w-5 h-5 text-primary" weight="fill" />
-                  <h3 className="font-semibold">Improvements</h3>
+                <div className="flex items-center gap-2 mb-4">
+                  <Warning className="w-5 h-5 text-primary" weight="fill" />
+                  <h3 className="font-semibold text-base">Known Limitations</h3>
                 </div>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-start gap-2">
                     <span className="text-primary mt-0.5">▸</span>
-                    <span>Reduced signature map query latency by 40% through index optimization</span>
+                    <span>Desktop-first experience; mobile dashboard layouts ship in 2026.05.</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-primary mt-0.5">▸</span>
-                    <span>Edge runtime now supports H.265 (HEVC) streams for 50% bandwidth reduction</span>
+                    <span>SDK packages (Python, TypeScript/Node, Go) available as install snippets in the Docs; publication to PyPI and npm is scheduled for 2026.05.</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-primary mt-0.5">▸</span>
-                    <span>API rate limits increased for Growth tier: 300 req/min (was 200)</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">▸</span>
-                    <span>Enhanced entity tracking across camera handoffs with 95% identity persistence</span>
+                    <span>Self-serve SDK tarball downloads from the console are not yet enabled.</span>
                   </li>
                 </ul>
               </div>
 
+              {/* Security & Compliance */}
               <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <Bug className="w-5 h-5 text-primary" weight="fill" />
-                  <h3 className="font-semibold">Bug Fixes</h3>
+                <div className="flex items-center gap-2 mb-4">
+                  <Shield className="w-5 h-5 text-primary" weight="fill" />
+                  <h3 className="font-semibold text-base">Security &amp; Compliance</h3>
                 </div>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-start gap-2">
                     <span className="text-primary mt-0.5">▸</span>
-                    <span>Fixed edge runtime crash when camera stream drops mid-session</span>
+                    <span>Row-level security on all customer tables.</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-primary mt-0.5">▸</span>
-                    <span>Corrected timestamp drift in event logs under high inference load</span>
+                    <span>Hash-chained SignatureMaps for every inference frame recorded to Audit Replay.</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-primary mt-0.5">▸</span>
-                    <span>Resolved action validation edge case for conflicting zone states</span>
+                    <span>Stripe webhooks verified via signature; unsigned requests rejected.</span>
                   </li>
                 </ul>
               </div>
+
             </CardContent>
           </Card>
 
-          <Card className="glass-card">
-            <CardHeader>
-              <div className="flex items-start justify-between mb-2">
-                <div>
-                  <CardTitle className="text-2xl mb-2">Version 1.1.0</CardTitle>
-                  <div className="flex gap-2 items-center text-sm text-muted-foreground mono">
-                    <GitCommit className="w-4 h-4" />
-                    <span>December 1, 2023</span>
+          {/* ── Upcoming ── */}
+          <div>
+            <h2 className="text-2xl font-bold mb-6">Upcoming (Targeted)</h2>
+            <div className="space-y-4">
+
+              <Card className="glass-card">
+                <CardHeader>
+                  <div className="flex items-start justify-between mb-1">
+                    <CardTitle className="text-lg">2026.05 — Runtime &amp; SDKs</CardTitle>
+                    <Clock className="w-5 h-5 text-muted-foreground mt-0.5" />
                   </div>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <Sparkle className="w-5 h-5 text-primary" weight="fill" />
-                  <h3 className="font-semibold">New Features</h3>
-                </div>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">▸</span>
-                    <span><strong className="text-foreground">EODA Edge Agent:</strong> Thin-client neuromorphic inference for low-power hardware (Jetson Orin Nano)</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">▸</span>
-                    <span><strong className="text-foreground">Action History API:</strong> Query past action executions with cryptographic audit signatures</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">▸</span>
-                    <span><strong className="text-foreground">Zone Heatmaps:</strong> Dwell time and occupancy visualization in console dashboard</span>
-                  </li>
-                </ul>
-              </div>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-0.5">▸</span>
+                      <span>Python + TypeScript SDK v1 published to PyPI and npm.</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-0.5">▸</span>
+                      <span>Mobile-responsive dashboard (SODA + VODA first).</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-0.5">▸</span>
+                      <span>WhatsApp alert template library with per-tenant branding.</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
 
-              <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <Lightning className="w-5 h-5 text-primary" weight="fill" />
-                  <h3 className="font-semibold">Improvements</h3>
-                </div>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">▸</span>
-                    <span>Entity confidence scoring now factors in temporal consistency across frames</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">▸</span>
-                    <span>Webhook delivery reliability improved with exponential backoff retry (max 5 attempts)</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <Bug className="w-5 h-5 text-primary" weight="fill" />
-                  <h3 className="font-semibold">Bug Fixes</h3>
-                </div>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">▸</span>
-                    <span>Fixed memory leak in long-running edge sessions (&gt;48 hours)</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">▸</span>
-                    <span>Corrected WebSocket reconnection logic when cloud connection is lost</span>
-                  </li>
-                </ul>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="glass-card">
-            <CardHeader>
-              <div className="flex items-start justify-between mb-2">
-                <div>
-                  <CardTitle className="text-2xl mb-2">Version 1.0.0</CardTitle>
-                  <div className="flex gap-2 items-center text-sm text-muted-foreground mono">
-                    <GitCommit className="w-4 h-4" />
-                    <span>October 15, 2023</span>
+              <Card className="glass-card">
+                <CardHeader>
+                  <div className="flex items-start justify-between mb-1">
+                    <CardTitle className="text-lg">2026.06 — Robotic Operations</CardTitle>
+                    <Clock className="w-5 h-5 text-muted-foreground mt-0.5" />
                   </div>
-                </div>
-                <Badge variant="outline" className="mono">Initial Release</Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <Sparkle className="w-5 h-5 text-primary" weight="fill" />
-                  <h3 className="font-semibold">Core Platform</h3>
-                </div>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">▸</span>
-                    <span>VODA agent with multi-camera signature map and entity tracking</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">▸</span>
-                    <span>REST and gRPC APIs for world model queries and action proposals</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">▸</span>
-                    <span>Edge runtime for Jetson Xavier NX with TensorRT optimization</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">▸</span>
-                    <span>Cloud console with site management, event monitoring, and API key administration</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">▸</span>
-                    <span>Python and TypeScript SDKs for LLM agent integration</span>
-                  </li>
-                </ul>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-0.5">▸</span>
+                      <span>Pre-trained robot fleet orchestration via RODA console.</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-0.5">▸</span>
+                      <span>PDDL-based mission planner (alpha).</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-0.5">▸</span>
+                      <span>Digital gate hardware reference design.</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
 
-        <div className="mt-12">
-          <Card className="glass-card">
-            <CardHeader>
-              <CardTitle>Upcoming Features</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2 text-sm text-muted-foreground">
-              <ul className="space-y-2">
-                <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">▸</span>
-                  <span><strong className="text-foreground">Q1 2024:</strong> SODA multi-camera surveillance with alert escalation engine</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">▸</span>
-                  <span><strong className="text-foreground">Q1 2024:</strong> On-premises deployment option with VPC peering</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">▸</span>
-                  <span><strong className="text-foreground">Q2 2024:</strong> Embedded model training pipeline from signature map replay</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">▸</span>
-                  <span><strong className="text-foreground">Q2 2024:</strong> Audio event detection and classification (VODA audio module)</span>
-                </li>
-              </ul>
-            </CardContent>
-          </Card>
+              <Card className="glass-card">
+                <CardHeader>
+                  <div className="flex items-start justify-between mb-1">
+                    <CardTitle className="text-lg">2026.Q3 — Field Expansion</CardTitle>
+                    <Clock className="w-5 h-5 text-muted-foreground mt-0.5" />
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-0.5">▸</span>
+                      <span>Multi-tenant partner portal for integrators.</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-0.5">▸</span>
+                      <span>Regional edge node self-hosting option (Hong Kong + Singapore).</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-0.5">▸</span>
+                      <span>Thermal camera fusion for FODA facade inspection (upgrade from RGB-only).</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+
+            </div>
+          </div>
+
         </div>
       </section>
     </div>

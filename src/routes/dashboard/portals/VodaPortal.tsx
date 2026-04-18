@@ -11,6 +11,7 @@ import { ApiKeyManager } from '@/components/voda/ApiKeyManager'
 import { ProviderConfig } from '@/components/voda/ProviderConfig'
 import { QualityLab } from '@/components/voda/QualityLab'
 import { BillingPanel } from '@/components/voda/BillingPanel'
+import { DeveloperMode } from '@/components/dashboard/DeveloperMode'
 import { vodaApi, vodaUpgradeEventName } from '@/lib/voda-api'
 import type { HealthResponse, UsageResponse, VodaTier } from '@/types/voda'
 import { Line, LineChart, XAxis } from 'recharts'
@@ -103,6 +104,7 @@ export function VodaPortal() {
           <TabsTrigger value="providers">Providers</TabsTrigger>
           <TabsTrigger value="quality">Quality Lab</TabsTrigger>
           <TabsTrigger value="billing">Billing</TabsTrigger>
+          <TabsTrigger value="developer">Developer Mode</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -220,6 +222,10 @@ export function VodaPortal() {
 
         <TabsContent value="billing">
           <BillingPanel usage={usage} isLoading={isLoading} />
+        </TabsContent>
+
+        <TabsContent value="developer">
+          <DeveloperMode portal="voda" />
         </TabsContent>
       </Tabs>
 
