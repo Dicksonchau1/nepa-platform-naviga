@@ -1,0 +1,493 @@
+services:
+  db:
+    image: postgres:15
+    container_name: nepa-postgres
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-nepa}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-nepa_dev_password}
+      - POSTGRES_DB=${POSTGRES_DB:-nepa_prod}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-nepa}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - nepa-net
+
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    container_name: nepa-api
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://nepa:nepa_dev_password@db:5432/nepa_prod}
+      - ENV=${ENV:-development}
+      - STORE_ID=${STORE_ID:-store_001}
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:5173}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - STRIPE_PRO_PRICE_ID=${STRIPE_PRO_PRICE_ID}
+      - STRIPE_ENTERPRISE_PRICE_ID=${STRIPE_ENTERPRISE_PRICE_ID}
+      - STRIPE_PORTAL_ID=${STRIPE_PORTAL_ID}
+      - VODA_ENCRYPTION_KEY=${VODA_ENCRYPTION_KEY}
+      - CORS_ORIGINS=${CORS_ORIGINS}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8001:8000"
+    expose:
+      - "8000"
+    volumes:
+      - ./backend/app/routers/stripe_provision.py:/app/app/routers/stripe_provision.py:ro
+      - ./app_main_patched.py:/app/app/main.py:ro
+    networks:
+      - nepa-net
+
+  nepa-engine:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nepa-engine
+    expose:
+      - "8080"
+    environment:
+      - DEPLOYMENT_PROFILE=${DEPLOYMENT_PROFILE:-public}
+      - EVIDENCE_ENCRYPTION_KEY=${EVIDENCE_ENCRYPTION_KEY}
+      - EVIDENCE_KEY_FILE=/app/keys/evidence.key
+      - SPCM_MAX_ITERATIONS=${SPCM_MAX_ITERATIONS:-100000}
+      - SPCM_MAX_CONCURRENT=${SPCM_MAX_CONCURRENT:-3}
+      - SPCM_TIMEOUT_SECONDS=${SPCM_TIMEOUT_SECONDS:-30}
+      - ENV=production
+    volumes:
+      - /etc/nepa/keys:/app/keys:ro
+      - /app/evidence:/app/evidence
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    tmpfs:
+      - /tmp
+      - /var/run
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1024M
+        reservations:
+          cpus: "0.5"
+          memory: 256M
+    restart: unless-stopped
+    networks:
+      - nepa-net
+
+  nepa-dashboard:
+    build: ./dashboard
+    container_name: nepa-dashboard
+    expose:
+      - "8501"
+    environment:
+      - DEPLOYMENT_PROFILE=${DEPLOYMENT_PROFILE:-public}
+      - STREAMLIT_SERVER_ENABLE_CORS=false
+      - STREAMLIT_SERVER_ENABLE_XSRF_PROTECTION=false
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/run
+      - /root/.streamlit/cache
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 128M
+    restart: unless-stopped
+    networks:
+      - nepa-net
+
+  whatsapp-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile.whatsapp
+    container_name: nepa-whatsapp-gateway
+    ports:
+      - "8000:8000"
+    expose:
+      - "8000"
+    environment:
+      - VERIFY_TOKEN=${VERIFY_TOKEN:-nepa_secure_2026}
+      - PHONE_ID=${PHONE_ID}
+      - ACCESS_TOKEN=${ACCESS_TOKEN}
+      - WA_TOKEN=${WA_TOKEN}
+      - WA_PHONE_ID=${WA_PHONE_ID}
+      - WA_OWNER_NUMBER=${WA_OWNER_NUMBER}
+      - PORT=8000
+    env_file:
+      - .env
+    depends_on:
+      - nepa-engine
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 128M
+    restart: unless-stopped
+    networks:
+      - nepa-net
+    labels:
+      - "nepa.service=whatsapp-gateway"
+      - "nepa.exposure=public-internet"
+
+  dashy:
+    image: lissy93/dashy:latest
+    container_name: nepa-dashy
+    ports:
+      - "127.0.0.1:4000:80"
+    expose:
+      - "80"
+    labels:
+      - "nepa.service=dashy"
+      - "nepa.exposure=tailscale-only"
+      - "nepa.public-internet=false"
+      - "nepa.profile-switch-affected=false"
+    volumes:
+      - ./dashy/conf.yml:/app/user-data/conf.yml
+    environment:
+      - NODE_ENV=production
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /app/node_modules/.cache
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+        reservations:
+          cpus: "0.1"
+          memory: 64M
+    depends_on:
+      - nepa-engine
+      - nepa-dashboard
+    restart: unless-stopped
+    networks:
+      - nepa-net
+
+  nepa-loop-planner:
+    build:
+      context: ./services/loop_planner
+    container_name: nepa-loop-planner
+    environment:
+      - NATS_URL=nats://nats:4222
+      - REDIS_HOST=redis
+      - POSTGRES_DSN=${POSTGRES_DSN:-postgresql://nepa:nepa_dev_password@db:5432/nepa_prod}
+      - LLM_API_KEY=${ANTHROPIC_API_KEY}
+      - LLM_BASE_URL=https://api.anthropic.com/v1
+      - NEPA_PLANNER_MODEL=claude-opus-4-6
+    depends_on:
+      - nats
+      - redis
+      - db
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "1.0"
+    networks:
+      - nepa-net
+
+  nepa-world-model:
+    build:
+      context: ./services/world_model
+    container_name: nepa-world-model
+    environment:
+      - NATS_URL=nats://nats:4222
+      - REDIS_HOST=redis
+      - HF_HOME=/app/models
+      - TRANSFORMERS_CACHE=/app/models
+      - NEPA_WM_INFERENCE_INTERVAL=2.0
+      - NEPA_WM_FRAMES_PER_CLIP=64
+      - NEPA_WM_FPS=8
+      - NEPA_WM_DEVICE=cuda
+      - NEPA_WM_QUANTIZE=true
+      - NEPA_ANOMALY_K_SIGMA=2.5
+      - NEPA_CAMERAS={"cam_entrance":"rtsp://192.168.1.10/stream","cam_shelf":"rtsp://192.168.1.11/stream"}
+    depends_on:
+      - nats
+      - redis
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+        limits:
+          memory: 4G
+    volumes:
+      - ./models:/app/models
+    restart: unless-stopped
+    networks:
+      - nepa-net
+
+  nepa-learning-orchestrator:
+    build:
+      context: ./services/learning
+    container_name: nepa-learning-orchestrator
+    environment:
+      - NATS_URL=nats://nats:4222
+      - REDIS_URL=redis://redis:6379/0
+      - POSTGRES_DSN=${POSTGRES_DSN:-postgresql://nepa:nepa_dev_password@db:5432/nepa_prod}
+      - NEPA_LEARNING_ROLE=orchestrator
+      - NEPA_LEARNING_RATE=0.01
+      - NEPA_LEARNING_PROMOTION_THRESHOLD=0.05
+      - NEPA_LEARNING_PROMOTION_WINDOW=50
+      - NEPA_MEMORY_ALPHA=0.1
+      - NEPA_LEARNING_TRACE_DECAY=0.95
+      - NEPA_LEARNING_TRACE_TAU_SECONDS=30.0
+    depends_on:
+      - nats
+      - redis
+      - db
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
+    networks:
+      - nepa-net
+
+  nepa-slow-learner:
+    build:
+      context: ./services/learning
+    container_name: nepa-slow-learner
+    environment:
+      - NATS_URL=nats://nats:4222
+      - REDIS_URL=redis://redis:6379/0
+      - POSTGRES_DSN=${POSTGRES_DSN:-postgresql://nepa:nepa_dev_password@db:5432/nepa_prod}
+      - NEPA_LEARNING_ROLE=slow
+      - NEPA_LEARNING_RATE=0.01
+      - NEPA_LEARNING_TRAIN_INTERVAL_SECONDS=86400
+    depends_on:
+      - nats
+      - redis
+      - db
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: "1.0"
+    networks:
+      - nepa-net
+
+  dashy-internal:
+    image: lissy93/dashy:latest
+    container_name: nepa-dashy-internal
+    expose:
+      - "80"
+    volumes:
+      - ./dashy/conf.yml:/app/user-data/conf.yml
+    environment:
+      - NODE_ENV=production
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /app/node_modules/.cache
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+        reservations:
+          cpus: "0.1"
+          memory: 64M
+    depends_on:
+      - nepa-engine
+      - nepa-dashboard
+    restart: unless-stopped
+    networks:
+      - nepa-net
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nepa-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+      - /tmp
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 128M
+        reservations:
+          cpus: "0.1"
+          memory: 32M
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/sites:/etc/nginx/sites-enabled:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/www/certbot:/var/www/certbot:ro
+    depends_on:
+      - dashy
+      - nepa-engine
+      - nepa-dashboard
+    restart: unless-stopped
+    networks:
+      - nepa-net
+
+  openclaw:
+    image: coollabsio/openclaw:latest
+    container_name: nepa-openclaw
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - nepa-openclaw-data:/data
+      - ./engine:/repo/engine:ro
+      - ./src:/repo/src:ro
+      - ./config:/repo/config:ro
+    ports:
+      - "3001:8080"
+
+  nats:
+    image: nats:2.10-alpine
+    container_name: nepa-nats
+    command: ["-c", "/etc/nats/nats-server.conf", "--jetstream"]
+    volumes:
+      - ./docker/nats/nats-server.conf:/etc/nats/nats-server.conf:ro
+      - nats_data:/data/jetstream
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    environment:
+      - NATS_PASSWORD=${NATS_PASSWORD:-nats_password}
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+        reservations:
+          cpus: "0.1"
+          memory: 64M
+    restart: unless-stopped
+    networks:
+      - nepa-net
+    labels:
+      - "nepa.service=nats"
+      - "nepa.exposure=internal"
+
+  redis:
+    image: redis:7-alpine
+    container_name: nepa-redis
+    command: ["redis-server", "--save", "60", "1", "--loglevel", "warning"]
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+        reservations:
+          cpus: "0.1"
+          memory: 64M
+    restart: unless-stopped
+    networks:
+      - nepa-net
+    labels:
+      - "nepa.service=redis"
+      - "nepa.exposure=internal"
+
+  poe-voda:
+    build:
+      context: ./poe-voda
+      dockerfile: Dockerfile
+    container_name: nepa-poe-voda
+    restart: unless-stopped
+    ports:
+      - "8100:8000"
+    env_file:
+      - ./poe-voda/.env
+    environment:
+      - SERVICE_NAME=poe-voda
+      - LOG_LEVEL=info
+    volumes:
+      - voda-frames:/app/frames
+      - ./poe-voda:/app
+    networks:
+      - nepa-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  poe-coda:
+    build:
+      context: ./poe-coda
+      dockerfile: Dockerfile
+    container_name: nepa-poe-coda
+    restart: unless-stopped
+    ports:
+      - "8200:8000"
+    env_file:
+      - ./poe-coda/.env
+    environment:
+      - SERVICE_NAME=poe-coda
+      - LOG_LEVEL=info
+    volumes:
+      - coda-assets:/app/output
+      - ./poe-coda:/app
+    networks:
+      - nepa-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+networks:
+  nepa-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  nats_data:
+  redis_data:
+  nepa-openclaw-data:
+    external: true
+    name: nepa-openclaw-data
+  voda-frames:
+  coda-assets:
