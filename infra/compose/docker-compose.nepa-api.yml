@@ -53,8 +53,8 @@ services:
     expose:
       - "8000"
     volumes:
-      - ./backend/app/routers/stripe_provision.py:/app/app/routers/stripe_provision.py:ro
-      - ./app_main_patched.py:/app/app/main.py:ro
+      - ./mounts/stripe_provision/router.py:/app/services/stripe_provision.py:ro
+      - ./mounts/api_main/main.py:/app/api/main.py:ro
     networks:
       - nepa-net
 
