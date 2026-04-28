@@ -1,10 +1,7 @@
-import ProductPage from './ProductPage'
-import { ArrowsClockwise, Cpu, Package, Gear } from '@phosphor-icons/react'
-export { RODAPage } from '@/routes/products/RODAPage'
 import { ProductPage } from './ProductPage'
-import { Path, GitBranch, UserCircleGear } from '@phosphor-icons/react'
+import { ArrowsClockwise, Cpu, Package, Gear } from '@phosphor-icons/react'
 
-export default function RODAPage() {
+export function RODAPage() {
   return (
     <ProductPage
       name="RODA"
@@ -30,7 +27,7 @@ export default function RODAPage() {
           icon: Cpu,
           title: 'NEPA-Native Dispatch',
           description:
-            'NERMN receives dispatch commands from NEPA\'s ACT layer via NERMNDispatcher. Each restock command carries store ID, zone, SKU, priority, and the triggering anomaly score.',
+            "NERMN receives dispatch commands from NEPA's ACT layer via NERMNDispatcher. Each restock command carries store ID, zone, SKU, priority, and the triggering anomaly score.",
         },
         {
           icon: ArrowsClockwise,

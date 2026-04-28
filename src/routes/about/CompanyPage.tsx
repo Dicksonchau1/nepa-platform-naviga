@@ -22,6 +22,17 @@ export function CompanyPage() {
             aerial inspection platforms, and robotic delivery systems — across Hong Kong and
             Asia-Pacific.
           </p>
+
+          <div className="grid grid-cols-2 gap-6 mt-8 max-w-md">
+            <div>
+              <p className="text-xs font-semibold tracking-[0.16em] uppercase text-muted-foreground mb-1">Founded</p>
+              <p className="text-base font-semibold">November 2025</p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold tracking-[0.16em] uppercase text-muted-foreground mb-1">Headquarters</p>
+              <p className="text-base font-semibold">Central, Hong Kong</p>
+            </div>
+          </div>
         </div>
 
         <section className="mb-16 border-l-2 border-primary/40 pl-6">
@@ -52,8 +63,8 @@ export function CompanyPage() {
               perception should live and how it should behave when the stakes are real.
             </p>
             <p>
-              In 2026 we filed our patent covering the core neuromorphic STDP inference
-              architecture. Since then we have been moving toward live pilot deployments in
+              Our core architecture combines V-JEPA 2 video world modeling with
+              spike-timing-dependent plasticity (STDP) for deterministic edge inference. Since then we have been moving toward live pilot deployments in
               unmanned retail, building facade inspection, and autonomous robotic delivery across
               Hong Kong, with structured Asia-Pacific expansion planned as we scale.
             </p>

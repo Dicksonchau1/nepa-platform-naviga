@@ -4,72 +4,22 @@ import { Check, X } from '@phosphor-icons/react'
 
 const PLANS = [
   {
-    name: 'NEPA Diagnostic',
-    price: 'Free',
-    period: '',
-    highlight: false,
-    tag: 'Find issues before regenerating',
-    features: [
-      'Up to 3 diagnostic scans per month',
-      'Motion inconsistency detection',
-      'Jitter and lighting mismatch analysis',
-      'Background quality assessment',
-      'ROI anomaly detection',
-      'NEPA inference engine access',
-    ],
-    cta: 'Start for free',
-    to: '/signup',
-  },
-  {
-    name: 'Creator',
-    price: '$29',
+    name: 'Studio',
+    price: '$199',
     period: 'per month',
     highlight: true,
-    tag: 'Turn diagnostics into action',
+    tag: 'Built for production teams',
     features: [
-      'Everything in Free',
-      'Vodec corrective workflows',
-      'Replay edits with predictable control',
-      'Resolve localized issues automatically',
-      'Unlimited diagnostics',
-      'Priority processing queue',
-    ],
-    cta: 'Start Creator',
-    to: '/signup',
-  },
-  {
-    name: 'Studio',
-    price: '$149',
-    period: 'per month',
-    highlight: false,
-    tag: 'Built for collaborative video operations',
-    features: [
-      'Everything in Creator',
+      'Unlimited NEPA diagnostics',
+      'Full Vodec corrective workflows',
       'Shared workflows across teams',
-      'Audit trails for all operations',
-      'Batch processing capability',
-      'Higher execution volume capacity',
-      'Team collaboration tools',
+      'Audit trails for every operation',
+      'Batch processing and queue priority',
+      'API access for integrations',
+      'Standard SLA, business-hours support',
     ],
     cta: 'Start Studio',
-    to: '/about/contact',
-  },
-  {
-    name: 'Growth',
-    price: '$499',
-    period: 'per month',
-    highlight: false,
-    tag: 'Scale video diagnostics and correction',
-    features: [
-      'Everything in Studio',
-      'Governance and compliance tools',
-      'Analytics and reporting dashboard',
-      'API access for integrations',
-      'Premium support',
-      'Custom workflow templates',
-    ],
-    cta: 'Talk to us',
-    to: '/about/contact',
+    to: '/signup',
   },
   {
     name: 'Enterprise',
@@ -78,12 +28,12 @@ const PLANS = [
     highlight: false,
     tag: 'Embed NEPA into production systems',
     features: [
-      'Everything in Growth',
+      'Everything in Studio',
       'Full API access for platform embedding',
       'High-volume infrastructure',
       'White-label options',
       'Dedicated account manager',
-      'Custom SLA and support',
+      'Custom SLA and 24/7 support',
     ],
     cta: 'Contact sales',
     to: '/about/contact',
@@ -126,6 +76,8 @@ export function VODAPage() {
       <div className="fixed inset-0 bg-gradient-to-br from-black via-zinc-900 to-zinc-950 -z-10" />
 
       <section className="relative min-h-screen flex items-center overflow-hidden pt-20 pb-20">
+        <video className="absolute inset-0 w-full h-full object-cover -z-10 opacity-30" src="/videos/voda-licensing-demo.mp4" poster="/videos/voda-poster.jpg" autoPlay loop muted playsInline preload="metadata" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/70 -z-10" />
         
         <div 
           className="absolute inset-0 pointer-events-none"

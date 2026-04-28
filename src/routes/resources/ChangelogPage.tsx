@@ -166,7 +166,7 @@ export function ChangelogPage() {
               <Card className="glass-card">
                 <CardHeader>
                   <div className="flex items-start justify-between mb-1">
-                    <CardTitle className="text-lg">2026.05 — Runtime &amp; SDKs</CardTitle>
+                    <CardTitle className="text-lg">2026.05 — Dual Launch</CardTitle>
                     <Clock className="w-5 h-5 text-muted-foreground mt-0.5" />
                   </div>
                 </CardHeader>
@@ -174,65 +174,11 @@ export function ChangelogPage() {
                   <ul className="space-y-2 text-sm text-muted-foreground">
                     <li className="flex items-start gap-2">
                       <span className="text-primary mt-0.5">▸</span>
-                      <span>Python + TypeScript SDK v1 published to PyPI and npm.</span>
+                      <span><strong>End of May:</strong> robotics field pilot live on partner edge hardware.</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-primary mt-0.5">▸</span>
-                      <span>Mobile-responsive dashboard (SODA + VODA first).</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-primary mt-0.5">▸</span>
-                      <span>WhatsApp alert template library with per-tenant branding.</span>
-                    </li>
-                  </ul>
-                </CardContent>
-              </Card>
-
-              <Card className="glass-card">
-                <CardHeader>
-                  <div className="flex items-start justify-between mb-1">
-                    <CardTitle className="text-lg">2026.06 — Robotic Operations</CardTitle>
-                    <Clock className="w-5 h-5 text-muted-foreground mt-0.5" />
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li className="flex items-start gap-2">
-                      <span className="text-primary mt-0.5">▸</span>
-                      <span>Pre-trained robot fleet orchestration via RODA console.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-primary mt-0.5">▸</span>
-                      <span>PDDL-based mission planner (alpha).</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-primary mt-0.5">▸</span>
-                      <span>Digital gate hardware reference design.</span>
-                    </li>
-                  </ul>
-                </CardContent>
-              </Card>
-
-              <Card className="glass-card">
-                <CardHeader>
-                  <div className="flex items-start justify-between mb-1">
-                    <CardTitle className="text-lg">2026.Q3 — Field Expansion</CardTitle>
-                    <Clock className="w-5 h-5 text-muted-foreground mt-0.5" />
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li className="flex items-start gap-2">
-                      <span className="text-primary mt-0.5">▸</span>
-                      <span>Multi-tenant partner portal for integrators.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-primary mt-0.5">▸</span>
-                      <span>Regional edge node self-hosting option (Hong Kong + Singapore).</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-primary mt-0.5">▸</span>
-                      <span>Thermal camera fusion for FODA facade inspection (upgrade from RGB-only).</span>
+                      <span><strong>End of May:</strong> AuraStudio public App Store launch — full NEPA agent suite, AuraMarket creator royalties at 85%.</span>
                     </li>
                   </ul>
                 </CardContent>
