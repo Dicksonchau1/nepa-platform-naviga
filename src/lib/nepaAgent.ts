@@ -60,22 +60,26 @@ export async function askNepaAgent(
   history: NepaAgentMessage[],
   userMessage: string
 ): Promise<NepaAgentResponse> {
-  // When Perplexity Sonar is wired, swap this block for:
-  //
-  // const r = await fetch('/api/v1/nepa-agent', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({ history, message: userMessage }),
-  // })
-  // if (!r.ok) throw new Error(await r.text())
-  // return await r.json()
-
-  // Mock implementation — canned responses
-  await new Promise((res) => setTimeout(res, 400 + Math.random() * 600)) // realistic latency
-  const match = KNOWLEDGE_TABLE.find((k) => k.patterns.some((p) => p.test(userMessage)))
-  return {
-    content: match ? match.reply : DEFAULT_REPLY,
-    mock: true,
+  try {
+    const r = await fetch('/api/nepa/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ history, message: userMessage }),
+    })
+    if (!r.ok) throw new Error(`HTTP ${r.status}`)
+    const data = await r.json()
+    return {
+      content: data.content,
+      mock: false,
+    }
+  } catch (e) {
+    // Fallback to local knowledge table on network failure
+    await new Promise((res) => setTimeout(res, 200))
+    const match = KNOWLEDGE_TABLE.find((k) => k.patterns.some((p) => p.test(userMessage)))
+    return {
+      content: match ? match.reply : DEFAULT_REPLY,
+      mock: true,
+    }
   }
 }
 

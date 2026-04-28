@@ -93,18 +93,31 @@ export function NepaAgent() {
     }
   }, [messages])
 
-  function handleSend(text?: string) {
+  async function handleSend(text?: string) {
     const msg = (text ?? input).trim()
     if (!msg) return
-    setMessages((prev) => [
-      ...prev,
-      { role: 'user', text: msg },
-      {
-        role: 'agent',
-        text: 'This interface is connected to mock context. Wire to /v1/agent/context and /v1/agent/query when the live endpoint is available.',
-      },
-    ])
+
+    setMessages((prev) => [...prev, { role: 'user', text: msg }])
     setInput('')
+
+    try {
+      const r = await fetch('/api/nepa/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ history: [], message: msg }),
+      })
+      if (!r.ok) throw new Error('HTTP ' + r.status)
+      const data = await r.json()
+      setMessages((prev) => [
+        ...prev,
+        { role: 'agent', text: data.content || 'No response.' },
+      ])
+    } catch (e) {
+      setMessages((prev) => [
+        ...prev,
+        { role: 'agent', text: 'NEPA agent is temporarily unreachable. Please try again.' },
+      ])
+    }
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
