@@ -12,7 +12,8 @@ import {
   UploadSimple,
 } from '@phosphor-icons/react'
 import { vodaApi } from '@/lib/voda-api'
-import type { DiagnosisResponse, ReconstructResponse, StitchResponse } from '@/types/voda'
+import type { DiagnosisResponse, ReconstructResponse, StitchResponse, ProcessResponse } from '@/types/voda'
+import ProcessingVisualization from '@/components/ProcessingVisualization'
 
 type QualityMode = 'diagnose' | 'reconstruct' | 'stitch'
 
@@ -51,6 +52,11 @@ export function QualityLab({ initialMode = 'diagnose', onModeChange }: QualityLa
   const inputRef = useRef<HTMLInputElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)
+
+  // For real-time processing visualization
+  const [processingJobId, setProcessingJobId] = useState<string | null>(null)
+  const [processingPrompt, setProcessingPrompt] = useState<string | null>(null)
+  const [processingError, setProcessingError] = useState<string | null>(null)
 
   useEffect(() => {
     setMode(initialMode)
@@ -111,7 +117,7 @@ export function QualityLab({ initialMode = 'diagnose', onModeChange }: QualityLa
   }
 
   const handleFiles = useCallback(
-    async (files: File[]) => {
+    async (files: File[], prompt?: string) => {
       if (!validateFiles(files)) return
       setLastFiles(files)
       setIsLoading(true)
@@ -119,13 +125,22 @@ export function QualityLab({ initialMode = 'diagnose', onModeChange }: QualityLa
       setDiagnosis(null)
       setReconstruct(null)
       setStitch(null)
+      setProcessingJobId(null)
+      setProcessingPrompt(null)
+      setProcessingError(null)
       try {
         if (mode === 'diagnose') {
           const response = await vodaApi.diagnoseFrames(files)
           setDiagnosis(response)
         } else if (mode === 'reconstruct') {
-          const response = await vodaApi.reconstructScene(files)
-          setReconstruct(response)
+          // Instead of direct reconstruct, submit job and get jobId
+          // Simulate prompt as file name or let user input prompt if available
+          const fakePrompt = prompt || files[0]?.name || 'Reconstruction';
+          // Here, you would call a real API to start the job and get jobId
+          // For now, use processFrames to get job_id
+          const processResp = await vodaApi.processFrames(files, 'voda');
+          setProcessingJobId(processResp.job_id)
+          setProcessingPrompt(fakePrompt)
         } else {
           const response = await vodaApi.stitchFrames(files, 'panoramic')
           setStitch(response)
@@ -133,6 +148,7 @@ export function QualityLab({ initialMode = 'diagnose', onModeChange }: QualityLa
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Processing failed'
         setError(message)
+        setProcessingError(message)
       } finally {
         setIsLoading(false)
       }
@@ -171,6 +187,21 @@ export function QualityLab({ initialMode = 'diagnose', onModeChange }: QualityLa
     ]
   }, [diagnosis])
 
+  // Handler for ProcessingVisualization completion/failure
+  const handleProcessingComplete = (outputUrl: string) => {
+    setProcessingJobId(null)
+    setProcessingPrompt(null)
+    // Optionally, fetch and show the result (e.g., setReconstruct with outputUrl)
+    // For now, just show a toast
+    toast.success('Reconstruction complete!')
+  }
+  const handleProcessingFailed = (source: 'user' | 'system', reason: string) => {
+    setProcessingJobId(null)
+    setProcessingPrompt(null)
+    setProcessingError(reason)
+    toast.error(`Reconstruction failed: ${reason}`)
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -200,42 +231,53 @@ export function QualityLab({ initialMode = 'diagnose', onModeChange }: QualityLa
         </div>
       </div>
 
-      <Card
-        className={`border-dashed border-2 p-8 text-center bg-card/40 transition-colors ${
-          isDragging ? 'border-primary/70 bg-primary/10' : 'border-border/60'
-        }`}
-        onDragOver={(event) => {
-          event.preventDefault()
-          setIsDragging(true)
-        }}
-        onDragLeave={() => setIsDragging(false)}
-        onDrop={handleDrop}
-      >
-        <Input
-          ref={inputRef}
-          type="file"
-          multiple={mode === 'stitch'}
-          accept="image/*,video/*"
-          className="hidden"
-          onChange={handleFileInput}
+
+      {/* Show ProcessingVisualization if reconstruct job is running */}
+      {processingJobId ? (
+        <ProcessingVisualization
+          jobId={processingJobId}
+          prompt={processingPrompt || undefined}
+          onComplete={handleProcessingComplete}
+          onFailed={handleProcessingFailed}
         />
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-            <UploadSimple size={22} className="text-primary" />
+      ) : (
+        <Card
+          className={`border-dashed border-2 p-8 text-center bg-card/40 transition-colors ${
+            isDragging ? 'border-primary/70 bg-primary/10' : 'border-border/60'
+          }`}
+          onDragOver={(event) => {
+            event.preventDefault()
+            setIsDragging(true)
+          }}
+          onDragLeave={() => setIsDragging(false)}
+          onDrop={handleDrop}
+        >
+          <Input
+            ref={inputRef}
+            type="file"
+            multiple={mode === 'stitch'}
+            accept="image/*,video/*"
+            className="hidden"
+            onChange={handleFileInput}
+          />
+          <div className="flex flex-col items-center gap-3">
+            <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+              <UploadSimple size={22} className="text-primary" />
+            </div>
+            <div>
+              <p className="font-medium">Drag & drop frames or video</p>
+              <p className="text-xs text-muted-foreground">
+                {mode === 'stitch'
+                  ? 'Upload at least 2 frames (max 50MB each).'
+                  : 'Upload a frame or clip (max 50MB).'}
+              </p>
+            </div>
+            <Button variant="outline" onClick={() => inputRef.current?.click()}>
+              Select files
+            </Button>
           </div>
-          <div>
-            <p className="font-medium">Drag & drop frames or video</p>
-            <p className="text-xs text-muted-foreground">
-              {mode === 'stitch'
-                ? 'Upload at least 2 frames (max 50MB each).'
-                : 'Upload a frame or clip (max 50MB).'}
-            </p>
-          </div>
-          <Button variant="outline" onClick={() => inputRef.current?.click()}>
-            Select files
-          </Button>
-        </div>
-      </Card>
+        </Card>
+      )}
 
       {isLoading && (
         <div className="space-y-4">
