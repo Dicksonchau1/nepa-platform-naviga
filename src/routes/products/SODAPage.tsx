@@ -1,28 +1,4 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { Check, X } from '@phosphor-icons/react'
-
-const STATS = [
-  { label: 'Active Camera Lanes', value: '24' },
-  { label: 'Alert Latency', value: '<38 ms' },
-  { label: 'Audit Events Today', value: '5,214' },
-  { label: 'Compliance Mode', value: 'GDPR · HIPAA' },
-]
-
-const FEATURES = [
-  {
-    title: 'Multi-Lane Camera Processing',
-    body: 'Each camera feed runs in its own isolated neuromorphic inference lane. No shared mutable state between streams means a fault or anomaly in one feed cannot contaminate decisions on another. Spike-timing decisions are deterministic per lane, so results are reproducible and auditable.',
-  },
-  {
-    title: 'Deterministic Alert Escalation',
-    body: 'Every detection event triggers a rule-based escalation chain rather than a probabilistic score. Alerts carry full inference provenance: which frames, which regions, which rules, and a cryptographic hash sealing the decision record. Operators receive structured findings, not just notifications.',
-  },
-  {
-    title: 'Operator-Authenticated Chain of Custody',
-    body: 'Every session requires operator authentication. All actions — view, acknowledge, escalate, dismiss — are timestamped, hashed, and sealed into an immutable audit trail from camera ingestion to operator response. Suitable for compliance, legal proceedings, and insurance documentation.',
-  },
-]
+// export { SODAPage } from '@/components/pages/SODAPage';
 
 const PIPELINE = [
   {

@@ -1,293 +1,147 @@
-import { useState, useEffect, useRef } from 'react'
-import { Link } from 'react-router-dom'
-import { Button } from '@/components/ui/button'
-import { Terminal } from '@phosphor-icons/react'
-import { CountUp } from '@/components/CountUp'
-import heroVideo from '@/assets/video/home-hero.mp4'
+
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { CountUp } from '@/components/CountUp';
+import heroVideo from '/assets/home-hero-DBs3qkXq.mp4';
 
 export function HomePage() {
-  const [videoPlaying, setVideoPlaying] = useState(true)
-  const [nepaRevealed, setNepaRevealed] = useState(false)
-  const [heroVisible, setHeroVisible] = useState(false)
-  const videoRef = useRef<HTMLVideoElement>(null)
-
-  useEffect(() => {
-    const nepaTimer = setTimeout(() => setNepaRevealed(true), 2000)
-    const heroTimer = setTimeout(() => {
-      setHeroVisible(true)
-      setVideoPlaying(false)
-    }, 3500)
-    
-    return () => {
-      clearTimeout(nepaTimer)
-      clearTimeout(heroTimer)
-    }
-  }, [])
-
-  const handleVideoEnded = () => {
-    if (videoRef.current) {
-      videoRef.current.pause()
-    }
-  }
-
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-background">
-      <video
-        ref={videoRef}
-        autoPlay
-        muted
-        playsInline
-        onEnded={handleVideoEnded}
-        className="absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1500"
-        style={{ opacity: videoPlaying ? 0.15 : 0.08 }}
-      >
-        <source src={heroVideo} type="video/mp4" />
-      </video>
-
-      <div 
-        className="absolute inset-0 transition-opacity duration-1500"
-        style={{ 
-          opacity: heroVisible ? 1 : 0,
-          background: 'radial-gradient(ellipse 120% 80% at 20% 50%, rgba(0,212,255,0.08) 0%, transparent 50%), radial-gradient(ellipse 100% 70% at 80% 30%, rgba(0,102,255,0.06) 0%, transparent 60%)'
-        }}
-      />
-      <div 
-        className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-transparent transition-opacity duration-1500"
-        style={{ opacity: heroVisible ? 1 : 0 }}
-      />
-      <div 
-        className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/80 transition-opacity duration-1500"
-        style={{ opacity: heroVisible ? 1 : 0 }}
-      />
-      <div 
-        className="absolute inset-0 transition-opacity duration-1500"
-        style={{ 
-          opacity: heroVisible ? 1 : 0,
-          background: 'linear-gradient(135deg, rgba(0,212,255,0.05) 0%, transparent 30%, rgba(107,33,255,0.03) 70%, transparent 100%)'
-        }}
-      />
-      
-      <div 
-        className="absolute inset-0 opacity-20 transition-opacity duration-1500" 
-        style={{
-          backgroundImage: 'radial-gradient(circle, rgba(0,212,255,0.08) 1px, transparent 1px)',
-          backgroundSize: '40px 40px',
-          opacity: heroVisible ? 0.2 : 0
-        }}
-      />
-
-      <div 
-        className="absolute left-0 right-0 h-px pointer-events-none transition-opacity duration-1500"
-        style={{
-          background: 'linear-gradient(90deg, rgba(0,212,255,0.4) 0%, transparent 60%)',
-          animation: 'sweep 8s linear infinite',
-          opacity: heroVisible ? 1 : 0
-        }}
-      />
-
-      <div className="relative z-20 container mx-auto px-8 pt-32 pb-16 min-h-screen flex flex-col justify-center">
-        <div className="max-w-5xl">
-          <div 
-            className="flex items-center gap-3 mb-12 transition-opacity duration-1000"
-            style={{ opacity: heroVisible ? 1 : 0 }}
-          >
-            <div className="relative flex items-center justify-center w-3 h-3">
-              <div className="absolute w-3 h-3 bg-cyan-400 rounded-full animate-ping opacity-75" />
-              <div className="relative w-2 h-2 bg-cyan-500 rounded-full" />
-            </div>
-            <span className="font-mono text-[10px] tracking-[0.22em] text-cyan-400/70 uppercase">
-              System Online
-            </span>
+    <div className="relative min-h-screen w-full bg-[#0B0F14] overflow-x-hidden">
+      {/* HERO SECTION */}
+      <div className="relative w-full min-h-screen flex flex-col items-center justify-center">
+        <video
+          src={heroVideo}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover -z-10 opacity-30"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0B0F14]/80 via-[#0B0F14]/60 to-black/90 -z-10" />
+        <div className="absolute inset-0 pointer-events-none select-none" style={{backgroundImage:'linear-gradient(to right,rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,0.03) 1px,transparent 1px)',backgroundSize:'40px 40px',opacity:0.18}} />
+        <div className="container mx-auto px-6 max-w-5xl text-center py-32 flex flex-col items-center justify-center">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 mb-6">
+            <span className="font-mono text-xs tracking-[2px] text-white/40 uppercase">AURASENSE</span>
+            <span className="font-mono text-xs tracking-[2px] text-primary uppercase">· Video Agent</span>
           </div>
-
-          <div
-            className="mb-10 transition-all duration-1000 ease-out"
-            style={{
-              opacity: heroVisible ? 1 : 0,
-              transform: heroVisible ? 'translateY(0)' : 'translateY(32px)',
-            }}
-          >
-            <h1 
-              className="text-7xl md:text-9xl font-bold tracking-tight leading-[0.95] mb-4"
-              style={{
-                color: 'white',
-                textShadow: '0 4px 8px rgba(0,0,0,0.5), 0 8px 24px rgba(0,212,255,0.3), 0 0 60px rgba(0,212,255,0.15)',
-                transform: 'translateZ(0)',
-              }}
-            >
-              AuraSense
-            </h1>
-            <h2
-              className="text-4xl md:text-6xl font-light tracking-tight leading-tight"
-              style={{
-                transition: 'opacity 1s ease-out 0.3s, transform 1s ease-out 0.3s',
-                opacity: heroVisible ? 1 : 0,
-                transform: heroVisible ? 'translateY(0)' : 'translateY(24px)',
-                color: '#00D4FF',
-                textShadow: '0 3px 6px rgba(0,0,0,0.5), 0 6px 18px rgba(0,212,255,0.4)',
-              }}
-            >
-              Video Agent
-            </h2>
+          <h1 className="text-7xl sm:text-8xl font-black tracking-tighter text-white mb-2">NEPA</h1>
+          <h2 className="text-2xl sm:text-3xl font-semibold text-primary mb-6">Neuromorphic Edge Perception Agent</h2>
+          <p className="text-lg text-[#cdd3de] mb-8 max-w-2xl mx-auto">Deterministic inference at the edge. No cloud. No latency. No compromise. Built for autonomous retail, aerial inspection, and robotic delivery operations across Asia-Pacific.</p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
+            <Link to="/dashboard" className="px-8 py-4 rounded-lg bg-primary text-white font-semibold shadow hover:bg-primary/90 transition-colors text-center">Launch NEPA Console →</Link>
+            <Link to="/about/contact" className="px-8 py-4 rounded-lg border border-primary text-primary font-semibold hover:bg-primary/10 transition-colors text-center">Request pilot access</Link>
           </div>
-
-          <div
-            className="mb-12 transition-opacity duration-1000 ease-out delay-700"
-            style={{ opacity: heroVisible ? 1 : 0 }}
-          >
-            <div className="inline-block border-l-2 border-cyan-500/40 pl-6 mb-8">
-              <p 
-                className="font-mono text-xs tracking-[0.28em] uppercase mb-3 transition-all duration-700"
-                style={{
-                  opacity: nepaRevealed ? 1 : 0,
-                  transform: nepaRevealed ? 'translateX(0)' : 'translateX(-12px)',
-                  color: '#00D4FF',
-                  textShadow: '0 2px 4px rgba(0,0,0,0.5)',
-                }}
-              >
-                NEPA
-              </p>
-              <p 
-                className="text-xl md:text-2xl font-light leading-relaxed mb-1 transition-all duration-700 delay-200"
-                style={{
-                  opacity: nepaRevealed ? 1 : 0,
-                  transform: nepaRevealed ? 'translateX(0)' : 'translateX(-12px)',
-                  color: 'white',
-                  textShadow: '0 2px 6px rgba(0,0,0,0.4)',
-                }}
-              >
-                Neuromorphic
-              </p>
-              <p 
-                className="text-xl md:text-2xl font-light leading-relaxed transition-all duration-700 delay-300"
-                style={{
-                  opacity: nepaRevealed ? 1 : 0,
-                  transform: nepaRevealed ? 'translateX(0)' : 'translateX(-12px)',
-                  color: 'white',
-                  textShadow: '0 2px 6px rgba(0,0,0,0.4)',
-                }}
-              >
-                Edge Perception Agent
-              </p>
+          {/* Live metrics row */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-white/5 rounded-xl overflow-hidden max-w-3xl mx-auto mt-12">
+            <div className="bg-zinc-950 px-6 py-5 flex flex-col items-center">
+              <span className="font-mono text-[10px] tracking-[2px] uppercase text-primary mb-1">Inference Latency</span>
+              <span className="text-2xl font-bold text-[#cdd3de]">&lt;<CountUp target={42} suffix="ms" /></span>
+              <span className="text-xs text-white/55">live edge benchmark</span>
             </div>
-
-            <p 
-              className="text-base max-w-xl leading-relaxed"
-              style={{
-                color: 'rgba(255,255,255,0.75)',
-                textShadow: '0 1px 3px rgba(0,0,0,0.4)',
-              }}
-            >
-              Deterministic inference at the edge. No cloud. No latency. No compromise. 
-              Built for autonomous retail, aerial inspection, and robotic delivery operations 
-              across Asia-Pacific.
-            </p>
-          </div>
-
-          <div
-            className="flex items-center gap-4 flex-wrap mb-16 transition-opacity duration-1000 ease-out delay-1000"
-            style={{ opacity: heroVisible ? 1 : 0 }}
-          >
-            <Button
-              asChild
-              size="lg"
-              className="border border-cyan-500/40 text-black bg-cyan-500 hover:bg-cyan-400 font-mono text-[11px] tracking-[0.18em] uppercase px-8 py-6 shadow-lg shadow-cyan-500/30"
-              style={{
-                textShadow: 'none',
-              }}
-            >
-              <Link to="/nepa">
-                <Terminal size={20} weight="duotone" className="mr-2" />
-                Open NEPA Agent
-              </Link>
-            </Button>
-
-            <Button
-              asChild
-              size="lg"
-              variant="ghost"
-              className="border border-white/20 text-white/80 hover:bg-white/10 hover:text-white font-mono text-[11px] tracking-[0.18em] uppercase px-8 py-6"
-            >
-              <Link to="/about/contact">Request pilot access</Link>
-            </Button>
-          </div>
-
-          <div
-            className="font-mono text-[11px] flex items-center gap-8 flex-wrap border-t border-white/10 pt-8 transition-opacity duration-1000 ease-out delay-1000"
-            style={{ opacity: heroVisible ? 1 : 0 }}
-          >
-            <div className="flex flex-col gap-1">
-              <span 
-                className="text-[10px] tracking-wider uppercase"
-                style={{
-                  color: 'rgba(255,255,255,0.35)',
-                  textShadow: '0 1px 2px rgba(0,0,0,0.3)',
-                }}
-              >
-                Inference Latency
-              </span>
-              <span 
-                className="font-semibold text-base"
-                style={{
-                  color: '#00D4FF',
-                  textShadow: '0 2px 4px rgba(0,0,0,0.4), 0 0 12px rgba(0,212,255,0.3)',
-                }}
-              >
-                &lt;<CountUp target={42} suffix="ms" />
-              </span>
+            <div className="bg-zinc-950 px-6 py-5 flex flex-col items-center">
+              <span className="font-mono text-[10px] tracking-[2px] uppercase text-primary mb-1">Edge Nodes Active</span>
+              <span className="text-2xl font-bold text-[#cdd3de]">12</span>
+              <span className="text-xs text-white/55">across HK pilots</span>
             </div>
-            <div className="w-px h-10 bg-white/10" />
-            <div className="flex flex-col gap-1">
-              <span 
-                className="text-[10px] tracking-wider uppercase"
-                style={{
-                  color: 'rgba(255,255,255,0.35)',
-                  textShadow: '0 1px 2px rgba(0,0,0,0.3)',
-                }}
-              >
-                Edge Nodes Active
-              </span>
-              <span 
-                className="font-semibold text-base"
-                style={{
-                  color: '#00D4FF',
-                  textShadow: '0 2px 4px rgba(0,0,0,0.4), 0 0 12px rgba(0,212,255,0.3)',
-                }}
-              >
-                <CountUp target={12} />
-              </span>
-            </div>
-            <div className="w-px h-10 bg-white/10" />
-            <div className="flex flex-col gap-1">
-              <span 
-                className="text-[10px] tracking-wider uppercase"
-                style={{
-                  color: 'rgba(255,255,255,0.35)',
-                  textShadow: '0 1px 2px rgba(0,0,0,0.3)',
-                }}
-              >
-                Audit Events Today
-              </span>
-              <span 
-                className="font-semibold text-base"
-                style={{
-                  color: '#00D4FF',
-                  textShadow: '0 2px 4px rgba(0,0,0,0.4), 0 0 12px rgba(0,212,255,0.3)',
-                }}
-              >
-                <CountUp target={3847} />
-              </span>
+            <div className="bg-zinc-950 px-6 py-5 flex flex-col items-center">
+              <span className="font-mono text-[10px] tracking-[2px] uppercase text-primary mb-1">Audit Events Today</span>
+              <span className="text-2xl font-bold text-[#cdd3de]">3,847</span>
+              <span className="text-xs text-white/55">signed records</span>
             </div>
           </div>
+          <div className="italic text-white/50 mt-8">AuraSense — Perception to Sensation. Orchestration by low latency and inference cost.</div>
         </div>
       </div>
 
-      <style>{`
-        @keyframes sweep {
-          0%   { top: -2px; }
-          100% { top: 100%; }
-        }
-      `}</style>
+      {/* WHAT NEPA DOES */}
+      <section className="border-t border-white/10 py-24 bg-transparent">
+        <div className="container mx-auto px-6 max-w-5xl">
+          <div className="font-mono text-xs tracking-[2px] uppercase text-primary mb-2">WHAT NEPA DOES</div>
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-10">Three operations. One engine.</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-zinc-900/40 border border-white/10 rounded-xl p-6 flex flex-col">
+              <div className="font-mono text-xs tracking-[2px] uppercase text-primary mb-2">01 · DETECT</div>
+              <div className="text-[#cdd3de] font-semibold mb-1">Neuromorphic spike streams</div>
+              <div className="text-white/65 text-sm">Anomaly detection at the sensor edge. V-JEPA 2 world modeling fused with spike-timing-dependent plasticity. Sub-millisecond response.</div>
+            </div>
+            <div className="bg-zinc-900/40 border border-white/10 rounded-xl p-6 flex flex-col">
+              <div className="font-mono text-xs tracking-[2px] uppercase text-primary mb-2">02 · DECIDE</div>
+              <div className="text-[#cdd3de] font-semibold mb-1">Deterministic arbitration</div>
+              <div className="text-white/65 text-sm">Three-loop closed control: detect → dispatch → confirm. Every decision traceable, replayable, and bounded by degraded-safe policies.</div>
+            </div>
+            <div className="bg-zinc-900/40 border border-white/10 rounded-xl p-6 flex flex-col">
+              <div className="font-mono text-xs tracking-[2px] uppercase text-primary mb-2">03 · DELIVER</div>
+              <div className="text-[#cdd3de] font-semibold mb-1">Cryptographic receipts</div>
+              <div className="text-white/65 text-sm">Ed25519-signed SignatureMaps. Replay-verified evidence chains. Compliance-ready exports for PDPO, GDPR, and insurance audit.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* TWO SURFACES, ONE ENGINE */}
+      <section className="border-t border-white/10 py-24 bg-transparent">
+        <div className="container mx-auto px-6 max-w-5xl">
+          <div className="font-mono text-xs tracking-[2px] uppercase text-primary mb-2">Two surfaces · one engine</div>
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-10">NEPA is the engine. AuraStudio is how creators experience it.</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-zinc-900/40 border border-white/10 rounded-xl p-6 flex flex-col">
+              <div className="font-mono text-xs tracking-[2px] uppercase text-primary mb-2">ENTERPRISE — VODA</div>
+              <div className="text-[#cdd3de] font-semibold mb-1">License the multi-agent orchestration engine.</div>
+              <div className="text-white/65 text-sm mb-4">Drives any generative video pipeline needing perception grounding and cryptographic provenance.</div>
+              <Link to="/products/voda" className="text-primary font-mono text-xs tracking-[2px] uppercase hover:underline">License VODA →</Link>
+            </div>
+            <div className="bg-zinc-900/40 border border-white/10 rounded-xl p-6 flex flex-col">
+              <div className="font-mono text-xs tracking-[2px] uppercase text-primary mb-2">CONSUMER — AuraStudio</div>
+              <div className="text-[#cdd3de] font-semibold mb-1">A full crew of AI agents turning your real footage — phone, drone, robot — into production-grade cinema.</div>
+              <div className="text-white/65 text-sm mb-4">App Store · End of May 2026.</div>
+              <a href="https://aurastudiohk.com" target="_blank" rel="noopener noreferrer" className="text-primary font-mono text-xs tracking-[2px] uppercase hover:underline">Join the waitlist →</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FOUR SURFACES */}
+      <section className="border-t border-white/10 py-20 bg-zinc-950/50">
+        <div className="container mx-auto px-6 max-w-5xl">
+          <div className="font-mono text-xs tracking-[2px] uppercase text-primary mb-2">Four surfaces · one core</div>
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-10">Same NEPA engine. Different operational lenses.</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <Link to="/products/voda" className="bg-zinc-900/40 border border-white/10 rounded-xl p-4 flex flex-col items-center hover:border-primary transition-colors group">
+              <div className="font-mono text-xs tracking-[2px] uppercase text-primary mb-1">VODA</div>
+              <div className="text-[#cdd3de] font-semibold mb-1">Video Operations</div>
+              <div className="text-white/65 text-xs">Diagnose · Correct · Govern</div>
+            </Link>
+            <Link to="/products/soda" className="bg-zinc-900/40 border border-white/10 rounded-xl p-4 flex flex-col items-center hover:border-primary transition-colors group">
+              <div className="font-mono text-xs tracking-[2px] uppercase text-primary mb-1">SODA</div>
+              <div className="text-[#cdd3de] font-semibold mb-1">Store Operations</div>
+              <div className="text-white/65 text-xs">Detect · Alert · Audit</div>
+            </Link>
+            <Link to="/products/foda" className="bg-zinc-900/40 border border-white/10 rounded-xl p-4 flex flex-col items-center hover:border-primary transition-colors group">
+              <div className="font-mono text-xs tracking-[2px] uppercase text-primary mb-1">FODA</div>
+              <div className="text-[#cdd3de] font-semibold mb-1">Facade Operations</div>
+              <div className="text-white/65 text-xs">Drone · Replay · Seal</div>
+            </Link>
+            <Link to="/products/roda" className="bg-zinc-900/40 border border-white/10 rounded-xl p-4 flex flex-col items-center hover:border-primary transition-colors group">
+              <div className="font-mono text-xs tracking-[2px] uppercase text-primary mb-1">RODA</div>
+              <div className="text-[#cdd3de] font-semibold mb-1">Robotic Dispatch</div>
+              <div className="text-white/65 text-xs">Detect · Dispatch · Confirm</div>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* FINAL CTA */}
+      <section className="border-t border-white/10 py-24 bg-transparent">
+        <div className="container mx-auto px-6 max-w-3xl text-center">
+          <div className="font-mono text-xs tracking-[2px] uppercase text-primary mb-2">FROM PERCEPTION TO SENSATION</div>
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Without empathy, how intelligent can it be?</h2>
+          <div className="text-[#cdd3de] mb-8">AuraSense is the first AI company whose core metric is perception accuracy, not attention extraction. That distinction is our competitive advantage, our technical thesis, and our moral foundation.</div>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link to="/agent" className="px-8 py-4 rounded-lg bg-primary text-white font-semibold shadow hover:bg-primary/90 transition-colors text-center">Try the NEPA Agent →</Link>
+            <Link to="/about/contact" className="px-8 py-4 rounded-lg border border-primary text-primary font-semibold hover:bg-primary/10 transition-colors text-center">Talk to AuraSense</Link>
+          </div>
+        </div>
+      </section>
     </div>
-  )
+  );
 }

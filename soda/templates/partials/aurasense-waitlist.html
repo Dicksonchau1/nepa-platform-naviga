@@ -1,0 +1,167 @@
+<!-- ===== AuraSense Waitlist Pop-up (SODA) ===== -->
+<button id="as-open" class="as-fab" type="button" aria-haspopup="dialog" aria-controls="as-dialog">
+  <span class="as-dot" aria-hidden="true"></span> Join AuraSense early access
+</button>
+
+<dialog id="as-dialog" class="as-dialog" aria-labelledby="as-title">
+  <form method="dialog" class="as-close-row">
+    <button class="as-close" value="cancel" aria-label="Close">×</button>
+  </form>
+
+  <div class="as-shell">
+    <span class="as-eyebrow">Limited early-access · SODA promo</span>
+    <h2 id="as-title">Get AuraSense before public launch.</h2>
+    <p class="as-lead">
+      Neuromorphic perception for unmanned retail and robotics.
+      Join the waitlist and get a pilot slot ahead of public launch.
+    </p>
+
+    <form id="as-form" class="as-form" novalidate>
+      <!-- honeypot (must remain empty) -->
+      <input type="text" name="hp" class="as-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <input type="hidden" name="ts" id="as-ts">
+      <input type="hidden" name="source_page" value="soda">
+
+      <label>Work email
+        <input type="email" name="email" required placeholder="you@company.com">
+      </label>
+
+      <div class="as-row">
+        <label>I'm joining as
+          <select name="role" required>
+            <option value="">Select…</option>
+            <option value="operator">Operator</option>
+            <option value="engineer">Robotics / engineer</option>
+            <option value="founder">Founder</option>
+            <option value="investor">Investor</option>
+            <option value="researcher">Researcher</option>
+            <option value="other">Other</option>
+          </select>
+        </label>
+
+        <label>Use case
+          <select name="use_case" required>
+            <option value="">Select…</option>
+            <option value="unmanned_retail">Unmanned retail</option>
+            <option value="robotics">Robotics</option>
+            <option value="security">Security / monitoring</option>
+            <option value="logistics">Logistics</option>
+            <option value="other">Other</option>
+          </select>
+        </label>
+      </div>
+
+      <label>Company <span class="as-faint">(optional)</span>
+        <input type="text" name="company" maxlength="120" placeholder="Acme Robotics">
+      </label>
+
+      <label>What are you deploying? <span class="as-faint">(optional)</span>
+        <textarea name="notes" maxlength="500" rows="3"
+          placeholder="e.g. Shelf-scanning robot in pilot retail environment"></textarea>
+      </label>
+
+      <button class="as-btn" type="submit" id="as-submit">Join the waitlist</button>
+      <p class="as-helper">Double opt-in. We'll email a confirm link, then a founder note within 24h.</p>
+    </form>
+
+    <div id="as-thanks" class="as-thanks" hidden>
+      <h3>You're on the list.</h3>
+      <p>Check your inbox to confirm — your spot is <strong id="as-pos">#—</strong>.</p>
+    </div>
+  </div>
+</dialog>
+
+<style>
+  .as-fab{position:fixed;right:1.25rem;bottom:1.25rem;z-index:9998;
+    display:inline-flex;gap:.55rem;align-items:center;
+    padding:.85rem 1.1rem;border-radius:9999px;border:1px solid rgba(101,211,216,.35);
+    background:linear-gradient(135deg,#65d3d8,#24a7b0);color:#071016;font-weight:700;
+    box-shadow:0 12px 32px rgba(36,167,176,.35);cursor:pointer}
+  .as-fab:hover{transform:translateY(-1px)}
+  .as-dot{width:.55rem;height:.55rem;border-radius:50%;background:#fff;box-shadow:0 0 0 4px rgba(255,255,255,.25)}
+  .as-dialog{border:none;padding:0;border-radius:1.4rem;max-width:560px;width:min(92vw,560px);
+    background:linear-gradient(180deg,#111722,#151c28);color:#edf3ff;
+    box-shadow:0 30px 80px rgba(0,0,0,.5)}
+  .as-dialog::backdrop{background:rgba(8,12,18,.62);backdrop-filter:blur(8px)}
+  .as-close-row{display:flex;justify-content:flex-end;padding:.5rem .5rem 0}
+  .as-close{background:transparent;border:none;color:#a8b5c9;font-size:1.5rem;cursor:pointer}
+  .as-shell{padding:.25rem 1.5rem 1.5rem}
+  .as-eyebrow{display:inline-block;padding:.4rem .7rem;border-radius:9999px;
+    background:rgba(101,211,216,.12);border:1px solid rgba(101,211,216,.25);
+    color:#65d3d8;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700}
+  .as-dialog h2{margin:.6rem 0 .4rem;font-size:1.6rem;line-height:1.1}
+  .as-lead{margin:0 0 1rem;color:#a8b5c9}
+  .as-form label{display:block;margin-top:.85rem;font-size:.9rem;font-weight:700}
+  .as-form input,.as-form select,.as-form textarea{
+    width:100%;margin-top:.35rem;padding:.85rem .95rem;border-radius:.75rem;
+    background:rgba(255,255,255,.04);border:1px solid rgba(154,178,206,.18);
+    color:#edf3ff;font:inherit}
+  .as-form input:focus,.as-form select:focus,.as-form textarea:focus{
+    outline:2px solid #65d3d8;outline-offset:2px}
+  .as-row{display:grid;gap:.85rem;grid-template-columns:1fr 1fr}
+  @media(max-width:560px){.as-row{grid-template-columns:1fr}}
+  .as-btn{margin-top:1.1rem;width:100%;padding:.95rem 1.1rem;border-radius:9999px;border:none;
+    background:linear-gradient(135deg,#65d3d8,#24a7b0);color:#071016;font-weight:800;cursor:pointer;
+    box-shadow:0 10px 28px rgba(36,167,176,.28)}
+  .as-helper,.as-faint{color:#7c889a;font-size:.78rem}
+  .as-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+  .as-thanks{margin-top:1rem;padding:1rem;border-radius:.9rem;
+    background:rgba(106,211,154,.08);border:1px solid rgba(106,211,154,.25)}
+</style>
+
+<script>
+(() => {
+  const dlg = document.getElementById('as-dialog');
+  const open = document.getElementById('as-open');
+  const form = document.getElementById('as-form');
+  const ts   = document.getElementById('as-ts');
+  const thx  = document.getElementById('as-thanks');
+  const pos  = document.getElementById('as-pos');
+
+  // Promo trigger: 12s dwell OR exit-intent OR 50% scroll, once / 7 days
+  const KEY = 'as_promo_seen_v1';
+  const seen = () => { try { return Date.now() - +localStorage.getItem(KEY) < 7*864e5 } catch { return false } };
+  const stamp = () => { try { localStorage.setItem(KEY, Date.now()) } catch {} };
+  const show = () => { if (dlg.open || seen()) return; ts.value = Date.now(); dlg.showModal(); stamp(); };
+
+  open.addEventListener('click', () => { ts.value = Date.now(); dlg.showModal(); });
+  setTimeout(show, 12000);
+  document.addEventListener('mouseleave', e => { if (e.clientY <= 0) show(); });
+  let fired = false;
+  window.addEventListener('scroll', () => {
+    if (fired) return;
+    const p = (scrollY + innerHeight) / document.body.scrollHeight;
+    if (p > 0.5) { fired = true; show(); }
+  }, { passive: true });
+
+  const qs = new URLSearchParams(location.search);
+  const utm = ['utm_source','utm_medium','utm_campaign'].reduce((a,k) => (a[k]=qs.get(k),a),{});
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(form);
+    const body = Object.fromEntries(fd.entries());
+    body.ts = +body.ts || Date.now();
+    Object.assign(body, utm, { referrer: document.referrer });
+
+    const btn = document.getElementById('as-submit');
+    btn.disabled = true; btn.textContent = 'Joining…';
+    try {
+      const r = await fetch('/api/waitlist', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(body)
+      });
+      const j = await r.json();
+      if (!j.ok) throw new Error('signup failed');
+      form.hidden = true;
+      thx.hidden = false;
+      if (j.position) pos.textContent = '#' + j.position;
+    } catch (err) {
+      btn.disabled = false; btn.textContent = 'Try again';
+      alert('Signup failed — please retry.');
+    }
+  });
+})();
+</script>
+<!-- ===== /AuraSense Waitlist Pop-up ===== -->

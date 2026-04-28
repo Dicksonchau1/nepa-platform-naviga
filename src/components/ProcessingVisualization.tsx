@@ -112,6 +112,11 @@ export const ProcessingVisualization: React.FC<ProcessingVisualizationProps> = (
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const calcTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Debug state
+  const [rawEvents, setRawEvents] = useState<any[]>([]);
+  const [wsStatus, setWsStatus] = useState<string>('connecting');
+  const [eventFilter, setEventFilter] = useState('');
+
   // Elapsed timer
   useEffect(() => {
     const interval = setInterval(() => {
@@ -164,6 +169,7 @@ export const ProcessingVisualization: React.FC<ProcessingVisualizationProps> = (
     let closed = false;
 
     function connect() {
+      setWsStatus('connecting');
       ws = new WebSocket(`${window.location.protocol === 'https:' ? 'wss' : 'ws'}://api/reconstructions/${jobId}/progress`);
       wsRef.current = ws;
       setIsConnected(true);
@@ -172,23 +178,31 @@ export const ProcessingVisualization: React.FC<ProcessingVisualizationProps> = (
         setIsConnected(true);
         setReconnecting(false);
         setReconnectAttempts(0);
+        setWsStatus('open');
       };
       ws.onclose = () => {
         setIsConnected(false);
+        setWsStatus('closed');
         if (!closed && reconnectAttempts < MAX_RECONNECTS) {
           setReconnecting(true);
           setReconnectAttempts((n) => n + 1);
           reconnectTimer = setTimeout(connect, 1500);
         }
       };
-      ws.onerror = () => {
+      ws.onerror = (e) => {
+        setWsStatus('error');
         ws?.close();
       };
       ws.onmessage = (event) => {
         lastEventTime.current = Date.now();
         setShowStillWorking(false);
-        const msg = JSON.parse(event.data);
-        handleEvent(msg);
+        try {
+          const msg = JSON.parse(event.data);
+          setRawEvents((evts) => [...evts.slice(-49), msg]);
+          handleEvent(msg);
+        } catch (e) {
+          setRawEvents((evts) => [...evts.slice(-49), { error: 'Invalid JSON', data: event.data }]);
+        }
       };
     }
     connect();
@@ -262,9 +276,58 @@ export const ProcessingVisualization: React.FC<ProcessingVisualizationProps> = (
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-6 bg-neutral-900 rounded-xl shadow-lg flex flex-col gap-6">
+    <div className="w-full max-w-2xl mx-auto p-6 bg-neutral-900 rounded-xl shadow-lg flex flex-col gap-6 relative">
       {/* Section 1: Prompt echo */}
       <div className="text-white/60 text-sm italic mb-2">Reconstructing: “{promptText}”</div>
+
+      {/* Debug: WebSocket status */}
+      <div className="text-xs text-yellow-300/80 mb-2">
+        <b>WebSocket:</b> {wsStatus}
+        {reconnecting && <span> (reconnecting...)</span>}
+      </div>
+
+      {/* Debug: Raw event data with filter and highlights */}
+      <details className="mb-2 bg-neutral-800/80 rounded p-2 text-xs text-white/80">
+        <summary className="cursor-pointer">Raw backend events ({rawEvents.length})</summary>
+        <div className="mt-2 flex flex-col gap-2">
+          <input
+            className="px-2 py-1 rounded bg-neutral-900 border border-neutral-700 text-xs text-white mb-1"
+            placeholder="Filter by event type or content..."
+            value={eventFilter}
+            onChange={e => setEventFilter(e.target.value)}
+            style={{ width: '100%' }}
+          />
+          <div className="max-h-48 overflow-y-auto">
+            {rawEvents.length === 0 && <div className="text-neutral-400">No events received yet.</div>}
+            {rawEvents
+              .map((evt, i) => ({ evt, i }))
+              .filter(({ evt }) => {
+                if (!eventFilter) return true;
+                const str = JSON.stringify(evt).toLowerCase();
+                return str.includes(eventFilter.toLowerCase());
+              })
+              .map(({ evt, i }) => {
+                const eventType = evt?.event;
+                let highlight = '';
+                if (eventType === 'job_failed') highlight = 'bg-red-900/60 text-red-300 border-l-4 border-red-500';
+                else if (eventType === 'agent_complete') highlight = 'bg-green-900/40 text-green-300 border-l-4 border-green-500';
+                else if (eventType === 'job_complete') highlight = 'bg-blue-900/40 text-blue-200 border-l-4 border-blue-400';
+                else if (evt?.error) highlight = 'bg-yellow-900/60 text-yellow-300 border-l-4 border-yellow-500';
+                return (
+                  <pre
+                    key={i}
+                    className={
+                      'whitespace-pre-wrap break-all border-b border-neutral-700 pb-1 mb-1 last:mb-0 last:border-0 px-2 py-1 rounded ' +
+                      (highlight || '')
+                    }
+                  >
+                    {JSON.stringify(evt, null, 2)}
+                  </pre>
+                );
+              })}
+          </div>
+        </div>
+      </details>
 
       {/* Section 2: Agent crew grid */}
       <div className="grid grid-cols-3 gap-6 md:gap-8">
