@@ -1,0 +1,79 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Create build env
+        run: |
+          cat > .env <<ENVEOF
+          VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_API_BASE_URL=https://www.aurasensehk.com
+          VITE_HRI_API_URL=https://www.aurasensehk.com
+          VITE_VODA_API_URL=https://voda.aurasensehk.com
+          ENVEOF
+
+      - name: Build
+        run: pnpm build
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/key
+          chmod 600 ~/.ssh/key
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Backup current site
+        run: |
+          ssh -i ~/.ssh/key ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
+            "cp -r ${{ secrets.VPS_DEPLOY_PATH }} ${{ secrets.VPS_DEPLOY_PATH }}.bak-ci-$(date +%Y%m%d-%H%M%S)"
+
+      - name: Deploy via rsync
+        run: |
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/key -o StrictHostKeyChecking=no" \
+            dist/ \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:${{ secrets.VPS_DEPLOY_PATH }}/
+
+      - name: Fix permissions
+        run: |
+          ssh -i ~/.ssh/key ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
+            "chown -R www-data:www-data ${{ secrets.VPS_DEPLOY_PATH }} && chmod -R 755 ${{ secrets.VPS_DEPLOY_PATH }}"
+
+      - name: Smoke test
+        run: |
+          sleep 5
+          HTTP_WWW=$(curl -k -s -o /dev/null -w "%{http_code}" https://www.aurasensehk.com/)
+          HTTP_BENCH=$(curl -k -s -o /dev/null -w "%{http_code}" https://www.aurasensehk.com/api/bench/latest)
+          HTTP_FODA=$(curl -k -s -o /dev/null -w "%{http_code}" https://foda.aurasensehk.com/)
+          echo "www: $HTTP_WWW | bench: $HTTP_BENCH | foda: $HTTP_FODA"
+          if [ "$HTTP_WWW" = "200" ] && [ "$HTTP_BENCH" = "200" ] && [ "$HTTP_FODA" = "200" ]; then
+            echo "Deploy verified"
+          else
+            echo "Verification failed"
+            exit 1
+          fi
+
+      - name: Cleanup
+        if: always()
+        run: rm -f ~/.ssh/key
