@@ -9,7 +9,7 @@ import {
   Camera,
   ShieldCheck,
   CheckCircle,
-  ChevronRight,
+  CaretRight,
   PaperPlaneRight,
   UserCircle,
 } from '@phosphor-icons/react'
@@ -306,7 +306,7 @@ export function NepaAgent() {
                 <div key={idx} className="flex items-center gap-2">
                   <CheckCircle size={14} className={log.status === 'done' ? 'text-green-400' : 'text-amber-400'} />
                   <span className="text-xs text-white/90">{log.label}</span>
-                  <ChevronRight size={14} className={log.status === 'done' ? 'text-green-400 ml-auto' : 'text-amber-400 ml-auto'} />
+                  <CaretRight size={14} className={log.status === 'done' ? 'text-green-400 ml-auto' : 'text-amber-400 ml-auto'} />
                 </div>
               ))}
             </div>
