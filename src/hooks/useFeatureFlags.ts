@@ -26,7 +26,8 @@ export function useFeatureFlags() {
 
   function isEnabled(product: ProductKey): boolean {
     if (!flags) return false
-    return flags[featureKeyMap[product]] ?? false
+    const value = flags[featureKeyMap[product]]
+    return typeof value === 'boolean' ? value : false
   }
 
   function getQuota(key: QuotaKey): number {

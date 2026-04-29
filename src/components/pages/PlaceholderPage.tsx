@@ -1,7 +1,7 @@
+import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from '@phosphor-icons/react'
 import { CinematicBackground } from '@/components/CinematicBackground'
-import { useNavigate } from 'react-router-dom'
 
 interface PlaceholderPageProps {
   title: string
@@ -22,7 +22,7 @@ export function PlaceholderPage({ title, subtitle }: PlaceholderPageProps) {
           This section is currently under construction. Check back soon for updates.
         </p>
         <Button
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/home')}
           variant="outline"
           className="border-border hover:border-primary/40 backdrop-blur-sm bg-background/20"
         >

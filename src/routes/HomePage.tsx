@@ -196,9 +196,9 @@ export function HomePage() {
                 textShadow: 'none',
               }}
             >
-              <Link to="/dashboard">
+              <Link to="/nepa">
                 <Terminal size={20} weight="duotone" className="mr-2" />
-                Launch NEPA Console
+                Open NEPA Agent
               </Link>
             </Button>
 

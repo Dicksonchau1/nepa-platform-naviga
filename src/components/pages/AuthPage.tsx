@@ -107,7 +107,7 @@ export default function AuthPage() {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Your full name"
+                  placeholder="Dickson Chau"
                   required
                   className="w-full bg-[#060b14] border border-cyan-500/20 rounded-lg px-4 py-3 text-white placeholder-gray-600 font-mono text-sm focus:outline-none focus:border-cyan-500/60 transition-colors"
                 />

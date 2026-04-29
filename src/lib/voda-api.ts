@@ -49,7 +49,7 @@ const handleResponse = async <T>(response: Response, options?: RequestOptions): 
   if (response.status === 401 && !options?.skipAuthRedirect) {
     toast.error('Session expired. Please sign in again.')
     if (typeof window !== 'undefined') {
-      window.location.assign('/signin')
+      window.location.assign('/auth/sign-in')
     }
     throw new Error('Unauthorized')
   }

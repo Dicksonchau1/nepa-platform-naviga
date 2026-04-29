@@ -8,13 +8,13 @@ import { CinematicBackground } from '@/components/CinematicBackground'
 import { toast } from 'sonner'
 
 export function ResetPasswordPage() {
-  const navigate = useNavigate()
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [resetSuccess, setResetSuccess] = useState(false)
+  const navigate = useNavigate()
 
   const passwordsMatch = password === confirmPassword && password.length > 0
   const isPasswordValid = password.length >= 8

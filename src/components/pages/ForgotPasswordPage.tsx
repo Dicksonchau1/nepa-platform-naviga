@@ -9,49 +9,41 @@ import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 
 export function ForgotPasswordPage() {
-  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
-  const [errorMsg, setErrorMsg] = useState<string | null>(null)
-
-  const getFriendlyError = (message: string) => {
-    const normalized = message.toLowerCase()
-    if (normalized.includes('user') && normalized.includes('not found')) {
-      return 'No account exists with this email address.'
-    }
-    return message
-  }
+  const [errorMsg, setErrorMsg] = useState('')
+  const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    setErrorMsg(null)
+    setErrorMsg('')
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/reset-password`,
+      redirectTo: `${window.location.origin}/auth/reset-password`
     })
+    setIsLoading(false)
     if (!error) {
       setEmailSent(true)
       toast.success('Password reset link sent to your email')
     } else {
-      setErrorMsg(getFriendlyError(error.message))
+      setErrorMsg(error.message)
     }
-    setIsLoading(false)
   }
 
   const handleResend = async () => {
     setIsLoading(true)
-    setErrorMsg(null)
+    setErrorMsg('')
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/reset-password`,
+      redirectTo: `${window.location.origin}/auth/reset-password`
     })
-    if (!error) {
-      toast.success('Email resent successfully')
-    } else {
-      setErrorMsg(getFriendlyError(error.message))
-    }
     setIsLoading(false)
+    if (error) {
+      setErrorMsg(error.message)
+      return
+    }
+    toast.success('Email resent successfully')
   }
 
   if (emailSent) {
@@ -102,7 +94,7 @@ export function ForgotPasswordPage() {
                 </div>
 
                 <Button
-                  onClick={() => navigate('/auth/sign-in')}
+                  onClick={() => navigate('/auth?mode=signin')}
                   variant="outline"
                   className="w-full h-11 border-border/70 hover:border-primary/40 backdrop-blur-sm bg-background/20 rounded-xl"
                 >
@@ -136,11 +128,6 @@ export function ForgotPasswordPage() {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
-                {errorMsg && (
-                  <div className="rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-                    {errorMsg}
-                  </div>
-                )}
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-sm font-medium">
                     Email
@@ -155,6 +142,9 @@ export function ForgotPasswordPage() {
                     className="h-11 bg-background/50 border-border/70 focus:border-primary/50 backdrop-blur-sm"
                   />
                 </div>
+                {errorMsg && (
+                  <p className="text-sm text-destructive">{errorMsg}</p>
+                )}
 
                 <Button
                   type="submit"
@@ -168,7 +158,7 @@ export function ForgotPasswordPage() {
 
               <div className="mt-8 text-center">
                 <button
-                  onClick={() => navigate('/auth/sign-in')}
+                  onClick={() => navigate('/auth?mode=signin')}
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-2"
                 >
                   <ArrowLeft size={14} weight="bold" />

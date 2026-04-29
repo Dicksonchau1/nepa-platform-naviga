@@ -13,9 +13,13 @@ interface TwoFactorVerifyPageProps {
 }
 
 export function TwoFactorVerifyPage({ onVerified, userEmail }: TwoFactorVerifyPageProps) {
-  const navigate = useNavigate()
   const [verificationCode, setVerificationCode] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
+
+  const handleNavigate = (path: string) => {
+    navigate(`/${path}`)
+  }
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -50,7 +54,7 @@ export function TwoFactorVerifyPage({ onVerified, userEmail }: TwoFactorVerifyPa
             
             <div className="relative z-10">
               <button
-                onClick={() => navigate('/signin')}
+                onClick={() => handleNavigate('signin')}
                 className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
               >
                 <ArrowLeft size={16} weight="regular" />

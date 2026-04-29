@@ -14,7 +14,6 @@ interface SignUpPageProps {
 }
 
 export function SignUpPage({ onSignUpSuccess }: SignUpPageProps) {
-  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -25,6 +24,11 @@ export function SignUpPage({ onSignUpSuccess }: SignUpPageProps) {
   const [showPassword, setShowPassword] = useState(false)
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
+
+  const handleNavigate = (path: string) => {
+    navigate(`/${path}`)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -43,7 +47,7 @@ export function SignUpPage({ onSignUpSuccess }: SignUpPageProps) {
       if (onSignUpSuccess) {
         onSignUpSuccess(formData.email)
       } else {
-        navigate('/')
+        handleNavigate('home')
       }
     }, 1500)
   }
@@ -189,7 +193,7 @@ export function SignUpPage({ onSignUpSuccess }: SignUpPageProps) {
                     I agree to the{' '}
                     <button
                       type="button"
-                      onClick={() => navigate('/about/terms')}
+                      onClick={() => handleNavigate('terms')}
                       className="text-primary hover:text-primary/80 transition-colors"
                     >
                       Terms
@@ -197,7 +201,7 @@ export function SignUpPage({ onSignUpSuccess }: SignUpPageProps) {
                     {' '}and{' '}
                     <button
                       type="button"
-                      onClick={() => navigate('/about/privacy')}
+                      onClick={() => handleNavigate('privacy')}
                       className="text-primary hover:text-primary/80 transition-colors"
                     >
                       Privacy Policy
@@ -218,7 +222,7 @@ export function SignUpPage({ onSignUpSuccess }: SignUpPageProps) {
               <div className="mt-8 text-center text-sm">
                 <span className="text-muted-foreground">Already have an account? </span>
                 <button
-                  onClick={() => navigate('/signin')}
+                  onClick={() => handleNavigate('signin')}
                   className="text-primary hover:text-primary/80 transition-colors font-medium"
                 >
                   Sign in

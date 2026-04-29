@@ -2,46 +2,25 @@ import { useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { HudPanel } from '@/components/HudPanel'
 import { LiveBadge } from '@/components/LiveBadge'
+import { Brain, MagnifyingGlass, Gear, Warning, Camera, ShieldCheck, CheckCircle, ChevronRight } from '@phosphor-icons/react'
+import { askNepaAgent, NepaAgentMessage } from '@/lib/nepaAgent'
 
-const CAPABILITIES = [
-  {
-    n: '01',
-    title: 'Operational Awareness',
-    desc: 'NEPA Agent reads your live node status, active camera lanes, alert queues, and recent audit events. Ask it what is running, what has fired, or what needs attention — and it answers from your actual deployment state, not a general knowledge base.',
-  },
-  {
-    n: '02',
-    title: 'Diagnostic Execution',
-    desc: 'Trigger NEPA Diagnostic scans, request inference health reports, and surface ROI anomaly maps directly through the agent interface. Results are returned as structured findings you can act on immediately.',
-  },
-  {
-    n: '03',
-    title: 'Platform Navigation',
-    desc: 'NEPA Agent can route you to the right Console view, documentation page, or configuration panel based on what you describe. Describe the problem — it finds the path.',
-  },
-  {
-    n: '04',
-    title: 'Audit & Compliance Queries',
-    desc: 'Ask NEPA Agent to surface audit events, session logs, or alert provenance records for a given time range, node, or operator. Results are formatted for inspection or export — no manual log trawling required.',
-  },
+const NODE_STATUS = [
+  { label: 'NUC_01 Latency', value: '16 ms', color: 'bg-green-400' },
+  { label: 'JETSON_02 Latency', value: '23 ms', color: 'bg-green-400' },
+  { label: 'NUC_03 Latency', value: '12 ms', color: 'bg-green-400' },
 ]
 
-const STEPS = [
-  {
-    step: '01',
-    title: 'Context Load',
-    desc: 'When you open NEPA Agent, it reads your current deployment state: active nodes, running lanes, recent alerts, and open audit events. Every response is grounded in your actual platform context, not a static knowledge base.',
-  },
-  {
-    step: '02',
-    title: 'Structured Tool Calls',
-    desc: 'When you ask NEPA Agent to do something — run a diagnostic, pull an audit log, check node health — it issues a structured tool call to the NEPA platform API rather than generating a freeform answer. Responses are deterministic and traceable.',
-  },
-  {
-    step: '03',
-    title: 'Replayable Actions',
-    desc: 'Every action NEPA Agent takes is logged to your audit trail under your operator session. You can inspect, replay, or export any agent-initiated action just like a manual operator action — full chain of custody maintained.',
-  },
+const ALERTS = [
+  { icon: <Warning size={18} className="text-amber-400" />, label: '3 Critical Alerts', className: 'text-amber-400' },
+  { icon: <Warning size={18} className="text-yellow-300" />, label: '5 Warnings', className: 'text-yellow-300' },
+  { icon: <Warning size={18} className="text-red-400" />, label: 'ROI Anomaly Detected', className: 'text-red-400' },
+]
+
+const QUICK_ACTIONS = [
+  { label: 'Run Diagnostic', text: 'Run a VODA diagnostic' },
+  { label: 'Check Latency', text: 'Check inference latency' },
+  { label: 'Show Alerts', text: 'Show last 10 alert events' },
 ]
 
 const STARTER_PROMPTS = [
@@ -52,32 +31,235 @@ const STARTER_PROMPTS = [
   'Check SODA lane status',
 ]
 
-type Message = { role: 'user' | 'agent'; text: string }
-
-const CONTEXT_TEXT = `NODE STATUS
-├── NUC_01       ACTIVE    <0.8ms
-├── JETSON_02    ACTIVE    <1.1ms
-└── NUC_03       STANDBY   —
-
-ACTIVE LANES
-├── SODA CAM_04  LIVE
-├── FODA ZONE_2  LIVE
-└── VODA CLIP_7  PROCESSING
-
-LAST ALERT
-└── SODA CAM_04 · 07:03:14 HKT
-    INTRUSION · ZONE_B · ESCALATED
-
-AUDIT EVENTS TODAY
-└── 3,847 sealed records`
-
 export function NepaAgent() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: 'agent',
-      text: 'NEPA Agent online. Deployment context loaded. How can I assist you?',
-    },
-  ])
+  const [messages, setMessages] = useState<NepaAgentMessage[]>([])
+  const [input, setInput] = useState('')
+  const transcriptRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (transcriptRef.current) {
+      transcriptRef.current.scrollTop = transcriptRef.current.scrollHeight
+    }
+  }, [messages])
+
+  // IntersectionObserver for fade-in
+  useEffect(() => {
+    const els = document.querySelectorAll('[data-fade]')
+    const io = new window.IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('opacity-100', 'translate-y-0')
+        }
+      })
+    }, { threshold: 0.18 })
+    els.forEach(el => {
+      el.classList.add('opacity-0', 'translate-y-4', 'transition-all', 'duration-500')
+      io.observe(el)
+    })
+    return () => io.disconnect()
+  }, [])
+
+  async function handleSend(text: string) {
+    setMessages(p => [...p, { role: 'user', content: text, timestamp: new Date().toISOString() }])
+    const r = await askNepaAgent(messages, text)
+    setMessages(p => [...p, { role: 'assistant', content: r.content, timestamp: new Date().toISOString() }])
+    setInput('')
+  }
+
+  return (
+    <main className="min-h-screen bg-[#0B0F14] text-[#cdd3de] overflow-x-hidden">
+      {/* Grid background */}
+      <div className="fixed inset-0 pointer-events-none -z-10" style={{
+        backgroundImage: `linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px)`,
+        backgroundSize: '56px 56px',
+      }} />
+      <div className="fixed inset-0 pointer-events-none -z-10" style={{
+        background: 'radial-gradient(ellipse 70% 60% at 50% 20%, rgba(0,212,255,0.08) 0%, transparent 70%)',
+      }} />
+
+      {/* HERO BAND */}
+      <section className="py-20 flex flex-col items-center justify-center text-center max-w-4xl mx-auto" data-fade>
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <Brain size={22} className="text-primary" />
+          <span className="font-mono text-primary tracking-[2px] text-xs uppercase">NEPA AGENT · OPERATIONAL AI</span>
+        </div>
+        <h1 className="text-5xl sm:text-6xl font-black tracking-tight mb-4">Your Operational AI Agent.</h1>
+        <p className="text-lg text-white/65 mb-8">Intelligent, reliable, autonomous — empowering your full studio crew.</p>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-2">
+          <button className="bg-primary text-black px-6 py-3 rounded font-semibold">Activate Agent ▾</button>
+          <button className="border border-white/20 text-white px-6 py-3 rounded font-medium">View Console →</button>
+        </div>
+      </section>
+
+      {/* STATUS BAND */}
+      <section className="py-8 max-w-6xl mx-auto w-full" data-fade>
+        <div className="grid md:grid-cols-3 gap-6">
+          {/* Node Status */}
+          <div className="bg-zinc-900/40 border border-white/10 rounded-xl p-6 flex flex-col gap-3">
+            <div className="flex items-center gap-2 mb-3">
+              <MagnifyingGlass size={18} className="text-primary" />
+              <span className="font-mono text-xs uppercase tracking-widest text-white/60">NODE STATUS</span>
+            </div>
+            {NODE_STATUS.map((n, i) => (
+              <div key={i} className="flex items-center gap-3 font-mono text-sm">
+                <span className={`w-2 h-2 rounded-full ${n.color} animate-pulse`} />
+                <span>{n.label}:</span>
+                <span className="ml-auto">{n.value}</span>
+              </div>
+            ))}
+          </div>
+          {/* Center Tiles */}
+          <div className="flex flex-col gap-4">
+            <div className="bg-zinc-900/40 border border-white/10 rounded-xl p-5 flex items-center gap-3">
+              <MagnifyingGlass size={18} className="text-primary" />
+              <div>
+                <h3 className="font-semibold text-white">Context Analysis</h3>
+                <p className="text-xs text-white/60">Reads live node context</p>
+              </div>
+            </div>
+            <div className="bg-zinc-900/40 border border-white/10 rounded-xl p-5 flex items-center gap-3">
+              <Gear size={18} className="text-primary" />
+              <div>
+                <h3 className="font-semibold text-white">Diagnostic Scan</h3>
+                <p className="text-xs text-white/60">Find problems instantly</p>
+              </div>
+            </div>
+          </div>
+          {/* Alert Queue */}
+          <div className="border border-white/10 rounded-xl p-6 flex flex-col gap-3">
+            <div className="flex items-center gap-2 mb-3">
+              <Warning size={18} className="text-primary" />
+              <span className="font-mono text-xs uppercase tracking-widest text-white/60">ALERT QUEUE</span>
+            </div>
+            {ALERTS.map((a, i) => (
+              <div key={i} className={`flex items-center gap-2 font-mono text-sm ${a.className}`}>{a.icon}<span>{a.label}</span></div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* AGENT TRANSCRIPT */}
+      <section className="py-8 max-w-3xl mx-auto w-full" data-fade>
+        <div className="bg-zinc-900/40 border border-white/10 rounded-xl p-4 mb-2 max-h-48 overflow-y-auto font-mono text-xs" ref={transcriptRef}>
+          {messages.slice(-3).map((m, i) => (
+            <div key={i} className="mb-2">
+              <span className={`font-bold ${m.role === 'user' ? 'text-primary' : 'text-white/70'}`}>{m.role === 'user' ? 'YOU >' : 'AGENT >'}</span> {m.content}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* AGENT INPUT BAR */}
+      <section className="py-4 max-w-3xl mx-auto w-full flex items-center gap-3" data-fade>
+        <div className="flex items-center gap-2 bg-zinc-900/40 border border-white/10 rounded-full px-4 py-2 flex-1">
+          <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center mr-2">
+            <Brain size={20} className="text-primary" />
+          </div>
+          <input
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') handleSend(input) }}
+            placeholder="Ask NEPA Agent..."
+            className="flex-1 bg-transparent outline-none border-0 text-white/80 placeholder:text-white/30 font-mono text-xs"
+          />
+        </div>
+        <div className="flex gap-2">
+          {QUICK_ACTIONS.map((a, i) => (
+            <button key={i} onClick={() => handleSend(a.text)} className="px-3 py-1 rounded-full bg-zinc-900/60 border border-white/10 text-white/80 font-mono text-xs hover:bg-primary/20 transition-colors">
+              {a.label}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* FOUR-PANEL DASHBOARD GRID */}
+      <section className="py-16 max-w-6xl mx-auto w-full grid md:grid-cols-2 gap-6" data-fade>
+        {/* JUDGE */}
+        <div className="bg-zinc-900/40 border border-white/10 rounded-xl p-6 hover:shadow-[0_0_0_2px_#00d4ff33] transition-shadow group flex flex-col">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="font-mono text-xs text-primary">JUDGE</span>
+            <span className="font-mono text-xs text-white/60">Real-Time Analysis</span>
+          </div>
+          <div className="grid grid-cols-2 gap-2 mb-3">
+            <div className="aspect-video rounded bg-gradient-to-br from-zinc-800 to-zinc-950 relative flex items-center justify-center">
+              <span className="text-white/20 font-bold">IMG</span>
+            </div>
+            <div className="aspect-video rounded bg-gradient-to-br from-zinc-800 to-zinc-950 border-2 border-red-400 flex items-center justify-center relative">
+              <span className="absolute top-2 left-2 bg-red-900/80 border border-red-400 text-red-300 text-xs font-mono px-2 py-1 rounded">⚠️ Stabilization Error Detected</span>
+              <span className="text-white/20 font-bold">IMG</span>
+            </div>
+            <div className="aspect-video rounded bg-gradient-to-br from-zinc-800 to-zinc-950 flex items-center justify-center">
+              <span className="text-white/20 font-bold">IMG</span>
+            </div>
+            <div className="aspect-video rounded bg-gradient-to-br from-zinc-800 to-zinc-950 flex items-center justify-center">
+              <span className="text-white/20 font-bold">IMG</span>
+            </div>
+          </div>
+          <div className="mt-2">
+            <div className="flex items-center gap-2 text-xs text-white/80 mb-1"><span>▸</span> Frame Drift: <span className="font-mono">3.3px</span></div>
+            <div className="flex items-center gap-2 text-xs text-white/80 mb-1"><span>▸</span> Exposure Mismatch</div>
+            <div className="text-xs text-white/50 text-center mt-3">Issue Report Generated</div>
+          </div>
+        </div>
+        {/* COMPOSER */}
+        <div className="bg-zinc-900/40 border border-white/10 rounded-xl p-6 hover:shadow-[0_0_0_2px_#00d4ff33] transition-shadow group flex flex-col">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="font-mono text-xs text-primary">COMPOSER</span>
+            <span className="font-mono text-xs text-white/60">Scene Adjustments</span>
+          </div>
+          <div className="aspect-video rounded bg-gradient-to-br from-zinc-800 to-zinc-950 flex items-center justify-center mb-3">
+            <span className="text-white/20 font-bold">IMG</span>
+          </div>
+          <div className="flex flex-col gap-1 mb-2">
+            <div className="bg-green-500/15 text-green-400 rounded px-3 py-1 text-xs flex items-center gap-2"><CheckCircle size={14} /> Auto-Fixed & Ready</div>
+            <div className="text-white/70 text-xs flex items-center gap-2"><CheckCircle size={14} /> Lighting Balanced</div>
+            <div className="text-white/70 text-xs flex items-center gap-2"><CheckCircle size={14} /> Artifact Removed</div>
+          </div>
+          <div className="text-xs text-white/50 mt-2">Scene Updated Successfully</div>
+        </div>
+        {/* DIRECTOR */}
+        <div className="bg-zinc-900/40 border border-white/10 rounded-xl p-6 hover:shadow-[0_0_0_2px_#00d4ff33] transition-shadow group flex flex-col">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="font-mono text-xs text-primary">DIRECTOR</span>
+            <span className="font-mono text-xs text-white/60">Command & Control</span>
+          </div>
+          <div className="relative aspect-video rounded bg-gradient-to-br from-zinc-800 to-zinc-950 mb-3 flex items-center justify-center">
+            <Camera size={22} className="absolute top-2 right-2 text-primary" />
+            <Camera size={22} className="absolute top-2 left-2 text-primary" />
+            <Camera size={22} className="absolute bottom-2 right-2 text-primary" />
+            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-primary rounded-full animate-pulse" />
+            <span className="text-white/20 font-bold">MAP</span>
+          </div>
+          <div className="text-xs font-mono text-white/80 mt-2">Deploy Camera 5 to Lane B</div>
+        </div>
+        {/* AUDITOR */}
+        <div className="bg-zinc-900/40 border border-white/10 rounded-xl p-6 hover:shadow-[0_0_0_2px_#00d4ff33] transition-shadow group flex flex-col">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="font-mono text-xs text-primary">AUDITOR</span>
+            <span className="font-mono text-xs text-white/60">Audit & Review</span>
+          </div>
+          <div className="flex flex-col gap-2 mb-3">
+            <div className="flex items-center gap-2"><CheckCircle size={16} className="text-amber-400" /> <span>Audit Trail Summary</span> <span className="flex-1 h-1 rounded bg-gradient-to-r from-amber-400/40 to-amber-400/0" /></div>
+            <div className="flex items-center gap-2"><CheckCircle size={16} className="text-amber-400" /> <span>Node Event Log</span> <span className="flex-1 h-1 rounded bg-gradient-to-r from-amber-400/40 to-amber-400/0" /></div>
+            <div className="flex items-center gap-2"><CheckCircle size={16} className="text-green-400" /> <span>Diagnostic Completed</span> <span className="flex-1 h-1 rounded bg-gradient-to-r from-green-400/40 to-green-400/0" /></div>
+            <div className="flex items-center gap-2"><CheckCircle size={16} className="text-green-400" /> <span>File Export: Secured</span> <span className="flex-1 h-1 rounded bg-gradient-to-r from-green-400/40 to-green-400/0" /></div>
+          </div>
+          <div className="text-xs text-white/50 mt-2">Log Export Ready</div>
+        </div>
+      </section>
+
+      {/* NARRATIVE FOOTER BAND */}
+      <section className="py-16 text-center" data-fade>
+        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3">Connect. Diagnose. Direct. Verify.</h2>
+        <p className="text-base text-white/65 mb-8">Sign up for free and run your first diagnostic scan. No credit card required.</p>
+        <div className="flex flex-wrap justify-center gap-4">
+          <Link to="/dashboard" className="inline-flex items-center gap-1.5 px-6 py-3 bg-primary text-black rounded font-semibold text-sm hover:bg-primary/90 transition-colors">Open Console →</Link>
+          <Link to="/docs/api" className="inline-flex items-center gap-1.5 px-6 py-3 border border-white/20 text-white rounded font-medium text-sm hover:bg-white/5 transition-colors">Read API Docs →</Link>
+        </div>
+      </section>
+    </main>
+  )
+}
   const [input, setInput] = useState('')
   const [visible, setVisible] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)

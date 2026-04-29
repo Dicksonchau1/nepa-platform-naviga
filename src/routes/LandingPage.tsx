@@ -138,7 +138,7 @@ export function LandingPage() {
             <div className="flex items-center gap-3 mb-10">
               <LiveBadge label="· AURASENSE" />
               <span className="text-xs text-white/35 tracking-[0.2em] font-mono uppercase">
-                NEPA Platform · Video Agent
+                NEPA World Model · Edge Agent
               </span>
             </div>
 
@@ -150,7 +150,7 @@ export function LandingPage() {
               }}
             >
               <h1 className="text-6xl md:text-8xl font-bold tracking-tight leading-[1.0] mb-2">
-                Neuromorphic
+                NEPA
               </h1>
               <h2
                 className="text-3xl md:text-5xl font-light tracking-tight leading-tight text-white/70 mb-0"
@@ -160,7 +160,7 @@ export function LandingPage() {
                   transform: visible ? 'translateY(0)' : 'translateY(24px)',
                 }}
               >
-                Edge Perception Agent
+                World model for the physical world
               </h2>
             </div>
 
@@ -171,7 +171,9 @@ export function LandingPage() {
                 opacity: visible ? 1 : 0,
               }}
             >
-              Deterministic inference at the edge. No cloud. No dependencies. Domain agnostic.
+              NEPA turns edge perception into a live operational world model, then uses that model
+              to route, explain, and execute the right physical-world action. No cloud dependency.
+              No black box reasoning.
             </p>
 
             <div
@@ -182,18 +184,28 @@ export function LandingPage() {
               }}
             >
               <Link
-                to="/dashboard"
+                to="/nepa"
                 className="bg-cyan-500 text-black font-semibold text-sm px-7 py-3 hover:bg-cyan-400 transition-colors"
               >
-                Launch NEPA Console →
+                Open NEPA Agent →
               </Link>
               <Link
-                to="/about/contact"
+                to="/about/technology"
                 className="border border-white/20 text-white/70 text-sm px-7 py-3 hover:border-white/40 hover:text-white transition-colors"
               >
-                Request pilot access →
+                Read the world model →
               </Link>
             </div>
+
+            <p
+              className="text-xs font-mono tracking-[0.24em] uppercase text-cyan-400/45 mb-8"
+              style={{
+                transition: 'opacity 1s ease-out 1.2s',
+                opacity: visible ? 1 : 0,
+              }}
+            >
+              Perception &rarr; world model &rarr; action
+            </p>
 
             <div
               className="flex flex-wrap gap-10 border-t border-white/8 pt-8"
@@ -214,6 +226,64 @@ export function LandingPage() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 border-t border-white/8 bg-[#07090f]">
+        <div className="container mx-auto px-6 max-w-6xl">
+          <div className="mb-10 max-w-2xl">
+            <p className="text-xs text-cyan-400/60 tracking-widest uppercase font-mono mb-3">
+              Start here
+            </p>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+              Find the right part of the site fast.
+            </h2>
+            <p className="text-white/50 leading-relaxed">
+              The website is organized around one main workflow: understand NEPA, open the agent,
+              then move into the SDK, partnership, or careers pages depending on what you need.
+            </p>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {[
+              {
+                title: 'Platform',
+                desc: 'Meet the NEPA world model and explore VODA, SODA, RODA, FODA, EODA, and HRI agents.',
+                to: '/platform',
+              },
+              {
+                title: 'NEPA Agent',
+                desc: 'Open the live agent experience and see how NEPA reasons over deployment context.',
+                to: '/nepa',
+              },
+              {
+                title: 'Pricing',
+                desc: 'Compare plans across all four domain pipelines — from free diagnostics to enterprise.',
+                to: '/pricing',
+              },
+              {
+                title: 'Business',
+                desc: 'Learn about AuraSense, explore career opportunities, or start a partnership.',
+                to: '/about/company',
+              },
+            ].map((item) => (
+              <Link
+                key={item.title}
+                to={item.to}
+                className="group rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition-all hover:border-cyan-400/30 hover:bg-white/[0.05]"
+              >
+                <p className="text-lg font-semibold text-white mb-2 group-hover:text-cyan-300 transition-colors">
+                  {item.title}
+                </p>
+                <p className="text-sm leading-relaxed text-white/45 mb-4">
+                  {item.desc}
+                </p>
+                <span className="text-xs font-mono uppercase tracking-[0.24em] text-cyan-400/70">
+                  Open section →
+                </span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

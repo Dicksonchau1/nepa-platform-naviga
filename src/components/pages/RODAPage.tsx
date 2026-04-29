@@ -1,63 +1,34 @@
 import { ProductPage } from './ProductPage'
-import { ArrowsClockwise, Cpu, Package, Gear } from '@phosphor-icons/react'
+import { Path, GitBranch, UserCircleGear } from '@phosphor-icons/react'
 
 export function RODAPage() {
   return (
     <ProductPage
-      name="RODA"
-      fullName="Robotic Operations Dispatch Agent"
-      tagline="NEPA-dispatched autonomous restocking. When NEPA detects a low-stock zone or clears a shrinkage alert, RODA dispatches the robotic arm — closing the loop from perception to physical action."
-      nepaLayer="dispatch"
-      nepaLayerLabel="NEPA ACT layer → NERMN physical execution"
-      pipelineSteps={[
-        { step: 'detect', label: 'NEPA Detects Low Stock', active: true },
-        { step: 'score', label: 'Anomaly Score Fires', active: true },
-        { step: 'dispatch', label: 'NERMNDispatcher', active: true },
-        { step: 'execute', label: 'Robotic Arm Restocks', active: true },
-        { step: 'confirm', label: 'NISSM Confirms', active: false },
-      ]}
-      ctaLabel="Request RODA integration spec"
-      ctaHref="mailto:support@aurasensehk.com?subject=RODA Integration"
-      ctaSecondaryLabel="Read RODA documentation"
-      ctaSecondaryHref="/docs/roda"
-      integrationNote="Add-on to SODA Professional or Enterprise plan"
-      deployTarget="NERMN robotic arm + Jetson Orin NX"
+      eyebrow="NEPA PLATFORM · ROBOTIC AGENT"
+      title="RODA — Robotic Operations Decision Agent"
+      subtitle="Spike-timing adaptive navigation and mission control for autonomous ground systems."
       features={[
         {
-          icon: Cpu,
-          title: 'NEPA-Native Dispatch',
+          icon: <Path size={40} />,
+          title: 'Path Adaptation',
           description:
-            "NERMN receives dispatch commands from NEPA's ACT layer via NERMNDispatcher. Each restock command carries store ID, zone, SKU, priority, and the triggering anomaly score.",
+            'Real-time neuromorphic path planning using spike-timing-dependent plasticity. Dynamic obstacle avoidance with deterministic decision replay for post-mission analysis.',
         },
         {
-          icon: ArrowsClockwise,
-          title: 'Closed-Loop Execution',
+          icon: <GitBranch size={40} />,
+          title: 'Mission State Machine',
           description:
-            'RODA operates in the full NEPA perception loop — not as a standalone robotics system. Every dispatch is triggered by a real behavioral signal, not a timer or manual trigger.',
+            'Structured mission control with explicit state transitions. Every command and sensor input logged with cryptographic timestamps for complete mission traceability.',
         },
         {
-          icon: Package,
-          title: 'NISSM Operations Sync',
+          icon: <UserCircleGear size={40} />,
+          title: 'HRI Escalation',
           description:
-            'NISSM ties RODA into the full store management loop — inventory sync, supplier reorder triggers, and operational reporting via CODA. The store knows it has been restocked.',
-        },
-        {
-          icon: Gear,
-          title: 'Edge-First Execution',
-          description:
-            'Runs on Jetson Orin NX. Full stack boots via docker-compose up in under 90 seconds. RODA operates independently of cloud — decisions made at the edge, actions executed locally.',
+            'Human-robot interaction escalation when confidence thresholds are not met. Operator-in-the-loop decision points with full context handoff and resumption support.',
         },
       ]}
-      terminalLines={[
-        '> RODA v1.0 — NERMN dispatcher ONLINE',
-        '> AWAITING NEPA dispatch signal...',
-        '> [NEPA] anomaly_score=0.73 zone=SHELF_B sku=SKU-4421',
-        '> [RODA] dispatch: { store: HK-KLN-01, zone: SHELF_B, sku: SKU-4421, priority: HIGH }',
-        '> [NERMN] arm ENGAGED — navigating to SHELF_B',
-        '> [NERMN] restock COMPLETE — 4 units placed',
-        '> [NISSM] inventory updated: SKU-4421 +4 units',
-        '> [NEPA] anomaly cleared — zone SHELF_B → NORMAL',
-      ]}
+      integrationTitle="How RODA Connects to NEPA Core"
+      integrationDescription="RODA leverages the NEPA spike-timing inference core for real-time path adaptation and mission control. Deploy on embedded robotic platforms or command-and-control stations. Full ROS2 compatibility for sensor fusion and actuator control."
     />
   )
 }
