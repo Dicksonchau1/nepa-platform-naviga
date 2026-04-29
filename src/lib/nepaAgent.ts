@@ -1,47 +1,118 @@
-// Single source of truth for NEPA agent calls.
-// Today: returns canned responses from a local knowledge table.
-// Tomorrow: swap body to fetch('/api/v1/nepa-agent', { method:'POST', ... })
-// — no other file changes needed.
+/**
+ * NEPA Agent client — calls /api/agent/chat (Sonnet 4.5 via OpenRouter)
+ * Falls back to local knowledge base on network/API failure.
+ */
+
+export type NepaAgentRole = 'user' | 'assistant' | 'system'
 
 export interface NepaAgentMessage {
-  role: 'user' | 'assistant'
+  role: NepaAgentRole
   content: string
-  timestamp: string
+  timestamp?: string
+  model?: string
 }
 
 export interface NepaAgentResponse {
   content: string
-  citations?: { title: string; url: string }[]
-  mock?: boolean  // true when running against the local knowledge table
+  model?: string
+  mock?: boolean
+  sessionId?: string
 }
 
-const KNOWLEDGE_TABLE: Array<{ patterns: RegExp[]; reply: string }> = [
+const SESSION_KEY = 'nepa-agent-session-id'
+
+function getSessionId(): string | null {
+  try { return localStorage.getItem(SESSION_KEY) } catch { return null }
+}
+
+function setSessionId(sid: string) {
+  try { localStorage.setItem(SESSION_KEY, sid) } catch {}
+}
+
+export function clearAgentSession() {
+  try { localStorage.removeItem(SESSION_KEY) } catch {}
+}
+
+/**
+ * Send a chat turn to the NEPA agent backend.
+ * Signature kept compatible with the previous mock implementation:
+ *   askNepaAgent(history, userMessage)
+ */
+export async function askNepaAgent(
+  history: NepaAgentMessage[],
+  userMessage?: string,
+): Promise<NepaAgentResponse> {
+  // Build the messages array. If userMessage is passed separately (legacy 2-arg usage),
+  // append it. Otherwise assume history already contains the latest user turn.
+  const fullHistory: NepaAgentMessage[] =
+    userMessage !== undefined
+      ? [...history, { role: 'user', content: userMessage }]
+      : history
+
+  const apiMessages = fullHistory.map(m => ({ role: m.role, content: m.content }))
+
+  try {
+    const r = await fetch('/api/agent/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: apiMessages,
+        sessionId: getSessionId(),
+      }),
+      signal: AbortSignal.timeout(60_000),
+    })
+
+    const data = await r.json().catch(() => ({} as any))
+
+    if (!r.ok || data.error) {
+      throw new Error(data.error || `agent returned ${r.status}`)
+    }
+
+    if (data.sessionId) setSessionId(data.sessionId)
+
+    return {
+      content: data.content || '(no content)',
+      model: data.model,
+      sessionId: data.sessionId,
+      mock: false,
+    }
+  } catch (e) {
+    // Fallback to local knowledge table on failure (preserves UX if API down)
+    await new Promise(res => setTimeout(res, 200))
+    const text = userMessage ?? history[history.length - 1]?.content ?? ''
+    const match = KNOWLEDGE_TABLE.find(k => k.patterns.some(p => p.test(text)))
+    return {
+      content: match ? match.reply : DEFAULT_REPLY,
+      mock: true,
+    }
+  }
+}
+
+// ─── LOCAL KNOWLEDGE FALLBACK (preserves prior behaviour if API fails) ───
+
+const KNOWLEDGE_TABLE: { patterns: RegExp[]; reply: string }[] = [
   {
-    patterns: [/what is nepa/i, /tell me about nepa/i, /how does nepa work/i],
-    reply: `NEPA (Neuromorphic Edge Perception Agent) is AuraSense's deterministic inspection infrastructure. It combines V-JEPA 2 world modeling with spike-timing-dependent plasticity for edge-only anomaly detection. Every inference is signed with a cryptographic audit trail for replay verification.`,
+    patterns: [/nepa.*work|how.*nepa|what.*nepa/i],
+    reply: `NEPA is the neuromorphic edge perception agent core — STDP-trained spiking neural networks running on Jetson/NUC nodes, building a SignatureMap world state. All inference is on-device with sub-15ms latency. Cloud LLMs are only escalated for the ambiguous residual.`,
   },
   {
     patterns: [/voda/i],
-    reply: `VODA (Video Operation Decision Agent) processes inspection and retail video streams through the NEPA engine. It produces signature maps, severity scores, and structured enhancement plans. Live in the console at /dashboard/voda.`,
+    reply: `VODA is video diagnostics & correction. Frame-by-frame SignatureMap analysis, anomaly scoring, and corrective workflows. Outputs are deterministic and replayable.`,
   },
   {
-    patterns: [/foda|drone|inspect/i],
-    reply: `FODA (Facade Operation Decision Agent) is our building inspection product — drone capture flows through the NEPA world model and emits structured findings with severity, bounding boxes, and repair priorities. HK$5,600–9,800 per unit for inspection alone.`,
+    patterns: [/foda/i],
+    reply: `FODA is the facade operations decision agent — aerial inspection for building facades. Drone edge nodes, cryptographically sealed audit chains, governance-grade evidence packs.`,
   },
   {
-    patterns: [/roda|robot/i],
-    reply: `RODA (Robot Operation Decision Agent) manages autonomous robot fleets — missions, telemetry, position oracle from the NEPA world model. See live state at /dashboard/robotic-ops.`,
+    patterns: [/roda/i],
+    reply: `RODA is the robotic operations dispatch agent — NEPA-dispatched autonomous restocking via NERMN robotic arms. Triggered by anomaly score thresholds in the ACT layer.`,
   },
   {
-    patterns: [/soda|retail|store|shelf/i],
-    reply: `SODA (Store Operation Decision Agent) runs neuromorphic theft detection and shelf monitoring for unmanned retail. Alerts flow to WhatsApp in real time, with zero video storage.`,
+    patterns: [/soda/i],
+    reply: `SODA is the store operating decision agent — fully autonomous unmanned store intelligence. Layer 1 perception, Layer 2 ACT dispatcher, Layer 3 world model API, Layer 4 NISSM operations.`,
   },
   {
-    patterns: [/pricing|price|cost|plan/i],
-    reply: `Pilot: HK$20,000 one-time. Monthly Support: HK$9,000/mo. Production: custom. See /pricing or contact pilot@aurasensehk.com.`,
-  },
-  {
-    patterns: [/hri|hr intelligence|interview/i],
+    patterns: [/hri/i],
     reply: `HRI is AuraSense's HR intelligence API — structured interview scoring, transcript analysis, and decision analytics. Four API tiers: Launch, Growth, Scale, Enterprise.`,
   },
   {
@@ -56,32 +127,7 @@ const KNOWLEDGE_TABLE: Array<{ patterns: RegExp[]; reply: string }> = [
 
 const DEFAULT_REPLY = `I can help with questions about NEPA, VODA, FODA, RODA, SODA, HRI, pricing, compliance, and APIs. Try asking "how does NEPA work?" or "what's the FODA pricing?"`
 
-export async function askNepaAgent(
-  history: NepaAgentMessage[],
-  userMessage: string
-): Promise<NepaAgentResponse> {
-  try {
-    const r = await fetch('/api/nepa/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ history, message: userMessage }),
-    })
-    if (!r.ok) throw new Error(`HTTP ${r.status}`)
-    const data = await r.json()
-    return {
-      content: data.content,
-      mock: false,
-    }
-  } catch (e) {
-    // Fallback to local knowledge table on network failure
-    await new Promise((res) => setTimeout(res, 200))
-    const match = KNOWLEDGE_TABLE.find((k) => k.patterns.some((p) => p.test(userMessage)))
-    return {
-      content: match ? match.reply : DEFAULT_REPLY,
-      mock: true,
-    }
-  }
-}
+// ─── ROTATING TIPS (for NepaAgentPopup) ───
 
 const ROTATING_TIPS = [
   'Ask me: How does NEPA work?',
