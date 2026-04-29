@@ -1,14 +1,24 @@
 import { useState, useRef, useEffect } from 'react'
+import type { KeyboardEvent as ReactKeyboardEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { HudPanel } from '@/components/HudPanel'
-import { LiveBadge } from '@/components/LiveBadge'
-import { Brain, MagnifyingGlass, Gear, Warning, Camera, ShieldCheck, CheckCircle, ChevronRight } from '@phosphor-icons/react'
-import { askNepaAgent, NepaAgentMessage } from '@/lib/nepaAgent'
+import {
+  Brain,
+  MagnifyingGlass,
+  Gear,
+  Warning,
+  Camera,
+  ShieldCheck,
+  CheckCircle,
+  ChevronRight,
+  PaperPlaneRight,
+  UserCircle,
+} from '@phosphor-icons/react'
+import { askNepaAgent, type NepaAgentMessage } from '@/lib/nepaAgent'
 
 const NODE_STATUS = [
-  { label: 'NUC_01 Latency', value: '16 ms', color: 'bg-green-400' },
-  { label: 'JETSON_02 Latency', value: '23 ms', color: 'bg-green-400' },
-  { label: 'NUC_03 Latency', value: '12 ms', color: 'bg-green-400' },
+  { name: 'NUC_01', latency: '16 ms', color: 'bg-green-400' },
+  { name: 'JETSON_02', latency: '23 ms', color: 'bg-green-400' },
+  { name: 'NUC_03', latency: '12 ms', color: 'bg-green-400' },
 ]
 
 const ALERTS = [
@@ -23,18 +33,46 @@ const QUICK_ACTIONS = [
   { label: 'Show Alerts', text: 'Show last 10 alert events' },
 ]
 
-const STARTER_PROMPTS = [
-  'What nodes are active?',
-  'Run a VODA diagnostic',
-  'Show last 10 alert events',
-  'What is my inference latency?',
-  'Check SODA lane status',
-]
+// MOCK panel data — replace with WebSocket later
+const MOCK_JUDGE = {
+  images: [{}, { error: 'Stabilization Error Detected' }, {}, {}],
+  frameDrift: 3.3,
+  exposureMismatch: true,
+  report: 'Issue Report Generated',
+}
+const MOCK_COMPOSER = {
+  status: 'Auto-Fixed & Ready',
+  lighting: true,
+  artifact: true,
+  updated: true,
+}
+const MOCK_DIRECTOR = {
+  cameras: [
+    { id: 'CAM 01', videoUrl: '/SFSVC_Herosection.mp4', overlayUrl: '/panel-demo-cam01.png' },
+    { id: 'CAM 02', videoUrl: '/SFSVC_Herosection.mp4', overlayUrl: '/panel-demo-cam02.png' },
+  ],
+  action: 'Deploy Camera 5 to Lane B',
+}
+const MOCK_AUDITOR = {
+  logs: [
+    { label: 'Audit Trail Summary', status: 'pending' },
+    { label: 'Node Event Log', status: 'pending' },
+    { label: 'Diagnostic Completed', status: 'done' },
+    { label: 'File Export Secured', status: 'done' },
+  ],
+  exportReady: true,
+}
 
 export function NepaAgent() {
   const [messages, setMessages] = useState<NepaAgentMessage[]>([])
   const [input, setInput] = useState('')
   const transcriptRef = useRef<HTMLDivElement>(null)
+
+  // Panels are mocked for demo; later wire to /api/dashboard or WebSocket
+  const [judge] = useState(MOCK_JUDGE)
+  const [composer] = useState(MOCK_COMPOSER)
+  const [director] = useState(MOCK_DIRECTOR)
+  const [auditor] = useState(MOCK_AUDITOR)
 
   useEffect(() => {
     if (transcriptRef.current) {
@@ -42,221 +80,249 @@ export function NepaAgent() {
     }
   }, [messages])
 
-  // IntersectionObserver for fade-in
   useEffect(() => {
     const els = document.querySelectorAll('[data-fade]')
-    const io = new window.IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('opacity-100', 'translate-y-0')
-        }
-      })
-    }, { threshold: 0.18 })
-    els.forEach(el => {
+    const io = new window.IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) entry.target.classList.add('opacity-100', 'translate-y-0')
+        })
+      },
+      { threshold: 0.18 }
+    )
+    els.forEach((el) => {
       el.classList.add('opacity-0', 'translate-y-4', 'transition-all', 'duration-500')
       io.observe(el)
     })
     return () => io.disconnect()
   }, [])
 
-  async function handleSend(text: string) {
-    setMessages(p => [...p, { role: 'user', content: text, timestamp: new Date().toISOString() }])
-    const r = await askNepaAgent(messages, text)
-    setMessages(p => [...p, { role: 'assistant', content: r.content, timestamp: new Date().toISOString() }])
+  async function handleSend(text?: string) {
+    const msg = (text ?? input).trim()
+    if (!msg) return
+    setMessages((p) => [...p, { role: 'user', content: msg, timestamp: new Date().toISOString() }])
     setInput('')
+    try {
+      const r = await askNepaAgent(messages, msg)
+      setMessages((p) => [...p, { role: 'assistant', content: r.content, timestamp: new Date().toISOString() }])
+    } catch {
+      setMessages((p) => [...p, { role: 'assistant', content: 'Agent unavailable. Please try again.', timestamp: new Date().toISOString() }])
+    }
   }
 
+  function handleKeyDown(e: ReactKeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') handleSend()
+  }
+
+  const transcript = messages.slice(-3)
+
   return (
-    <main className="min-h-screen bg-[#0B0F14] text-[#cdd3de] overflow-x-hidden">
-      {/* Grid background */}
-      <div className="fixed inset-0 pointer-events-none -z-10" style={{
-        backgroundImage: `linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px)`,
-        backgroundSize: '56px 56px',
-      }} />
-      <div className="fixed inset-0 pointer-events-none -z-10" style={{
-        background: 'radial-gradient(ellipse 70% 60% at 50% 20%, rgba(0,212,255,0.08) 0%, transparent 70%)',
-      }} />
+    <main className="min-h-screen bg-[#0B0F14] text-white overflow-x-hidden">
+      <div className="fixed inset-0 pointer-events-none -z-10" style={{ backgroundImage: 'linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px)', backgroundSize: '56px 56px' }} />
+      <div className="fixed inset-0 pointer-events-none -z-10" style={{ background: 'radial-gradient(ellipse 70% 60% at 50% 20%, rgba(0,212,255,0.08) 0%, transparent 70%)' }} />
 
-      {/* HERO BAND */}
-      <section className="py-20 flex flex-col items-center justify-center text-center max-w-4xl mx-auto" data-fade>
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <Brain size={22} className="text-primary" />
-          <span className="font-mono text-primary tracking-[2px] text-xs uppercase">NEPA AGENT · OPERATIONAL AI</span>
-        </div>
-        <h1 className="text-5xl sm:text-6xl font-black tracking-tight mb-4">Your Operational AI Agent.</h1>
-        <p className="text-lg text-white/65 mb-8">Intelligent, reliable, autonomous — empowering your full studio crew.</p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-2">
-          <button className="bg-primary text-black px-6 py-3 rounded font-semibold">Activate Agent ▾</button>
-          <button className="border border-white/20 text-white px-6 py-3 rounded font-medium">View Console →</button>
+      <section className="max-w-4xl mx-auto py-20 text-center" data-fade>
+        <span className="font-mono text-xs tracking-[2px] uppercase text-primary inline-flex items-center gap-2 mb-6">
+          <Brain size={18} className="text-primary" /> NEPA AGENT · OPERATIONAL AI
+        </span>
+        <h1 className="text-5xl sm:text-6xl font-black tracking-tight mb-4 text-white">Your Operational AI Agent.</h1>
+        <p className="text-[#cdd3de] text-lg mb-8">Intelligent, reliable, autonomous — embedded in your live deployment.</p>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <button className="bg-primary text-white font-semibold px-7 py-3 rounded-full hover:bg-primary/90">Activate Agent</button>
+          <Link to="/dashboard" className="border border-white/20 text-white/80 font-semibold px-7 py-3 rounded-full hover:border-primary/40 hover:text-primary">View Console →</Link>
         </div>
       </section>
 
-      {/* STATUS BAND */}
-      <section className="py-8 max-w-6xl mx-auto w-full" data-fade>
-        <div className="grid md:grid-cols-3 gap-6">
-          {/* Node Status */}
-          <div className="bg-zinc-900/40 border border-white/10 rounded-xl p-6 flex flex-col gap-3">
-            <div className="flex items-center gap-2 mb-3">
-              <MagnifyingGlass size={18} className="text-primary" />
-              <span className="font-mono text-xs uppercase tracking-widest text-white/60">NODE STATUS</span>
-            </div>
-            {NODE_STATUS.map((n, i) => (
-              <div key={i} className="flex items-center gap-3 font-mono text-sm">
-                <span className={`w-2 h-2 rounded-full ${n.color} animate-pulse`} />
-                <span>{n.label}:</span>
-                <span className="ml-auto">{n.value}</span>
+      <section className="container mx-auto px-6 max-w-6xl mb-16" data-fade>
+        <div className="grid md:grid-cols-3 gap-4">
+          <div className="bg-zinc-900/40 border border-white/10 rounded-xl p-6 flex flex-col gap-2">
+            <div className="font-mono text-xs tracking-[2px] uppercase text-primary mb-2">NODE STATUS</div>
+            {NODE_STATUS.map((n) => (
+              <div key={n.name} className="flex items-center justify-between py-1">
+                <span className="font-mono text-xs text-white/80">{n.name}</span>
+                <span className="font-mono text-xs text-white/55">Latency: {n.latency}</span>
+                <span className={`w-2 h-2 rounded-full ml-2 ${n.color}`} />
               </div>
             ))}
           </div>
-          {/* Center Tiles */}
           <div className="flex flex-col gap-4">
-            <div className="bg-zinc-900/40 border border-white/10 rounded-xl p-5 flex items-center gap-3">
-              <MagnifyingGlass size={18} className="text-primary" />
+            <div className="bg-zinc-900/40 border border-white/10 rounded-xl p-4 flex items-center gap-3">
+              <MagnifyingGlass size={20} className="text-primary" />
               <div>
-                <h3 className="font-semibold text-white">Context Analysis</h3>
-                <p className="text-xs text-white/60">Reads live node context</p>
+                <div className="font-mono text-xs tracking-[2px] uppercase text-primary">Context Analysis</div>
+                <div className="text-[#cdd3de] text-sm">Reads live node context</div>
               </div>
             </div>
-            <div className="bg-zinc-900/40 border border-white/10 rounded-xl p-5 flex items-center gap-3">
-              <Gear size={18} className="text-primary" />
+            <div className="bg-zinc-900/40 border border-white/10 rounded-xl p-4 flex items-center gap-3">
+              <Gear size={20} className="text-primary" />
               <div>
-                <h3 className="font-semibold text-white">Diagnostic Scan</h3>
-                <p className="text-xs text-white/60">Find problems instantly</p>
+                <div className="font-mono text-xs tracking-[2px] uppercase text-primary">Diagnostic Scan</div>
+                <div className="text-[#cdd3de] text-sm">Find problems instantly</div>
               </div>
             </div>
           </div>
-          {/* Alert Queue */}
-          <div className="border border-white/10 rounded-xl p-6 flex flex-col gap-3">
-            <div className="flex items-center gap-2 mb-3">
-              <Warning size={18} className="text-primary" />
-              <span className="font-mono text-xs uppercase tracking-widest text-white/60">ALERT QUEUE</span>
-            </div>
+          <div className="bg-zinc-900/40 border border-white/10 rounded-xl p-6">
+            <div className="font-mono text-xs tracking-[2px] uppercase text-primary mb-2">ALERT QUEUE</div>
             {ALERTS.map((a, i) => (
-              <div key={i} className={`flex items-center gap-2 font-mono text-sm ${a.className}`}>{a.icon}<span>{a.label}</span></div>
+              <div key={i} className={`flex items-center gap-2 py-1 ${a.className}`}>
+                {a.icon}
+                <span className={a.className}>{a.label}</span>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* AGENT TRANSCRIPT */}
-      <section className="py-8 max-w-3xl mx-auto w-full" data-fade>
-        <div className="bg-zinc-900/40 border border-white/10 rounded-xl p-4 mb-2 max-h-48 overflow-y-auto font-mono text-xs" ref={transcriptRef}>
-          {messages.slice(-3).map((m, i) => (
-            <div key={i} className="mb-2">
-              <span className={`font-bold ${m.role === 'user' ? 'text-primary' : 'text-white/70'}`}>{m.role === 'user' ? 'YOU >' : 'AGENT >'}</span> {m.content}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* AGENT INPUT BAR */}
-      <section className="py-4 max-w-3xl mx-auto w-full flex items-center gap-3" data-fade>
-        <div className="flex items-center gap-2 bg-zinc-900/40 border border-white/10 rounded-full px-4 py-2 flex-1">
-          <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center mr-2">
-            <Brain size={20} className="text-primary" />
+      <section className="w-full bg-zinc-900/40 border-y border-white/10 py-6 mb-16" data-fade>
+        <div className="container mx-auto px-6 max-w-4xl flex flex-col gap-3">
+          <div ref={transcriptRef} className="max-h-48 overflow-y-auto mb-2 flex flex-col gap-1">
+            {transcript.map((m, i) => (
+              <div key={i} className="flex items-start gap-2 font-mono text-xs">
+                <span className={`tracking-[2px] uppercase ${m.role === 'user' ? 'text-primary' : 'text-white/55'}`}>
+                  {m.role === 'user' ? 'YOU>' : 'AGENT>'}
+                </span>
+                <span className="whitespace-pre-line">{m.content}</span>
+              </div>
+            ))}
           </div>
-          <input
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            onKeyDown={e => { if (e.key === 'Enter') handleSend(input) }}
-            placeholder="Ask NEPA Agent..."
-            className="flex-1 bg-transparent outline-none border-0 text-white/80 placeholder:text-white/30 font-mono text-xs"
-          />
-        </div>
-        <div className="flex gap-2">
-          {QUICK_ACTIONS.map((a, i) => (
-            <button key={i} onClick={() => handleSend(a.text)} className="px-3 py-1 rounded-full bg-zinc-900/60 border border-white/10 text-white/80 font-mono text-xs hover:bg-primary/20 transition-colors">
-              {a.label}
+          <div className="flex items-center gap-3">
+            <span className="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center mr-2">
+              <UserCircle size={28} className="text-primary" />
+            </span>
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Ask NEPA Agent..."
+              className="flex-1 bg-transparent font-mono text-xs text-white/80 placeholder:text-white/25 outline-none border-0 focus:ring-0"
+            />
+            {QUICK_ACTIONS.map((a) => (
+              <button
+                key={a.label}
+                onClick={() => handleSend(a.text)}
+                className="font-mono text-xs tracking-[2px] uppercase border border-white/15 rounded-full px-3 py-1 text-primary hover:border-primary/30 transition-colors"
+              >
+                {a.label}
+              </button>
+            ))}
+            <button
+              onClick={() => handleSend()}
+              className="ml-2 bg-primary text-white rounded-full p-2 hover:bg-primary/90 transition-colors flex items-center justify-center"
+              aria-label="Send"
+            >
+              <PaperPlaneRight size={20} />
             </button>
-          ))}
+          </div>
         </div>
       </section>
 
-      {/* FOUR-PANEL DASHBOARD GRID */}
-      <section className="py-16 max-w-6xl mx-auto w-full grid md:grid-cols-2 gap-6" data-fade>
-        {/* JUDGE */}
-        <div className="bg-zinc-900/40 border border-white/10 rounded-xl p-6 hover:shadow-[0_0_0_2px_#00d4ff33] transition-shadow group flex flex-col">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="font-mono text-xs text-primary">JUDGE</span>
-            <span className="font-mono text-xs text-white/60">Real-Time Analysis</span>
-          </div>
-          <div className="grid grid-cols-2 gap-2 mb-3">
-            <div className="aspect-video rounded bg-gradient-to-br from-zinc-800 to-zinc-950 relative flex items-center justify-center">
-              <span className="text-white/20 font-bold">IMG</span>
+      <section className="container mx-auto px-6 max-w-6xl mb-20" data-fade>
+        <div className="grid md:grid-cols-2 gap-6">
+
+          {/* JUDGE */}
+          <div className="bg-zinc-900/40 border-white/10 border rounded-xl p-6 flex flex-col min-h-[320px]">
+            <div className="font-mono text-xs tracking-[2px] uppercase text-primary mb-3 flex items-center gap-2">
+              <MagnifyingGlass size={16} className="text-primary" />JUDGE
+              <span className="ml-2 text-white/40 font-normal">Real-Time Analysis</span>
             </div>
-            <div className="aspect-video rounded bg-gradient-to-br from-zinc-800 to-zinc-950 border-2 border-red-400 flex items-center justify-center relative">
-              <span className="absolute top-2 left-2 bg-red-900/80 border border-red-400 text-red-300 text-xs font-mono px-2 py-1 rounded">⚠️ Stabilization Error Detected</span>
-              <span className="text-white/20 font-bold">IMG</span>
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              {judge.images.map((img, idx) => {
+                const hasError = (img as { error?: string }).error
+                return (
+                  <div key={idx} className={`aspect-video bg-gradient-to-br from-zinc-800 to-zinc-950 rounded relative flex items-center justify-center ${hasError ? 'border-2 border-red-500' : ''}`}>
+                    {hasError ? (
+                      <span className="text-red-400 font-mono text-xs px-2 py-1 bg-zinc-950/80 rounded border border-red-400 flex items-center gap-1">
+                        <Warning size={14} />{hasError}
+                      </span>
+                    ) : (
+                      <span className="text-white/20 font-mono text-xs">IMG</span>
+                    )}
+                  </div>
+                )
+              })}
             </div>
-            <div className="aspect-video rounded bg-gradient-to-br from-zinc-800 to-zinc-950 flex items-center justify-center">
-              <span className="text-white/20 font-bold">IMG</span>
+            <div className="text-xs text-white/80 font-mono mb-1">▸ Frame Drift: {judge.frameDrift}px</div>
+            <div className="text-xs text-white/80 font-mono mb-1">▸ {judge.exposureMismatch ? 'Exposure Mismatch' : 'Exposure OK'}</div>
+            <div className="text-xs text-white/55 font-mono mt-2">{judge.report}</div>
+          </div>
+
+          {/* COMPOSER */}
+          <div className="bg-zinc-900/40 border-white/10 border rounded-xl p-6 flex flex-col min-h-[320px]">
+            <div className="font-mono text-xs tracking-[2px] uppercase text-primary mb-3 flex items-center gap-2">
+              <CheckCircle size={16} className="text-green-400" />COMPOSER
+              <span className="ml-2 text-white/40 font-normal">Scene Adjustments</span>
             </div>
-            <div className="aspect-video rounded bg-gradient-to-br from-zinc-800 to-zinc-950 flex items-center justify-center">
-              <span className="text-white/20 font-bold">IMG</span>
+            <div className="aspect-video bg-gradient-to-br from-zinc-800 to-zinc-950 rounded mb-4 flex items-center justify-center">
+              <span className="text-white/20 font-mono text-xs">IMG</span>
             </div>
+            <div className="flex flex-col gap-1 mb-2">
+              <div className="flex items-center gap-2"><CheckCircle size={12} className="text-green-400" /><span className="text-green-400 text-xs">{composer.status}</span></div>
+              <div className="flex items-center gap-2"><CheckCircle size={12} className="text-green-400" /><span className="text-white/80 text-xs">{composer.lighting ? 'Lighting Balanced' : 'Lighting Issue'}</span></div>
+              <div className="flex items-center gap-2"><CheckCircle size={12} className="text-green-400" /><span className="text-white/80 text-xs">{composer.artifact ? 'Artifact Removed' : 'Artifact Present'}</span></div>
+            </div>
+            <div className="text-xs text-white/55 font-mono mt-2">{composer.updated ? 'Scene Updated Successfully' : 'Update Pending'}</div>
           </div>
-          <div className="mt-2">
-            <div className="flex items-center gap-2 text-xs text-white/80 mb-1"><span>▸</span> Frame Drift: <span className="font-mono">3.3px</span></div>
-            <div className="flex items-center gap-2 text-xs text-white/80 mb-1"><span>▸</span> Exposure Mismatch</div>
-            <div className="text-xs text-white/50 text-center mt-3">Issue Report Generated</div>
+
+          {/* DIRECTOR — multi-lane video with overlay */}
+          <div className="bg-zinc-900/40 border-white/10 border rounded-xl p-6 flex flex-col min-h-[320px]">
+            <div className="font-mono text-xs tracking-[2px] uppercase text-primary mb-3 flex items-center gap-2">
+              <Camera size={16} className="text-primary" />DIRECTOR
+              <span className="ml-2 text-white/40 font-normal">Command &amp; Control</span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {director.cameras.map((cam) => (
+                <div key={cam.id} className="relative aspect-video rounded overflow-hidden bg-black">
+                  <video
+                    src={cam.videoUrl}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-full object-cover"
+                  />
+                  <img
+                    src={cam.overlayUrl}
+                    alt="Overlay"
+                    className="absolute top-0 left-0 w-full h-full object-contain pointer-events-none opacity-80"
+                    style={{ mixBlendMode: 'screen' }}
+                  />
+                  <span className="absolute top-2 left-2 bg-black/60 text-cyan-300 font-mono text-xs px-3 py-1 rounded">
+                    {cam.id} · Overlay
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="text-xs text-white/80 font-mono mt-3">{director.action}</div>
           </div>
-        </div>
-        {/* COMPOSER */}
-        <div className="bg-zinc-900/40 border border-white/10 rounded-xl p-6 hover:shadow-[0_0_0_2px_#00d4ff33] transition-shadow group flex flex-col">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="font-mono text-xs text-primary">COMPOSER</span>
-            <span className="font-mono text-xs text-white/60">Scene Adjustments</span>
+
+          {/* AUDITOR */}
+          <div className="bg-zinc-900/40 border-white/10 border rounded-xl p-6 flex flex-col min-h-[320px]">
+            <div className="font-mono text-xs tracking-[2px] uppercase text-primary mb-3 flex items-center gap-2">
+              <ShieldCheck size={16} className="text-amber-400" />AUDITOR
+              <span className="ml-2 text-white/40 font-normal">Audit &amp; Review</span>
+            </div>
+            <div className="flex flex-col gap-2 mb-3">
+              {auditor.logs.map((log, idx) => (
+                <div key={idx} className="flex items-center gap-2">
+                  <CheckCircle size={14} className={log.status === 'done' ? 'text-green-400' : 'text-amber-400'} />
+                  <span className="text-xs text-white/90">{log.label}</span>
+                  <ChevronRight size={14} className={log.status === 'done' ? 'text-green-400 ml-auto' : 'text-amber-400 ml-auto'} />
+                </div>
+              ))}
+            </div>
+            <div className="text-xs text-white/55 font-mono mt-2">{auditor.exportReady ? 'Log Export Ready' : 'Export Pending'}</div>
           </div>
-          <div className="aspect-video rounded bg-gradient-to-br from-zinc-800 to-zinc-950 flex items-center justify-center mb-3">
-            <span className="text-white/20 font-bold">IMG</span>
-          </div>
-          <div className="flex flex-col gap-1 mb-2">
-            <div className="bg-green-500/15 text-green-400 rounded px-3 py-1 text-xs flex items-center gap-2"><CheckCircle size={14} /> Auto-Fixed & Ready</div>
-            <div className="text-white/70 text-xs flex items-center gap-2"><CheckCircle size={14} /> Lighting Balanced</div>
-            <div className="text-white/70 text-xs flex items-center gap-2"><CheckCircle size={14} /> Artifact Removed</div>
-          </div>
-          <div className="text-xs text-white/50 mt-2">Scene Updated Successfully</div>
-        </div>
-        {/* DIRECTOR */}
-        <div className="bg-zinc-900/40 border border-white/10 rounded-xl p-6 hover:shadow-[0_0_0_2px_#00d4ff33] transition-shadow group flex flex-col">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="font-mono text-xs text-primary">DIRECTOR</span>
-            <span className="font-mono text-xs text-white/60">Command & Control</span>
-          </div>
-          <div className="relative aspect-video rounded bg-gradient-to-br from-zinc-800 to-zinc-950 mb-3 flex items-center justify-center">
-            <Camera size={22} className="absolute top-2 right-2 text-primary" />
-            <Camera size={22} className="absolute top-2 left-2 text-primary" />
-            <Camera size={22} className="absolute bottom-2 right-2 text-primary" />
-            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-primary rounded-full animate-pulse" />
-            <span className="text-white/20 font-bold">MAP</span>
-          </div>
-          <div className="text-xs font-mono text-white/80 mt-2">Deploy Camera 5 to Lane B</div>
-        </div>
-        {/* AUDITOR */}
-        <div className="bg-zinc-900/40 border border-white/10 rounded-xl p-6 hover:shadow-[0_0_0_2px_#00d4ff33] transition-shadow group flex flex-col">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="font-mono text-xs text-primary">AUDITOR</span>
-            <span className="font-mono text-xs text-white/60">Audit & Review</span>
-          </div>
-          <div className="flex flex-col gap-2 mb-3">
-            <div className="flex items-center gap-2"><CheckCircle size={16} className="text-amber-400" /> <span>Audit Trail Summary</span> <span className="flex-1 h-1 rounded bg-gradient-to-r from-amber-400/40 to-amber-400/0" /></div>
-            <div className="flex items-center gap-2"><CheckCircle size={16} className="text-amber-400" /> <span>Node Event Log</span> <span className="flex-1 h-1 rounded bg-gradient-to-r from-amber-400/40 to-amber-400/0" /></div>
-            <div className="flex items-center gap-2"><CheckCircle size={16} className="text-green-400" /> <span>Diagnostic Completed</span> <span className="flex-1 h-1 rounded bg-gradient-to-r from-green-400/40 to-green-400/0" /></div>
-            <div className="flex items-center gap-2"><CheckCircle size={16} className="text-green-400" /> <span>File Export: Secured</span> <span className="flex-1 h-1 rounded bg-gradient-to-r from-green-400/40 to-green-400/0" /></div>
-          </div>
-          <div className="text-xs text-white/50 mt-2">Log Export Ready</div>
         </div>
       </section>
 
-      {/* NARRATIVE FOOTER BAND */}
-      <section className="py-16 text-center" data-fade>
-        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3">Connect. Diagnose. Direct. Verify.</h2>
-        <p className="text-base text-white/65 mb-8">Sign up for free and run your first diagnostic scan. No credit card required.</p>
-        <div className="flex flex-wrap justify-center gap-4">
-          <Link to="/dashboard" className="inline-flex items-center gap-1.5 px-6 py-3 bg-primary text-black rounded font-semibold text-sm hover:bg-primary/90 transition-colors">Open Console →</Link>
-          <Link to="/docs/api" className="inline-flex items-center gap-1.5 px-6 py-3 border border-white/20 text-white rounded font-medium text-sm hover:bg-white/5 transition-colors">Read API Docs →</Link>
+      <footer className="py-16 text-center" data-fade>
+        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4 text-white">Connect. Diagnose. Direct. Verify.</h2>
+        <p className="text-[#cdd3de] mb-8">Sign up for free and run your first diagnostic scan. No credit card required.</p>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Link to="/dashboard" className="bg-primary text-white font-semibold px-7 py-3 rounded-full hover:bg-primary/90">Open Console →</Link>
+          <Link to="/docs/api" className="border border-white/20 text-white/80 font-semibold px-7 py-3 rounded-full hover:border-primary/40 hover:text-primary">Read API Docs →</Link>
         </div>
-      </section>
+      </footer>
     </main>
   )
 }
