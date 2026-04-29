@@ -33,7 +33,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import { PencilSimple, Trash, Plus } from '@phosphor-icons/react'
 import { toast } from 'sonner'
-import { supabase } from '@/lib/supabaseClient'
+import { supabase } from '@/lib/supabase'
 
 /* ------------------------------------------------------------------ */
 /* Types                                                               */

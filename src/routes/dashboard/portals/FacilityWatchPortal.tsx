@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useCameras } from '@/hooks/useCameras'
 import { useRetailAlerts } from '@/hooks/useAlerts'
 import { useSites } from '@/hooks/useSites'
-import { supabase, Shelf } from '@/lib/supabaseClient'
+import { supabase, Shelf } from '@/lib/supabase'
 import { useSupabaseQuery } from '@/hooks/useSupabaseQuery'
 import { DeveloperMode } from '@/components/dashboard/DeveloperMode'
 

@@ -4,7 +4,7 @@
  * Replaces old REST call to /tasks.
  */
 import { useState, useCallback, useEffect } from 'react'
-import { supabase, Mission } from '@/lib/supabaseClient'
+import { supabase, Mission } from '@/lib/supabase'
 
 // Valid statuses from the missions table enum
 type MissionStatus = 'planned' | 'active' | 'paused' | 'completed' | 'aborted' | 'failed'
