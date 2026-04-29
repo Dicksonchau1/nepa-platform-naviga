@@ -23,20 +23,10 @@ export function Footer() {
           <div>
             <h3 className="text-sm font-semibold text-foreground mb-3">Products</h3>
             <div className="flex flex-col gap-2 text-sm text-muted-foreground">
-              <Link to="/products/soda" className="hover:text-primary transition-colors">
-                SODA
-              </Link>
-              <Link to="/products/roda" className="hover:text-primary transition-colors">
-                RODA
-              </Link>
-              <Link to="/products/voda-coda" className="hover:text-primary transition-colors">
-                VODA / CODA
-              </Link>
-              <Link to="/products/hri" className="hover:text-primary transition-colors">
-                HRI
-              </Link>
-              <Link to="/products/foda" className="hover:text-primary transition-colors">
-                FODA
+              <Link to='/products/soda-roda' className="hover:text-primary transition-colors">
+                SODA 
+                VODA
+                NEPA Agent 
               </Link>
             </div>
           </div>

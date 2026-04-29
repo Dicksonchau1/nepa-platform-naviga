@@ -10,12 +10,9 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 
 const platformItems = [
   { label: 'NEPA World Model', desc: 'Introducing Vodec Agent NEPA', href: '/platform', featured: true },
-  { label: 'VODA', desc: 'Video Intelligence Pipeline', href: '/products/voda' },
-  { label: 'SODA', desc: 'Store Operating System', href: '/products/soda' },
-  { label: 'RODA', desc: 'Robotic Dispatch Agent', href: '/products/roda' },
-  { label: 'FODA', desc: 'Infrastructure Inspection', href: '/products/foda' },
-  { label: 'EODA', desc: 'Edge Operations Agent', href: '/products/eoda' },
-  { label: 'HRI', desc: 'Behavioral Intelligence API', href: '/products/hri' },
+  { label: 'VODA', desc: 'AuraStudio (coming soon)', href: '/products/voda' },
+  { label: 'SODA', desc: 'Store Operations', href: '/products/soda-roda' },
+  { label: 'NEPA Runtime', desc: 'Neuromorphic Edge Agent', href: '/nepa' },
 ]
 
 const businessItems = [
@@ -141,7 +138,7 @@ export function Navbar() {
         {/* ── desktop links ────── */}
         <div className="hidden items-center gap-6 lg:flex">
           {/* Platform dropdown */}
-          <DesktopDropdown label="Platform">
+          <DesktopDropdown label="Modules">
             {platformItems.map((item) => (
               <DropdownLink key={item.href} {...item} />
             ))}

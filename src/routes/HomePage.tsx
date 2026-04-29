@@ -114,9 +114,7 @@ export function HomePage() {
                 textShadow: '0 4px 8px rgba(0,0,0,0.5), 0 8px 24px rgba(0,212,255,0.3), 0 0 60px rgba(0,212,255,0.15)',
                 transform: 'translateZ(0)',
               }}
-            >
-              AuraSense
-            </h1>
+            >Neuromorphic Edge</h1>
             <h2
               className="text-4xl md:text-6xl font-light tracking-tight leading-tight"
               style={{
@@ -127,7 +125,7 @@ export function HomePage() {
                 textShadow: '0 3px 6px rgba(0,0,0,0.5), 0 6px 18px rgba(0,212,255,0.4)',
               }}
             >
-              Video Agent
+              Sensation Agent
             </h2>
           </div>
 
@@ -167,7 +165,7 @@ export function HomePage() {
                   textShadow: '0 2px 6px rgba(0,0,0,0.4)',
                 }}
               >
-                Edge Perception Agent
+                Edge Sensation Agent
               </p>
             </div>
 
