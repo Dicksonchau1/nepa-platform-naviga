@@ -21,7 +21,7 @@
 
 import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase } from '@/lib/supabaseClient'
+import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 
 const PORTAL_ROUTES: Record<string, string> = {

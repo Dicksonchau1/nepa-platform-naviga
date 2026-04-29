@@ -5,7 +5,7 @@ import { useCallback } from 'react'
 import { useDrones } from '@/hooks/useDrones'
 import { useSites } from '@/hooks/useSites'
 import { RegistryTable, statusBadge, ColumnDef, FieldDef } from '@/components/dashboard/RegistryTable'
-import type { Drone } from '@/lib/supabaseClient'
+import type { Drone } from '@/lib/supabase'
 
 const DRONE_STATUSES = ['idle', 'preflight', 'flying', 'returning', 'landed', 'error', 'maintenance']
 

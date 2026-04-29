@@ -1,4 +1,4 @@
-import { supabase, Camera } from '@/lib/supabaseClient'
+import { supabase, Camera } from '@/lib/supabase'
 import { useSupabaseQuery } from './useSupabaseQuery'
 import { useRealtimeTable } from './useRealtimeSubscription'
 

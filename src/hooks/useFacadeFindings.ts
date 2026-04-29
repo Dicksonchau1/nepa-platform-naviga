@@ -4,7 +4,7 @@
  * Replaces old REST call to /facade/findings.
  */
 import { useState, useCallback, useEffect } from 'react'
-import { supabase, InspectionFinding } from '@/lib/supabaseClient'
+import { supabase, InspectionFinding } from '@/lib/supabase'
 
 interface FacadeFindingFilters {
   buildingId?: string

@@ -1,4 +1,4 @@
-import { supabase, Robot, Mission, RobotTelemetry } from '@/lib/supabaseClient'
+import { supabase, Robot, Mission, RobotTelemetry } from '@/lib/supabase'
 import { useSupabaseQuery } from './useSupabaseQuery'
 import { useRealtimeTable } from './useRealtimeSubscription'
 

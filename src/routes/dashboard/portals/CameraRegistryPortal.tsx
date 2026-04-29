@@ -5,7 +5,7 @@ import { useCallback } from 'react'
 import { useCameras } from '@/hooks/useCameras'
 import { useSites } from '@/hooks/useSites'
 import { RegistryTable, statusBadge, ColumnDef, FieldDef } from '@/components/dashboard/RegistryTable'
-import type { Camera } from '@/lib/supabaseClient'
+import type { Camera } from '@/lib/supabase'
 
 const CAMERA_STATUSES = ['online', 'offline', 'error', 'maintenance']
 const PORTAL_OPTIONS = ['facility_watch', 'robotic_ops', 'drone_inspect']

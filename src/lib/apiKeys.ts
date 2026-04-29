@@ -1,4 +1,4 @@
-import { supabase } from './supabaseClient'
+import { supabase } from './supabase'
 
 const PREFIX_BY_PORTAL: Record<string, string> = {
   drone_inspect: 'sk_foda_',

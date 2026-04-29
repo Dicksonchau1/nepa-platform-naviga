@@ -1,4 +1,4 @@
-import { supabase, Drone, Building, FlightPlan, InspectionFinding } from '@/lib/supabaseClient'
+import { supabase, Drone, Building, FlightPlan, InspectionFinding } from '@/lib/supabase'
 import { useSupabaseQuery } from './useSupabaseQuery'
 import { useRealtimeTable } from './useRealtimeSubscription'
 

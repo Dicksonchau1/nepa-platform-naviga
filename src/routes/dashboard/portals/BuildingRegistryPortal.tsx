@@ -5,7 +5,7 @@ import { useCallback } from 'react'
 import { useBuildings } from '@/hooks/useDrones'
 import { useSites } from '@/hooks/useSites'
 import { RegistryTable, ColumnDef, FieldDef } from '@/components/dashboard/RegistryTable'
-import type { Building } from '@/lib/supabaseClient'
+import type { Building } from '@/lib/supabase'
 
 export function BuildingRegistryPortal() {
   const { data, isLoading, refresh } = useBuildings()

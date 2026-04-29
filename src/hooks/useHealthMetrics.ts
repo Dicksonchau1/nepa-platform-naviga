@@ -4,7 +4,7 @@
  * Replaces old REST call to /metrics/live.
  */
 import { useState, useEffect, useCallback } from 'react'
-import { supabase, ServiceStatus } from '@/lib/supabaseClient'
+import { supabase, ServiceStatus } from '@/lib/supabase'
 import { useRealtimeSubscription } from './useRealtimeSubscription'
 
 export interface LiveIntelligence {

@@ -1,7 +1,7 @@
-import { supabase, Alert, RetailAlert } from '@/lib/supabaseClient'
+import { supabase, Alert, RetailAlert } from '@/lib/supabase'
 import { useSupabaseQuery } from './useSupabaseQuery'
 import { useRealtimeTable } from './useRealtimeSubscription'
-import type { PortalType } from '@/lib/supabaseClient'
+import type { PortalType } from '@/lib/supabase'
 
 /** System-wide alerts (cross-portal) */
 export function useAlerts(portal?: PortalType, siteId?: string) {

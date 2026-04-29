@@ -4,8 +4,8 @@
  * Replaces old REST call to /audit/logs.
  */
 import { useState, useCallback, useEffect } from 'react'
-import { supabase, AuditLogEntry } from '@/lib/supabaseClient'
-import type { PortalType } from '@/lib/supabaseClient'
+import { supabase, AuditLogEntry } from '@/lib/supabase'
+import type { PortalType } from '@/lib/supabase'
 
 interface AuditLogFilters {
   portal?: PortalType

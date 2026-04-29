@@ -1,4 +1,4 @@
-import { supabase, Site } from '@/lib/supabaseClient'
+import { supabase, Site } from '@/lib/supabase'
 import { useSupabaseQuery } from './useSupabaseQuery'
 
 export function useSites() {

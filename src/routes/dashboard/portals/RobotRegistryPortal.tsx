@@ -5,7 +5,7 @@ import { useCallback } from 'react'
 import { useRobots } from '@/hooks/useRobots'
 import { useSites } from '@/hooks/useSites'
 import { RegistryTable, statusBadge, ColumnDef, FieldDef } from '@/components/dashboard/RegistryTable'
-import type { Robot } from '@/lib/supabaseClient'
+import type { Robot } from '@/lib/supabase'
 
 const ROBOT_STATUSES = ['idle', 'active', 'charging', 'error', 'offline', 'maintenance']
 
