@@ -8,6 +8,7 @@ import { getAuditEvents }      from './handlers/getAuditEvents'
 import { getInferenceLatency } from './handlers/getInferenceLatency'
 import { runVodaDiagnostic }   from './handlers/runVodaDiagnostic'
 import { findSimilarFrames }   from './handlers/findSimilarFrames'
+import { registerCamera }      from './handlers/registerCamera'
 
 export interface ToolContext {
   operatorId: string | null
@@ -34,16 +35,18 @@ export const TOOL_REGISTRY: Record<string, ToolDef> = {
     validator: z.object({}),
     handler: getNodeStatus,
   },
+
   nepa_get_active_lanes: {
     name: 'nepa_get_active_lanes',
-    description: 'Returns every currently-running inference lane: camera_id, agent type, state, fps, last frame timestamp.',
+    description: 'Returns every currently-running inference lane: camera_id, name, agent_type (SODA/FODA/VODA/RODA/NEPA), status (LIVE/PAUSED), fps, freshness (FRESH/STALE/NEVER), seconds since last frame.',
     parameters: { type: 'object', properties: {}, required: [] },
     validator: z.object({}),
     handler: getActiveLanes,
   },
+
   nepa_get_alert_queue: {
     name: 'nepa_get_alert_queue',
-    description: 'Returns recent alerts, optionally filtered by severity, agent, or time range.',
+    description: 'Returns recent alerts from the alert_queue, optionally filtered by severity, agent, or time range.',
     parameters: {
       type: 'object',
       properties: {
@@ -59,6 +62,7 @@ export const TOOL_REGISTRY: Record<string, ToolDef> = {
     }),
     handler: getAlertQueue,
   },
+
   nepa_get_audit_events: {
     name: 'nepa_get_audit_events',
     description: 'Queries audit_log for operator actions, agent tool calls, system events. Use for chain-of-custody questions.',
@@ -77,6 +81,7 @@ export const TOOL_REGISTRY: Record<string, ToolDef> = {
     }),
     handler: getAuditEvents,
   },
+
   nepa_get_inference_latency: {
     name: 'nepa_get_inference_latency',
     description: 'Returns p50/p95/p99 inference latency in ms, plus per-node breakdown.',
@@ -84,6 +89,7 @@ export const TOOL_REGISTRY: Record<string, ToolDef> = {
     validator: z.object({}),
     handler: getInferenceLatency,
   },
+
   nepa_run_voda_diagnostic: {
     name: 'nepa_run_voda_diagnostic',
     description: 'Triggers VODA diagnostic on camera or frame. Returns anomaly score, entities, signature, action recs.',
@@ -101,6 +107,7 @@ export const TOOL_REGISTRY: Record<string, ToolDef> = {
     }),
     handler: runVodaDiagnostic,
   },
+
   nepa_voda_find_similar_frames: {
     name: 'nepa_voda_find_similar_frames',
     description: 'pgvector cosine search over SignatureMap. Finds frames similar to a reference frame.',
@@ -117,6 +124,30 @@ export const TOOL_REGISTRY: Record<string, ToolDef> = {
       limit:    z.number().int().min(1).max(20).optional().default(5),
     }),
     handler: findSimilarFrames,
+  },
+
+  nepa_register_camera: {
+    name: 'nepa_register_camera',
+    description: 'Registers a new camera in the deployment. Requires a name and RTSP URL. Use when the operator says "add a camera", "register an RTSP feed", or describes a new physical camera to onboard.',
+    parameters: {
+      type: 'object',
+      properties: {
+        name:        { type: 'string', description: 'Human-readable name, e.g. "Front entrance"' },
+        rtsp_url:    { type: 'string', description: 'Full RTSP URL, e.g. rtsp://user:pass@192.168.1.10:554/stream' },
+        location:    { type: 'string', description: 'Physical location label, optional' },
+        agent_type:  { type: 'string', enum: ['SODA','FODA','VODA','RODA','NEPA'], description: 'Which NEPA agent should consume this feed. Default NEPA.' },
+        fps_target:  { type: 'integer', description: 'Target inference fps. Default 5.' },
+      },
+      required: ['name', 'rtsp_url'],
+    },
+    validator: z.object({
+      name: z.string().min(1).max(120),
+      rtsp_url: z.string().min(7).max(500),
+      location: z.string().max(200).optional(),
+      agent_type: z.enum(['SODA','FODA','VODA','RODA','NEPA']).optional(),
+      fps_target: z.number().int().min(1).max(30).optional(),
+    }),
+    handler: registerCamera,
   },
 }
 
