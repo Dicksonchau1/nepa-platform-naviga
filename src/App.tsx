@@ -42,6 +42,7 @@ const FODAPage = lazyPage(() => import('@/routes/products/FODAPage'), 'FODAPage'
 const SODAPage = lazyPage(() => import('@/routes/products/SODAPage'), 'SODAPage')
 const HRIPage = lazyPage(() => import('@/routes/products/HRIPage'), 'HRIPage')
 const VODACODAPage = lazyPage(() => import('@/components/pages/VODACODAPage'), 'default')
+const SODARODAPage = lazyPage(() => import('@/components/pages/SODARODAPage'), 'SODARODAPage')
 const DocsPage = lazyPage(() => import('@/routes/resources/DocsPage'), 'DocsPage')
 const ApiReferencePage = lazyPage(() => import('@/routes/resources/ApiReferencePage'), 'ApiReferencePage')
 const GuidesPage = lazyPage(() => import('@/routes/resources/GuidesPage'), 'GuidesPage')
@@ -91,6 +92,7 @@ function PublicRoutes() {
       <Route path="/products/roda" element={<RODAPage />} />
       <Route path="/products/voda" element={<VODAPage />} />
       <Route path="/products/voda-coda" element={<VODACODAPage />} />
+      <Route path="/products/soda-roda" element={<SODARODAPage />} />
       <Route path="/products/eoda" element={<EODAPage />} />
       <Route path="/products/foda" element={<FODAPage />} />
       <Route path="/products/hri" element={<HRIPage />} />

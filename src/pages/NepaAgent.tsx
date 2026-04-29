@@ -323,6 +323,39 @@ export function NepaAgent() {
           <Link to="/docs/api" className="border border-white/20 text-white/80 font-semibold px-7 py-3 rounded-full hover:border-primary/40 hover:text-primary">Read API Docs →</Link>
         </div>
       </footer>
-    </main>
+          <section className="py-24 border-t border-white/8 bg-[#080B12]">
+        <div className="container mx-auto px-6 max-w-6xl">
+          <p className="text-xs text-cyan-400/50 tracking-[0.28em] font-mono uppercase mb-3">
+            The Cognitive Loop
+          </p>
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-14">
+            10 Stages. One Closed Loop.
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            {[
+              { n: '01', icon: '📷', title: 'Perceive',     sub: 'rt_core.cpp + YOLO + STDP' },
+              { n: '02', icon: '🧠', title: 'Remember',     sub: 'SignatureMap world model' },
+              { n: '03', icon: '📈', title: 'Predict',      sub: 'FrameStatePredictor spatial+temporal' },
+              { n: '04', icon: '🔄', title: 'Compare',      sub: 'frame_processor.py actual vs predicted' },
+              { n: '05', icon: '💭', title: 'Think',        sub: 'llm_consultation.py Claude + Perplexity' },
+              { n: '06', icon: '⚡', title: 'Learn',        sub: 'DopamineModulator STDP reinforcement' },
+              { n: '07', icon: '📊', title: 'Analyze',      sub: 'VODA quality pipeline + polygon + stitch' },
+              { n: '08', icon: '🎬', title: 'Create',       sub: 'CODA film/avatar/pitch + ffmpeg' },
+              { n: '09', icon: '🎯', title: 'Act',          sub: 'agent_runtime.py sandbox + dispatch' },
+              { n: '10', icon: '📡', title: 'Communicate',  sub: 'route.py alerts + events + reports' },
+            ].map((s) => (
+              <div key={s.n} className="bg-[#050508] border border-white/8 rounded-lg p-5">
+                <p className="font-mono text-xs text-cyan-400/40 mb-2">{s.n}</p>
+                <div className="text-2xl mb-3">{s.icon}</div>
+                <h3 className="text-sm font-semibold text-white mb-1">{s.title}</h3>
+                <p className="text-[11px] text-white/40 leading-relaxed">{s.sub}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+
+      </main>
   )
 }
