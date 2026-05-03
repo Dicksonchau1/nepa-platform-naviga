@@ -172,11 +172,13 @@ export function Navbar() {
             Sign in
           </Button>
           <Button
-            onClick={() => navigateAndClose('/contact')}
+            asChild
             size="sm"
             className="border-0 bg-gradient-to-r from-cyan-500 to-blue-500 text-sm font-semibold text-black shadow-[0_0_20px_rgba(0,212,255,0.3)] transition-all hover:from-cyan-400 hover:to-blue-400 hover:shadow-[0_0_30px_rgba(0,212,255,0.5)]"
           >
-            Request Pilot
+            <a href="https://playground.aurasensehk.com" target="_blank" rel="noopener noreferrer">
+              Playground
+            </a>
           </Button>
         </div>
 
@@ -294,8 +296,10 @@ export function Navbar() {
                     <Button variant="outline" className="border-white/20 text-white" onClick={() => navigateAndClose('/pricing')}>
                       View pricing
                     </Button>
-                    <Button className="bg-cyan-500 text-black hover:bg-cyan-400" onClick={() => navigateAndClose('/contact')}>
-                      Request Pilot
+                    <Button asChild className="bg-cyan-500 text-black hover:bg-cyan-400">
+                      <a href="https://playground.aurasensehk.com" target="_blank" rel="noopener noreferrer">
+                        Playground
+                      </a>
                     </Button>
                   </div>
                 </div>

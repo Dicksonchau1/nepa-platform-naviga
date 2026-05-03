@@ -483,12 +483,14 @@ export function HeroSequence() {
               >
                 Ask NEPA
               </Link>
-              <Link
-                to="/about/contact"
+              <a
+                href="https://playground.aurasensehk.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-sm text-white/35 hover:text-white/60 transition-colors underline underline-offset-4"
               >
-                Request pilot access →
-              </Link>
+                Open playground →
+              </a>
             </div>
           )}
 
