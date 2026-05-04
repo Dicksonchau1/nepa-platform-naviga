@@ -17,24 +17,23 @@ import { askNepaAgent, type NepaAgentMessage } from '@/lib/nepaAgent'
 import { WorldModelSection } from '@/components/sections/WorldModelSection'
 
 const NODE_STATUS = [
-  { name: 'NUC_01', latency: '16 ms', color: 'bg-green-400' },
+  { name: 'NUC_01',    latency: '16 ms', color: 'bg-green-400' },
   { name: 'JETSON_02', latency: '23 ms', color: 'bg-green-400' },
-  { name: 'NUC_03', latency: '12 ms', color: 'bg-green-400' },
+  { name: 'NUC_03',    latency: '12 ms', color: 'bg-green-400' },
 ]
 
 const ALERTS = [
-  { icon: <Warning size={18} className="text-amber-400" />, label: '3 Critical Alerts', className: 'text-amber-400' },
-  { icon: <Warning size={18} className="text-yellow-300" />, label: '5 Warnings', className: 'text-yellow-300' },
-  { icon: <Warning size={18} className="text-red-400" />, label: 'ROI Anomaly Detected', className: 'text-red-400' },
+  { icon: <Warning size={18} className="text-amber-400"  />, label: '3 Critical Alerts',     className: 'text-amber-400'  },
+  { icon: <Warning size={18} className="text-yellow-300" />, label: '5 Warnings',            className: 'text-yellow-300' },
+  { icon: <Warning size={18} className="text-red-400"    />, label: 'ROI Anomaly Detected', className: 'text-red-400'    },
 ]
 
 const QUICK_ACTIONS = [
   { label: 'Run Diagnostic', text: 'Run a VODA diagnostic' },
-  { label: 'Check Latency', text: 'Check inference latency' },
-  { label: 'Show Alerts', text: 'Show last 10 alert events' },
+  { label: 'Check Latency',  text: 'Check inference latency' },
+  { label: 'Show Alerts',    text: 'Show last 10 alert events' },
 ]
 
-// MOCK panel data — replace with WebSocket later
 const MOCK_JUDGE = {
   images: [{}, { error: 'Stabilization Error Detected' }, {}, {}],
   frameDrift: 3.3,
@@ -56,10 +55,10 @@ const MOCK_DIRECTOR = {
 }
 const MOCK_AUDITOR = {
   logs: [
-    { label: 'Audit Trail Summary', status: 'pending' },
-    { label: 'Node Event Log', status: 'pending' },
-    { label: 'Diagnostic Completed', status: 'done' },
-    { label: 'File Export Secured', status: 'done' },
+    { label: 'Audit Trail Summary',    status: 'pending' },
+    { label: 'Node Event Log',         status: 'pending' },
+    { label: 'Diagnostic Completed',   status: 'done'    },
+    { label: 'File Export Secured',    status: 'done'    },
   ],
   exportReady: true,
 }
@@ -69,10 +68,10 @@ export function NepaAgent() {
   const [input, setInput] = useState('')
   const transcriptRef = useRef<HTMLDivElement>(null)
 
-  const [judge] = useState(MOCK_JUDGE)
+  const [judge]    = useState(MOCK_JUDGE)
   const [composer] = useState(MOCK_COMPOSER)
   const [director] = useState(MOCK_DIRECTOR)
-  const [auditor] = useState(MOCK_AUDITOR)
+  const [auditor]  = useState(MOCK_AUDITOR)
 
   useEffect(() => {
     if (transcriptRef.current) {
@@ -118,7 +117,7 @@ export function NepaAgent() {
 
   return (
     <main className="min-h-screen bg-[#0B0F14] text-white overflow-x-hidden">
-      {/* Background grid + radial — kept as page-wide ambient */}
+      {/* Page-wide ambient grid + radial glow */}
       <div
         className="fixed inset-0 pointer-events-none -z-10"
         style={{
@@ -132,9 +131,8 @@ export function NepaAgent() {
         style={{ background: 'radial-gradient(ellipse 70% 60% at 50% 20%, rgba(0,212,255,0.08) 0%, transparent 70%)' }}
       />
 
-      {/* ───────────────────────── HERO with looping world-model video ───────────────────────── */}
+      {/* HERO with looping world-model background video */}
       <section className="relative overflow-hidden" data-fade>
-        {/* Background video */}
         <video
           autoPlay
           loop
@@ -147,7 +145,6 @@ export function NepaAgent() {
           <source src="/videos/world-model-stdp.mp4" type="video/mp4" />
         </video>
 
-        {/* Dark gradient overlay so headline + buttons stay readable */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -157,7 +154,6 @@ export function NepaAgent() {
           }}
         />
 
-        {/* Hero content lifted above the video */}
         <div className="relative max-w-4xl mx-auto py-24 sm:py-32 text-center px-6" style={{ zIndex: 2 }}>
           <span className="font-mono text-xs tracking-[2px] uppercase text-primary inline-flex items-center gap-2 mb-6">
             <Brain size={18} className="text-primary" /> NEPA AGENT · OPERATIONAL AI
@@ -229,9 +225,7 @@ export function NepaAgent() {
           <div ref={transcriptRef} className="max-h-48 overflow-y-auto mb-2 flex flex-col gap-1">
             {transcript.map((m, i) => (
               <div key={i} className="flex items-start gap-2 font-mono text-xs">
-                <span
-                  className={`tracking-[2px] uppercase ${m.role === 'user' ? 'text-primary' : 'text-white/55'}`}
-                >
+                <span className={`tracking-[2px] uppercase ${m.role === 'user' ? 'text-primary' : 'text-white/55'}`}>
                   {m.role === 'user' ? 'YOU>' : 'AGENT>'}
                 </span>
                 <span className="whitespace-pre-line">{m.content}</span>
@@ -272,6 +266,7 @@ export function NepaAgent() {
       {/* Judge / Composer / Director / Auditor panels */}
       <section className="container mx-auto px-6 max-w-6xl mb-20" data-fade>
         <div className="grid md:grid-cols-2 gap-6">
+
           {/* JUDGE */}
           <div className="bg-zinc-900/40 border-white/10 border rounded-xl p-6 flex flex-col min-h-[320px]">
             <div className="font-mono text-xs tracking-[2px] uppercase text-primary mb-3 flex items-center gap-2">
@@ -288,8 +283,7 @@ export function NepaAgent() {
                   >
                     {hasError ? (
                       <span className="text-red-400 font-mono text-xs px-2 py-1 bg-zinc-950/80 rounded border border-red-400 flex items-center gap-1">
-                        <Warning size={14} />
-                        {hasError}
+                        <Warning size={14} />{hasError}
                       </span>
                     ) : (
                       <span className="text-white/20 font-mono text-xs">IMG</span>
@@ -307,19 +301,6 @@ export function NepaAgent() {
 
           {/* COMPOSER */}
           <div className="bg-zinc-900/40 border-white/10 border rounded-xl p-6 flex flex-col min-h-[320px]">
-            <div className="font-mono text-xs tracking-[2px] uppercase text-primary mb-3 flex items-center gap-2">
-              <CheckCircle size={16} className="text-green-400" />COMPOSER
-              <span className="ml-2 text-white/40 font-normal">Scene Adjustments</span>
-            </div>
-            <div className="aspect-video bg-gradient-to-br from-zinc-800 to-zinc-950 rounded mb-4 flex items-center justify-center">
-              <span className="text-white/20 font-mono text-xs">IMG</span>
-            </div>
-            <div className="flex flex-col gap-1 mb-2">
-              <div className="flex items-center gap-2">
-                <CheckCircle size={12} className="text-green-400" />
-                <span className="text-green-400 text-xs">{composer.status}</span>
-              </div>
-               <div className="bg-zinc-900/40 border-white/10 border rounded-xl p-6 flex flex-col min-h-[320px]">
             <div className="font-mono text-xs tracking-[2px] uppercase text-primary mb-3 flex items-center gap-2">
               <CheckCircle size={16} className="text-green-400" />COMPOSER
               <span className="ml-2 text-white/40 font-normal">Scene Adjustments</span>
@@ -350,89 +331,61 @@ export function NepaAgent() {
             </div>
           </div>
 
-          {/* DIRECTOR — multi-lane video with overlay */}
-          <div className="bg-zinc-900/40 border-white/10 border rounded-xl p-6 flex flex-col min-h-[320px]">
+        <div className="bg-zinc-900/40 border-white/10 border rounded-xl p-6 flex flex-col min-h-[320px]">
             <div className="font-mono text-xs tracking-[2px] uppercase text-primary mb-3 flex items-center gap-2">
               <Camera size={16} className="text-primary" />DIRECTOR
-              <span className="ml-2 text-white/40 font-normal">Command &amp; Control</span>
+              <span className="ml-2 text-white/40 font-normal">Scene Control</span>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {director.cameras.map((cam) => (
-                <div key={cam.id} className="relative aspect-video rounded overflow-hidden bg-black">
-                  <video
-                    src={cam.videoUrl}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="w-full h-full object-cover"
-                  />
-                  <img
-                    src={cam.overlayUrl}
-                    alt="Overlay"
-                    className="absolute top-0 left-0 w-full h-full object-contain pointer-events-none opacity-80"
-                    style={{ mixBlendMode: 'screen' }}
-                  />
-                  <span className="absolute top-2 left-2 bg-black/60 text-cyan-300 font-mono text-xs px-3 py-1 rounded">
-                    {cam.id} · Overlay
-                  </span>
-                </div>
-              ))}
+            <div className="aspect-video bg-gradient-to-br from-zinc-800 to-zinc-950 rounded mb-4 flex items-center justify-center">
+              <span className="text-white/20 font-mono text-xs">IMG</span>
             </div>
-            <div className="text-xs text-white/80 font-mono mt-3">{director.action}</div>
+            <div className="flex flex-col gap-1 mb-2">
+              <div className="flex items-center gap-2">
+                <CheckCircle size={12} className="text-green-400" />
+                <span className="text-white/80 text-xs">
+                  {director.cameras.map((cam) => (
+                    <>
+                      <span key={cam.id}>{cam.id}</span>
+                      <span> </span>
+                    </>
+                  ))}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle size={12} className="text-green-400" />
+                <span className="text-white/80 text-xs">{director.action}</span>
+              </div>
+            </div>
+            <div className="text-xs text-white/55 font-mono mt-2">
+              {director.action ? 'Action Executed' : 'Pending Action'}
+            </div>
           </div>
 
           {/* AUDITOR */}
           <div className="bg-zinc-900/40 border-white/10 border rounded-xl p-6 flex flex-col min-h-[320px]">
             <div className="font-mono text-xs tracking-[2px] uppercase text-primary mb-3 flex items-center gap-2">
-              <ShieldCheck size={16} className="text-amber-400" />AUDITOR
-              <span className="ml-2 text-white/40 font-normal">Audit &amp; Review</span>
+              <ShieldCheck size={16} className="text-primary" />AUDITOR
+              <span className="ml-2 text-white/40 font-normal">System Integrity</span>
             </div>
-            <div className="flex flex-col gap-2 mb-3">
+            <div className="flex flex-col gap-2">
               {auditor.logs.map((log, idx) => (
                 <div key={idx} className="flex items-center gap-2">
-                  <CheckCircle size={14} className={log.status === 'done' ? 'text-green-400' : 'text-amber-400'} />
-                  <span className="text-xs text-white/90">{log.label}</span>
-                  <CaretRight
-                    size={14}
-                    className={log.status === 'done' ? 'text-green-400 ml-auto' : 'text-amber-400 ml-auto'}
-                  />
+                  <CheckCircle size={12} className={log.status === 'done' ? 'text-green-400' : 'text-yellow-400'} />
+                  <span className="text-white/80 text-xs">{log.label}</span>
                 </div>
               ))}
             </div>
-            <div className="text-xs text-white/55 font-mono mt-2">
-              {auditor.exportReady ? 'Log Export Ready' : 'Export Pending'}
+            <div className="flex items-center gap-2 mt-4">
+              <CheckCircle size={12} className="text-green-400" />
+              <span className="text-white/80 text-xs">
+                {auditor.exportReady ? 'Export Ready' : 'Export Pending'}
+              </span>
             </div>
           </div>
+
         </div>
       </section>
 
-      {/* ────────── World Model section (public, polished) ────────── */}
-      <WorldModelSection />
-
-      {/* ────────── Footer CTA ────────── */}
-      <footer className="py-16 text-center" data-fade>
-        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4 text-white">
-          Connect. Diagnose. Direct. Verify.
-        </h2>
-        <p className="text-[#cdd3de] mb-8">
-          Sign up for free and run your first diagnostic scan. No credit card required.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link
-            to="/dashboard"
-            className="bg-primary text-white font-semibold px-7 py-3 rounded-full hover:bg-primary/90"
-          >
-            Open Console →
-          </Link>
-          <Link
-            to="/docs/api"
-            className="border border-white/20 text-white/80 font-semibold px-7 py-3 rounded-full hover:border-primary/40 hover:text-primary"
-          >
-            Read API Docs →
-          </Link>
-        </div>
-      </footer>
     </main>
-  )
+  );
 }
