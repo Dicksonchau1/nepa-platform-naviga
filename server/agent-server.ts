@@ -8,6 +8,26 @@ import { getOpenAITools, executeToolCall, type ToolContext } from '../src/lib/ag
 const app = express()
 app.use(express.json({ limit: '1mb' }))
 
+
+// CORS — allow Vercel playground + marketing site to call us cross-origin
+app.use((req, res, next) => {
+  const origin = req.headers.origin
+  const allowed = [
+    'https://playground.aurasensehk.com',
+    'https://www.aurasensehk.com',
+    'https://aurasensehk.com',
+  ]
+  if (origin && allowed.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin)
+    res.setHeader('Access-Control-Allow-Credentials', 'true')
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+    res.setHeader('Vary', 'Origin')
+  }
+  if (req.method === 'OPTIONS') return res.status(204).end()
+  next()
+})
+
 const PORT = parseInt(process.env.AGENT_PORT || '8010', 10)
 
 const SYSTEM_PROMPT = `You are NEPA Agent, the operational AI for the AuraSense NEPA platform.
