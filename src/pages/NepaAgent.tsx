@@ -13,7 +13,8 @@ import {
   PaperPlaneRight,
   UserCircle,
 } from '@phosphor-icons/react'
-import { askNepaAgent, type NepaAgentMessage } from '@/lib/nepaAgent'
+import { WorldModelSection } from '@/components/sections/WorldModelSection'
+import { TenStageSection } from '@/components/sections/TenStageSection'
 
 const NODE_STATUS = [
   { name: 'NUC_01', latency: '16 ms', color: 'bg-green-400' },
@@ -355,7 +356,8 @@ export function NepaAgent() {
         </div>
       </section>
 
-
+      <WorldModelSection />
+      <TenStageSection />
       </main>
   )
 }
